@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C86DD402ED02D470017C10F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 0C86DD3F2ED02D470017C10F /* RxCocoa */; };
 		58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8C2ECC06EE00333D36 /* SnapKit */; };
 		58619E902ECC071100333D36 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8F2ECC071100333D36 /* RxSwift */; };
-		69928BEE2ECEDEAC00125FE5 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 69928BED2ECEDEAC00125FE5 /* RxCocoa */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,7 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				69928BEE2ECEDEAC00125FE5 /* RxCocoa in Frameworks */,
+				0C86DD402ED02D470017C10F /* RxCocoa in Frameworks */,
 				58619E902ECC071100333D36 /* RxSwift in Frameworks */,
 				58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */,
 			);
@@ -51,10 +51,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0C86DD3E2ED02D470017C10F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		58619E4C2ECBF85D00333D36 = {
 			isa = PBXGroup;
 			children = (
 				58619E572ECBF85D00333D36 /* UnknownBookArchive */,
+				0C86DD3E2ED02D470017C10F /* Frameworks */,
 				58619E562ECBF85D00333D36 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,7 +97,7 @@
 			packageProductDependencies = (
 				58619E8C2ECC06EE00333D36 /* SnapKit */,
 				58619E8F2ECC071100333D36 /* RxSwift */,
-				69928BED2ECEDEAC00125FE5 /* RxCocoa */,
+				0C86DD3F2ED02D470017C10F /* RxCocoa */,
 			);
 			productName = UnknownBookArchive;
 			productReference = 58619E552ECBF85D00333D36 /* UnknownBookArchive.app */;
@@ -178,7 +186,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.FineApple.UBArc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -217,7 +224,6 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.FineApple.UBArc;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -400,6 +406,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0C86DD3F2ED02D470017C10F /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
 		58619E8C2ECC06EE00333D36 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 58619E8B2ECC06EE00333D36 /* XCRemoteSwiftPackageReference "SnapKit" */;
@@ -409,11 +420,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
-		};
-		69928BED2ECEDEAC00125FE5 /* RxCocoa */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
-			productName = RxCocoa;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
