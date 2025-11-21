@@ -9,25 +9,29 @@ class BookSearchViewModel {
     
     private let apiService = BookRepository()
     
-    let bookList = BehaviorSubject<[Book]>(value: [])
+    let bookList = BehaviorRelay<[Book]>(value: [])
+    let viewState = BehaviorRelay<SearchState>(value: .initial)
     
     func search(query: String) {
         
         guard !query.isEmpty else {
-            // 추후에 검색 전 안내멘트 + 책 추가 버튼 추가필요
-            bookList.onNext([])
+            viewState.accept(.initial)
             return
         }
         apiService.searchBooks(query: query)
             .subscribe(onSuccess: { [weak self] items in
-                self?.bookList.onNext(items)
+                self?.bookList.accept(items)
+                self?.viewState.accept(.success)
             }, onFailure: { [weak self] error in
-                // 검색 실페시 안내멘트 + 책 추가 버튼 추가필요
                 print("검색 실패: \(error)")
-                self?.bookList.onNext([])
+                self?.viewState.accept(.error(error))
             })
             .disposed(by: disposeBag)
-
+    }
+    // 초기 상태로 돌리기 (검색 취소시 사용)
+    func resetSearchState() {
+        self.viewState.accept(.initial)
+        self.bookList.accept([])
     }
 }
 

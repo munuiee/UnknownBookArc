@@ -15,7 +15,6 @@ class BookRepository {
         self.apiKey = Bundle.main.infoDictionary?["APIKey"] as? String ?? ""
         
         if self.apiKey.isEmpty {
-            print("API키를 찾을 수 없습니다.")
         }
     }
     func searchBooks(query: String) -> Single<[BookItem]> {
@@ -24,8 +23,6 @@ class BookRepository {
         else {
             return Single.error(APIError.invalidURL)
         }
-        // 디버깅용
-        print("API URL: \(url)")
         return networkManager.fetch(url: url)
             .map { (response: BookResponse) in
                 return response.item
