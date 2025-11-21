@@ -71,9 +71,23 @@ class BookSearchCell: UITableViewCell {
 
         }
     }
-    func setData(title: String, author: String, publisher: String) {
-        self.titleLabel.text = title
-        self.authorLabel.text = author
-        self.publisherLabel.text = publisher
+    func setData(item: BookItem) {
+        self.titleLabel.text = item.title
+        self.authorLabel.text = item.author
+        self.publisherLabel.text = item.publisher
+        
+        if let imageURL = URL(string: item.cover) {
+            self.thumnailImage.image = nil
+            
+            URLSession.shared.dataTask(with: imageURL) { [weak self] data, _, error in
+                guard let data = data, error == nil else {
+                    print("이미지 불러오기 실패")
+                    return
+                }
+                DispatchQueue.main.async {
+                    self?.thumnailImage.image = UIImage(data: data)
+                }
+            }.resume()
+        }
     }
 }

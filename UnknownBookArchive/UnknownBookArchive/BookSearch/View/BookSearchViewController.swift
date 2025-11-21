@@ -5,6 +5,10 @@ import RxCocoa
 
 class BookSearchViewController: UIViewController {
     
+    let viewModel = BookSearchViewModel()
+    let disposeBag = DisposeBag()
+    
+    // MARK: UI요소
     private let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: nil, action: nil)
     
     private let searchBar: UISearchBar = {
@@ -25,7 +29,6 @@ class BookSearchViewController: UIViewController {
         }
             return sb
     }()
-    
     private lazy var tableView: UITableView = {
         let tv = UITableView()
         tv.backgroundColor = .white
@@ -33,9 +36,6 @@ class BookSearchViewController: UIViewController {
         tv.rowHeight = 100
        return tv
     }()
-    
-    let viewModel = BookSearchViewModel()
-        let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -92,7 +92,7 @@ class BookSearchViewController: UIViewController {
 
             viewModel.bookList
                 .bind(to: tableView.rx.items(cellIdentifier: BookSearchCell.id, cellType: BookSearchCell.self)) { index, item, cell in
-                    cell.setData(title: item.title, author: item.author, publisher: item.publisher)
+                    cell.setData(item: item)
                 }
                 .disposed(by: disposeBag)
         }
