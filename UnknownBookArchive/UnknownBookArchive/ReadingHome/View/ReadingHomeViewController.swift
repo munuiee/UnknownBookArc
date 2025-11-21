@@ -41,6 +41,16 @@ final class ReadingHomeViewController: UIViewController {
         setupConstraints()
         applySpacing()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+    }
 
     // MARK: - UI 설정
     private func setupUI() {
@@ -147,6 +157,7 @@ final class ReadingHomeViewController: UIViewController {
         
         topSpacer.snp.makeConstraints {
             $0.height.equalTo(32)
+
         }
 
 
