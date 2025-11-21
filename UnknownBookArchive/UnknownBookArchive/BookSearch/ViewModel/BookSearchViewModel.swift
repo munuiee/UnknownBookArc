@@ -2,25 +2,32 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-// 임시 데이터 모델
-struct Book {
-    let title: String
-    let author: String
-    let publisher: String
-}
+typealias Book = BookItem
 
 class BookSearchViewModel {
     let disposeBag = DisposeBag()
     
+    private let apiService = BookRepository()
+    
     let bookList = BehaviorSubject<[Book]>(value: [])
     
     func search(query: String) {
-        let dummyBooks = [
-            Book(title: "해리포터와 비밀의 방", author: "조앤 K.롤링", publisher: "문학수첩"),
-            Book(title: "혼모노", author: "성해나", publisher: "창비"),
-            Book(title: "모순", author: "양귀자", publisher: "쓰다")
-        ]
-        bookList.onNext(dummyBooks)
+        
+        guard !query.isEmpty else {
+            // 추후에 검색 전 안내멘트 + 책 추가 버튼 추가필요
+            bookList.onNext([])
+            return
+        }
+        apiService.searchBooks(query: query)
+            .subscribe(onSuccess: { [weak self] items in
+                self?.bookList.onNext(items)
+            }, onFailure: { [weak self] error in
+                // 검색 실페시 안내멘트 + 책 추가 버튼 추가필요
+                print("검색 실패: \(error)")
+                self?.bookList.onNext([])
+            })
+            .disposed(by: disposeBag)
+
     }
 }
 
