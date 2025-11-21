@@ -11,9 +11,8 @@ class BookSearchViewController: UIViewController {
     // MARK: UI요소
     private let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: nil, action: nil)
     
-    private let searchBar: UISearchBar = {
+    private lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
-        sb.placeholder = "책 제목, 저자를 검색하세요"
         sb.backgroundImage = UIImage()
         sb.barTintColor = .white
         sb.backgroundColor = .white
@@ -67,9 +66,11 @@ class BookSearchViewController: UIViewController {
     
     private func setConstraints() {
         searchBar.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalToSuperview().inset(112)
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
         }
+        
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
@@ -78,10 +79,10 @@ class BookSearchViewController: UIViewController {
     }
     
     private func bind() {
-        // 백버튼 메인화면에 연결 필요
+        // 백버튼 홈화면에 연결 필요
 //        backButton.rx.tap
 //            .subscribe()
-
+        // 검색 시작 시
         searchBar.rx.searchButtonClicked
                     .withLatestFrom(searchBar.rx.text.orEmpty)
                     .bind(onNext: { [weak self] text in
@@ -91,10 +92,106 @@ class BookSearchViewController: UIViewController {
                     .disposed(by: disposeBag)
 
             viewModel.bookList
-                .bind(to: tableView.rx.items(cellIdentifier: BookSearchCell.id, cellType: BookSearchCell.self)) { index, item, cell in
+                .bind(to: tableView.rx.items(
+                    cellIdentifier: BookSearchCell.id, cellType: BookSearchCell.self)) { index, item, cell in
                     cell.setData(item: item)
                 }
                 .disposed(by: disposeBag)
+        // 검색 취소 시
+        searchBar.rx.cancelButtonClicked
+            .bind(onNext: { [weak self] in
+                guard let self = self else { return }
+                self.searchBar.text = ""
+                self.searchBar.resignFirstResponder()
+                self.viewModel.resetSearchState()
+                self.searchBar.setShowsCancelButton(false, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        searchBar.rx.textDidBeginEditing
+            .bind(onNext: { [weak self] in
+                
+                self?.searchBar.setValue("취소", forKey: "cancelButtonText")
+                self?.searchBar.setShowsCancelButton(true, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        // 상태에 따라 UI 업데이트
+        Observable.combineLatest(viewModel.viewState, viewModel.bookList)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] state, items in
+                guard let self = self else { return }
+                var message: String = ""
+                var showEmptyView: Bool = false
+                
+                switch state {
+                case .initial:
+                    message = "직접 책을 추가하고 싶으신가요?"
+                    showEmptyView = true
+                case .loading:
+                    showEmptyView = false
+                case .success:
+                    if items.isEmpty {
+                        message = "검색 결과가 안나오시나요?"
+                        showEmptyView = true
+                    } else {
+                        showEmptyView = false
+                    }
+                case .error:
+                    message = "검색에 실패했습니다."
+                    showEmptyView = true
+                }
+                
+                // UI 적용
+                if showEmptyView {
+                    self.tableView.backgroundView = self.createEmptyView(message: message)
+                    self.tableView.separatorStyle = .none
+                } else {
+                    self.tableView.backgroundView = nil
+                    self.tableView.separatorStyle = .singleLine
+                }
+            })
+                .disposed(by: disposeBag)
         }
+    
+    // MARK: 검색 전, 검색 실패 시 화면
+    private func createEmptyView(message: String, showButton: Bool = true) -> UIView {
+        let containerView = UIView()
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.alignment = .center
+        stackView.spacing = 24
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+
+        let label = UILabel()
+        label.text = message
+        label.textColor = .gray
+        label.textAlignment = .center
+        stackView.addArrangedSubview(label)
+
+        if showButton {
+            let button = UIButton()
+            button.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
+            button.setTitle("직접 책 추가하기", for: .normal)
+            button.setTitleColor(.black, for: .normal)
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            // 추후 버튼 이벤트 필요
+            button.layer.cornerRadius = 5
+            button.snp.makeConstraints {
+                $0.height.equalTo(48)
+                $0.width.equalTo(198)
+            }
+            stackView.addArrangedSubview(button)
+        }
+        containerView.addSubview(stackView)
+        
+        stackView.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-80)
+            $0.height.equalTo(130)
+            $0.width.equalToSuperview()
+        }
+     return containerView
+    }
 
 }

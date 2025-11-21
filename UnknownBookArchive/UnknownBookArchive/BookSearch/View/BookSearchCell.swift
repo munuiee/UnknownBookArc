@@ -59,18 +59,21 @@ class BookSearchCell: UITableViewCell {
         }
         titleLabel.snp.makeConstraints {
             $0.leading.equalTo(thumnailImage.snp.trailing).offset(10)
+            $0.trailing.equalToSuperview().inset(20)
             $0.top.equalToSuperview().inset(15)
         }
         authorLabel.snp.makeConstraints {
             $0.leading.equalTo(thumnailImage.snp.trailing).offset(10)
+            $0.trailing.equalToSuperview().inset(30)
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
         }
         publisherLabel.snp.makeConstraints {
             $0.leading.equalTo(thumnailImage.snp.trailing).offset(10)
+            $0.trailing.equalToSuperview().inset(30)
             $0.top.equalTo(authorLabel.snp.bottom).offset(5)
-
         }
     }
+    
     func setData(item: BookItem) {
         self.titleLabel.text = item.title
         self.authorLabel.text = item.author
