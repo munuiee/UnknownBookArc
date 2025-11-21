@@ -65,11 +65,16 @@ final class JournalViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-
+        
         setupUI()
         bindViewModel()
         setupInitialSelection()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+    }
+
     
     private func bindViewModel() {
         viewModel.onPageChanged = { [weak self] pageIndex in
@@ -87,19 +92,32 @@ final class JournalViewController: UIViewController {
             // 인디케이터 이동
             self.updateIndicator(for: pageIndex)
         }
+        
+        viewModel.didTapEdit = { [weak self] in
+            guard let self = self else { return }
+            let editVC = JournalEditViewController()
+            
+            if let nav = self.navigationController {
+                nav.pushViewController(editVC, animated: true)
+            } else {
+                self.present(editVC, animated: true)
+            }
+        }
     }
 
     
     // MARK: - UI 세팅
     private func setupUI() {
         bookTitle.text = "책 제목"
-        bookTitle.font = .boldSystemFont(ofSize: 18)
+        bookTitle.font = .systemFont(ofSize: 18, weight: .semibold)
+
 
         let addConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let addImage = UIImage(systemName: "plus", withConfiguration: addConfig)
         addButton.setImage(addImage, for: .normal)
         addButton.tintColor = .black
         addButton.sizeToFit()
+        addButton.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
 
         let backConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let backImage = UIImage(systemName: "chevron.backward", withConfiguration: backConfig)
@@ -160,6 +178,10 @@ final class JournalViewController: UIViewController {
         }
     }
 
+
+    
+  
+    
     // 처음에 0번째 탭 선택 + 인디케이터 세팅
     private func setupInitialSelection() {
         let indexPath = IndexPath(item: 0, section: 0)
@@ -193,6 +215,10 @@ final class JournalViewController: UIViewController {
         UIView.animate(withDuration: 0.35) {
             self.view.layoutIfNeeded()
         }
+    }
+    
+    @objc private func didTapEditButton() {
+        viewModel.editButtonTapped()
     }
 
 

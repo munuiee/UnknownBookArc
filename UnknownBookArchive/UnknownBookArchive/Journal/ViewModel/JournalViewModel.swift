@@ -2,6 +2,9 @@
 import Foundation
 
 final class JournalViewModel {
+    var onPageChanged: ((Int) -> Void)?
+    var didTapEdit: (() -> Void)?
+    
     private(set) var tabItems: [String] = ["문단 수집", "찰나의 기록"]
     
     private(set) var currentPage: Int = 0 {
@@ -29,5 +32,9 @@ final class JournalViewModel {
         index == 0 ? .paragraph : .moment
     }
     
-    var onPageChanged: ((Int) -> Void)?
+    func editButtonTapped() {
+        didTapEdit?()
+    }
+    
+    
 }

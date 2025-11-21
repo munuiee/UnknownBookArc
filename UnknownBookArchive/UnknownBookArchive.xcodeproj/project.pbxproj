@@ -10,6 +10,7 @@
 		0C86DD402ED02D470017C10F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 0C86DD3F2ED02D470017C10F /* RxCocoa */; };
 		58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8C2ECC06EE00333D36 /* SnapKit */; };
 		58619E902ECC071100333D36 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8F2ECC071100333D36 /* RxSwift */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+
 				0C86DD402ED02D470017C10F /* RxCocoa in Frameworks */,
 				58619E902ECC071100333D36 /* RxSwift in Frameworks */,
 				58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */,
@@ -97,6 +99,7 @@
 			packageProductDependencies = (
 				58619E8C2ECC06EE00333D36 /* SnapKit */,
 				58619E8F2ECC071100333D36 /* RxSwift */,
+
 				0C86DD3F2ED02D470017C10F /* RxCocoa */,
 			);
 			productName = UnknownBookArchive;
@@ -421,6 +424,7 @@
 			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
 		};
+
 /* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 58619E4D2ECBF85D00333D36 /* Project object */;
