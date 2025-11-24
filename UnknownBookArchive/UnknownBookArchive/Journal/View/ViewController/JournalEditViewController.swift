@@ -12,12 +12,18 @@ final class JournalEditViewController: UIViewController {
     private let pageField = UITextField()
     private let mainField = UITextView()
     private let mainPlaceholderLabel = UILabel()
+    private let viewModel = JournalEditViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureUI()
         configureStack()
+        
+        viewModel.onSaved = { [weak self] in
+            print("저장 완료")
+            self?.navigationController?.popViewController(animated: true)
+        }
     }
     
     private func configureUI() {
@@ -33,7 +39,7 @@ final class JournalEditViewController: UIViewController {
         
         let image = UIImage(named: "saveButton")?.withRenderingMode(.alwaysOriginal)
         saveButton.setImage(image, for: .normal)
-        
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         
         
         mainLabel.text = "문단 수집"
@@ -117,6 +123,13 @@ final class JournalEditViewController: UIViewController {
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func saveButtonTapped() {
+        let page = pageField.text ?? ""
+        let text = mainField.text ?? ""
+        
+        viewModel.saveButtonTapped(savedPage: page, journalText: text, liked: false)
     }
 }
 
