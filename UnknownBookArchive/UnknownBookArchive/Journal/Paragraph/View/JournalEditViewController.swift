@@ -1,3 +1,5 @@
+// MARK: - 저널 '문단 수집' 추가/편집 페이지
+
 import Foundation
 import SnapKit
 import UIKit
@@ -12,7 +14,19 @@ final class JournalEditViewController: UIViewController {
     private let pageField = UITextField()
     private let mainField = UITextView()
     private let mainPlaceholderLabel = UILabel()
-    private let viewModel = JournalEditViewModel()
+    private let viewModel: JournalEditViewModel
+    
+    var journal: Journal?
+    
+    init(journal: Journal?) {
+        self.viewModel = JournalEditViewModel(journal: journal)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,10 +35,19 @@ final class JournalEditViewController: UIViewController {
         configureStack()
         
         viewModel.onSaved = { [weak self] in
-            print("저장 완료")
             self?.navigationController?.popViewController(animated: true)
         }
+        
+        if let journal = journal {
+            pageField.text = journal.savedPage
+            mainField.text = journal.journalText
+            if let text = journal.journalText {
+                mainPlaceholderLabel.isHidden = !text.isEmpty
+            }
+        }
     }
+    
+    
     
     private func configureUI() {
         [topView, vStack].forEach { view.addSubview($0) }
@@ -129,7 +152,7 @@ final class JournalEditViewController: UIViewController {
         let page = pageField.text ?? ""
         let text = mainField.text ?? ""
         
-        viewModel.saveButtonTapped(savedPage: page, journalText: text, liked: false)
+        viewModel.saveButtonTapped(journal: journal, savedPage: page, journalText: text, liked: false)
     }
 }
 

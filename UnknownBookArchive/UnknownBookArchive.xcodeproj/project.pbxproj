@@ -10,14 +10,10 @@
 		58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8C2ECC06EE00333D36 /* SnapKit */; };
 		58619E902ECC071100333D36 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8F2ECC071100333D36 /* RxSwift */; };
 		58B169C42ED02D2A0046E4E4 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 58B169C32ED02D2A0046E4E4 /* RxCocoa */; };
-		58B16A732ED085980046E4E4 /* Journal+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B16A712ED085980046E4E4 /* Journal+CoreDataClass.swift */; };
-		58B16A742ED085980046E4E4 /* Journal+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58B16A722ED085980046E4E4 /* Journal+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		58619E552ECBF85D00333D36 /* UnknownBookArchive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnknownBookArchive.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		58B16A712ED085980046E4E4 /* Journal+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Journal+CoreDataClass.swift"; sourceTree = "<group>"; };
-		58B16A722ED085980046E4E4 /* Journal+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Journal+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -58,8 +54,6 @@
 		58619E4C2ECBF85D00333D36 = {
 			isa = PBXGroup;
 			children = (
-				58B16A712ED085980046E4E4 /* Journal+CoreDataClass.swift */,
-				58B16A722ED085980046E4E4 /* Journal+CoreDataProperties.swift */,
 				58619E572ECBF85D00333D36 /* UnknownBookArchive */,
 				58619E562ECBF85D00333D36 /* Products */,
 			);
@@ -154,8 +148,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58B16A732ED085980046E4E4 /* Journal+CoreDataClass.swift in Sources */,
-				58B16A742ED085980046E4E4 /* Journal+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

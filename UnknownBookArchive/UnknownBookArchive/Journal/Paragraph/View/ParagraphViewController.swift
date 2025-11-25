@@ -23,6 +23,7 @@ final class ParagraphViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.fetchParagraphs()
+        collectionView.reloadData()
     }
     
     private func collectionSet() {
@@ -52,8 +53,7 @@ final class ParagraphViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
-    
-    
+
     
 }
 
@@ -65,6 +65,39 @@ extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDat
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ParagraphCardCell.id, for: indexPath) as? ParagraphCardCell else {
             return UICollectionViewCell()
+        }
+        
+        let journal = viewModel.journal(at: indexPath)
+        
+        cell.onEditTapped = { [weak self] in
+            guard let self = self else { return }
+            
+            let editVC = JournalEditViewController(journal: journal)
+            editVC.journal = journal
+            self.navigationController?.pushViewController(editVC, animated: true)
+        }
+        
+        cell.onDeleteTapped = { [weak self] in
+            guard let self = self else { return }
+            
+            let alert = UIAlertController(title: "문단 삭제", message: "이 문단을 삭제할까요?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
+                self.viewModel.delete(at: indexPath)
+            })
+            
+            self.present(alert, animated: true)
+        }
+        
+        cell.onLikeTapped = { [weak self, weak cell] in
+            guard
+                let self = self,
+                let cell = cell,
+                let indexPath = collectionView.indexPath(for: cell)
+            else { return }
+            
+            self.viewModel.toggleLike(at: indexPath.item)
+            self.collectionView.reloadItems(at: [indexPath])
         }
         
         cell.configure(
