@@ -80,7 +80,6 @@ final class JournalViewController: UIViewController {
     
     private func bindViewModel() {
         viewModel.onPageChanged = { [weak self] pageIndex in
-            print("🌀 onPageChanged 콜백: \(pageIndex)")
             guard let self = self else { return }
             
             let indexPath = IndexPath(item: pageIndex, section: 0)
@@ -97,7 +96,7 @@ final class JournalViewController: UIViewController {
         
         viewModel.didTapEdit = { [weak self] in
             guard let self = self else { return }
-            let editVC = JournalEditViewController()
+            let editVC = JournalEditViewController(journal: nil)
             
             if let nav = self.navigationController {
                 nav.pushViewController(editVC, animated: true)

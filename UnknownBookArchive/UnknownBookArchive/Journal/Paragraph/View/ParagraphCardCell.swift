@@ -1,9 +1,15 @@
+// MARK: - 저널 '문단수집' 페이지 컬렉션뷰셀
+
 import Foundation
 import SnapKit
 import UIKit
 
 final class ParagraphCardCell: UICollectionViewCell {
     static let id = "ParagraphCardCell"
+    
+    var onEditTapped: (() -> Void)?
+    var onDeleteTapped: (() -> Void)?
+    var onLikeTapped: (() -> Void)?
     
     private let topStack = UIStackView()
     private let pageLabel = UILabel()
@@ -37,7 +43,26 @@ final class ParagraphCardCell: UICollectionViewCell {
         pageLabel.font = .systemFont(ofSize: 14, weight: .medium)
         pageLabel.textColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
         
-
+        let menuEdit = UIAction(
+            title: "문단 수정",
+            image: UIImage(named: "menuEdit")
+        ) { [weak self] _ in
+            self?.onEditTapped?()
+        }
+        
+        let menuDelete = UIAction(
+            title: "문단 삭제",
+            image: UIImage(named: "menuDelete"),
+        ) { [weak self] _ in
+            self?.onDeleteTapped?()
+        }
+        
+        
+        multiButton.menu = UIMenu(children: [menuEdit, menuDelete])
+        
+        
+        multiButton.showsMenuAsPrimaryAction = true
+        
         multiButton.setImage(UIImage(named: "journalMultiB"), for: .normal)
         multiButton.imageView?.contentMode = .scaleAspectFit
         multiButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
@@ -67,16 +92,22 @@ final class ParagraphCardCell: UICollectionViewCell {
         let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
         let image = UIImage(systemName: "heart", withConfiguration: config)
         likeButton.setImage(image, for: .normal)
+        likeButton.imageView?.contentMode = .scaleAspectFit
+        likeButton.contentHorizontalAlignment = .fill
+        likeButton.contentVerticalAlignment = .fill
         likeButton.tintColor = UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
-        likeButton.sizeToFit()
-       
+        likeButton.snp.makeConstraints {
+            $0.width.height.equalTo(24)
+        }
+        applyLiked(false)
+        likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
         
         bottomStack.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview().inset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
- 
+        
     }
     
     private func configureUI() {
@@ -96,7 +127,7 @@ final class ParagraphCardCell: UICollectionViewCell {
         }
         
         sententceLabel.textColor = UIColor(red: 0.101, green: 0.099, blue: 0.099, alpha: 1)
-       // sententceLabel.font = .systemFont(ofSize: 14, weight: .regular)
+        // sententceLabel.font = .systemFont(ofSize: 14, weight: .regular)
         sententceLabel.numberOfLines = 0
         sententceLabel.lineBreakMode = .byWordWrapping
         sententceLabel.textColor = UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1.0)
@@ -107,9 +138,23 @@ final class ParagraphCardCell: UICollectionViewCell {
         }
     }
     
+    @objc private func likeButtonTapped() {
+        onLikeTapped?()
+    }
+    
+    func applyLiked(_ liked: Bool) {
+        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
+        let imageName = liked ? "heart.fill" : "heart"
+        let image = UIImage(systemName: imageName, withConfiguration: config)
+        likeButton.setImage(image, for: .normal)
+        likeButton.tintColor = liked
+            ? UIColor(red: 21/255, green: 37/255, blue: 85/255, alpha: 1.0)
+            : UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
+    }
+    
+    
     func configure(page: String, text: String, dateText: String, liked: Bool) {
         pageLabel.text = "\(page)p"
-        //sententceLabel.text = text
         dateLabel.text = dateText
         
         let font = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -130,10 +175,10 @@ final class ParagraphCardCell: UICollectionViewCell {
             attributes: attributes
         )
         
-        
-        let imageName = liked ? "heart.fill" : "heart"
-        likeButton.setImage(UIImage(systemName: imageName), for: .normal)
+        applyLiked(liked)
     }
+    
+    
     
 }
 

@@ -6,6 +6,7 @@ class CoreDataManager {
     static let shared = CoreDataManager()
     private init() {}
     
+    
     // MARK: - Core Data stack
 
     lazy var persistentContainer: NSPersistentCloudKitContainer = {
@@ -15,6 +16,11 @@ class CoreDataManager {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        
+        let context = container.viewContext
+            context.automaticallyMergesChangesFromParent = true
+            context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+
         return container
     }()
 
@@ -27,12 +33,16 @@ class CoreDataManager {
                 try context.save()
             } catch {
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                print("⚠️ CoreData save 실패: \(nserror), \(nserror.userInfo)")
             }
         }
     }
     
-    func createCollectionData(savedPage: String, journalText: String, liked: Bool) {
+    lazy var context: NSManagedObjectContext = {
+           persistentContainer.viewContext
+       }()
+    
+    func paragraphCreate(savedPage: String, journalText: String, liked: Bool) {
         guard let entity = NSEntityDescription.entity(forEntityName: "Journal", in: self.persistentContainer.viewContext) else { return }
         
         // JCData = 저널 문단 수집 데이터
@@ -51,5 +61,34 @@ class CoreDataManager {
         }
     }
     
+
+
+    
+    func paragraphDelete(journal: Journal) throws {
+        let context = persistentContainer.viewContext
+        context.delete(journal)
+        
+        do {
+            try context.save()
+        } catch {
+            print("문단 삭제에 실패했습니다. \(error)")
+        }
+    }
+    
+    func paragraphUpdate(journal: Journal, page: String, text: String, liked: Bool) throws {
+        journal.savedPage = page
+        journal.journalText = text
+        journal.liked = liked
+        try context.save()
+    }
+    
+    func newParagraphCreate(page: String, text: String, liked: Bool) throws {
+        let newJournal = Journal(context: persistentContainer.viewContext)
+        newJournal.savedPage = page
+        newJournal.journalText = text
+        newJournal.liked = liked
+        // newJournal.createDate = Date()
+        try context.save()
+    }
 
 }
