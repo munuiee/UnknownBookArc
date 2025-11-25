@@ -9,16 +9,17 @@ class BookSearchViewController: UIViewController {
     let disposeBag = DisposeBag()
     
     // MARK: UI요소
-    private let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: nil, action: nil)
-    
+    private let topView = TopView()
+
     private lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
         sb.backgroundImage = UIImage()
         sb.barTintColor = .white
         sb.backgroundColor = .white
         sb.searchTextField.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
-        sb.searchTextField.textColor = .black
+        sb.searchTextField.font = .systemFont(ofSize: 15)
         sb.searchTextField.tintColor = .black
+        sb.searchTextField.textColor = .black
         sb.searchTextField.leftView?.tintColor = .gray
         sb.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "책 제목, 저자를 검색하세요",
@@ -38,39 +39,38 @@ class BookSearchViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavigationBar()
+        setupTopView()
         configureUI()
         setConstraints()
         bind()
+        keyboardDismiss()
     }
-     // 내비게이션바 아이템 추가
-    private func setupNavigationBar() {
-        self.navigationItem.title = "책 추가하기"
-        let appearance = UINavigationBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = .white
-            appearance.titleTextAttributes = [.foregroundColor: UIColor.black]
-            
-            navigationController?.navigationBar.standardAppearance = appearance
-            navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        backButton.tintColor = .black
-        self.navigationItem.leftBarButtonItem = backButton
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     private func configureUI() {
+
         view.backgroundColor = .white
         [
-            searchBar, tableView
+            topView, searchBar, tableView
         ].forEach { view.addSubview($0) }
+        
     }
     
     private func setConstraints() {
-        searchBar.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(112)
-            $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(20)
+        topView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(60)
+            $0.leading.trailing.equalToSuperview()
         }
-        
+        searchBar.snp.makeConstraints {
+            $0.top.equalTo(topView.snp.bottom)
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(15)
+        }
+
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
             $0.leading.trailing.equalToSuperview()
@@ -79,9 +79,14 @@ class BookSearchViewController: UIViewController {
     }
     
     private func bind() {
-        // 백버튼 홈화면에 연결 필요
-//        backButton.rx.tap
-//            .subscribe()
+        topView.backButtonTap
+            .bind { [weak self] in
+                guard let self = self else { return }
+                print("백버튼 눌림")
+                self.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
+ 
         // 검색 시작 시
         searchBar.rx.searchButtonClicked
                     .withLatestFrom(searchBar.rx.text.orEmpty)
@@ -193,5 +198,8 @@ class BookSearchViewController: UIViewController {
         }
      return containerView
     }
-
+    
+    private func setupTopView() {
+        topView.configure(title: "책 추가하기", rightButtonImage: nil)
+    }
 }

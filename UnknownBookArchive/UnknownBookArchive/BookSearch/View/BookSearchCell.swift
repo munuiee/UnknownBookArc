@@ -1,7 +1,6 @@
 import UIKit
 import SnapKit
 
-
 class BookSearchCell: UITableViewCell {
     static let id = "BookSearchCell"
     

@@ -9,7 +9,9 @@
 /* Begin PBXBuildFile section */
 		58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8C2ECC06EE00333D36 /* SnapKit */; };
 		58619E902ECC071100333D36 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 58619E8F2ECC071100333D36 /* RxSwift */; };
+		6949B8DE2ED52BBC00CD0076 /* RxKeyboard in Frameworks */ = {isa = PBXBuildFile; productRef = 6949B8DD2ED52BBC00CD0076 /* RxKeyboard */; };
 		58B169C42ED02D2A0046E4E4 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 58B169C32ED02D2A0046E4E4 /* RxCocoa */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+
+
+				6949B8DE2ED52BBC00CD0076 /* RxKeyboard in Frameworks */,
 				58B169C42ED02D2A0046E4E4 /* RxCocoa in Frameworks */,
 				58619E902ECC071100333D36 /* RxSwift in Frameworks */,
 				58619E8D2ECC06EE00333D36 /* SnapKit in Frameworks */,
@@ -89,6 +94,7 @@
 			packageProductDependencies = (
 				58619E8C2ECC06EE00333D36 /* SnapKit */,
 				58619E8F2ECC071100333D36 /* RxSwift */,
+				6949B8DD2ED52BBC00CD0076 /* RxKeyboard */,
 				58B169C32ED02D2A0046E4E4 /* RxCocoa */,
 			);
 			productName = UnknownBookArchive;
@@ -122,6 +128,7 @@
 			packageReferences = (
 				58619E8B2ECC06EE00333D36 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				6949B8DC2ED52BBC00CD0076 /* XCRemoteSwiftPackageReference "RxKeyboard" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 58619E562ECBF85D00333D36 /* Products */;
@@ -395,6 +402,14 @@
 				minimumVersion = 6.9.1;
 			};
 		};
+		6949B8DC2ED52BBC00CD0076 /* XCRemoteSwiftPackageReference "RxKeyboard" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxKeyboard";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -408,10 +423,18 @@
 			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
 		};
+
+		6949B8DD2ED52BBC00CD0076 /* RxKeyboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6949B8DC2ED52BBC00CD0076 /* XCRemoteSwiftPackageReference "RxKeyboard" */;
+			productName = RxKeyboard;
+      };
+
 		58B169C32ED02D2A0046E4E4 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
+
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
