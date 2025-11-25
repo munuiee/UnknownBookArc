@@ -1,3 +1,4 @@
+// MARK: - 저널 탭바 ViewModel
 
 import Foundation
 
