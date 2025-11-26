@@ -5,6 +5,7 @@
 //  Created by 김리하 on 11/21/25.
 //
 
+
 import UIKit
 import SnapKit
 
@@ -15,8 +16,10 @@ final class BookshelfViewController: UIViewController {
     // 보여줄 책 목록
     private var displayedBooks: [BookshelfBook] = []
 
-    // 갤러리 모드 on/ off
-    private var isGalleryMode: Bool = false
+//    // 갤러리 모드 on/ off
+//    private var isGalleryMode: Bool = false
+    
+    private var selectedCategoryIndex: Int = 0
 
     // 상단 바
     private let topBarView: UIView = UIView()
@@ -25,8 +28,7 @@ final class BookshelfViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "책장"
-        label.font = .boldSystemFont(ofSize: 20)
-        label.textColor = .label
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
         return label
     }()
 
@@ -98,21 +100,33 @@ final class BookshelfViewController: UIViewController {
         sv.axis = .horizontal
         sv.spacing = 10
 
-        // 버튼 생성
+        // 카테고리 버튼 디자인
         categories.enumerated().forEach { index, title in
-            let btn = UIButton(type: .system)
-            btn.setTitle(title, for: .normal)
+            var config = UIButton.Configuration.bordered()
+            config.title = title
+            config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+            config.baseForegroundColor = .black
+            config.cornerStyle = .medium
+            
+            let btn = UIButton(configuration: config)
             btn.tag = index
-            btn.configuration = nil
-            btn.titleLabel?.font = .systemFont(ofSize: 14)
+            
             btn.layer.cornerRadius = 8
             btn.layer.borderWidth = 1
             btn.layer.borderColor = UIColor.systemGray5.cgColor
-            btn.setTitleColor(.black, for: .normal)
-            btn.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
+            btn.clipsToBounds = true
+            
+            btn.configurationUpdateHandler = {[weak self] button in
+                guard let self = self else { return }
+                let isSelected = button.tag == self.selectedCategoryIndex
+                
+                button.configuration?.baseBackgroundColor = isSelected ? .black : .white
+                button.configuration?.baseForegroundColor = isSelected ? .white : .black
+                
+            }
+            
             btn.addTarget(self, action: #selector(categoryTapped(_:)), for: .touchUpInside)
-        
-
+            
             categoryButtons.append(btn)
             sv.addArrangedSubview(btn)
         }
@@ -161,14 +175,15 @@ final class BookshelfViewController: UIViewController {
     private func setupConstraints() {
 
         topBarView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(8)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(60)
+            $0.leading.trailing.equalToSuperview()
         }
 
+        
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview()
+            $0.center.equalToSuperview()
+            $0.height.equalTo(32)
         }
 
 //        galleryButton.snp.makeConstraints {
@@ -234,12 +249,11 @@ final class BookshelfViewController: UIViewController {
         viewModel.updateCategory(index: sender.tag)
     }
 
+    
     // 선택된 버튼 검정색으로 표시. 추후 변경 예정.
     private func updateCategoryUI(selectedIndex: Int) {
-        for btn in categoryButtons {
-            btn.backgroundColor = (btn.tag == selectedIndex) ? .black : .white
-            btn.setTitleColor((btn.tag == selectedIndex) ? .white : .black, for: .normal)
-        }
+        selectedCategoryIndex = selectedIndex
+        categoryButtons.forEach { $0.setNeedsUpdateConfiguration()}
     }
 
 //    // 갤러리모드 토글

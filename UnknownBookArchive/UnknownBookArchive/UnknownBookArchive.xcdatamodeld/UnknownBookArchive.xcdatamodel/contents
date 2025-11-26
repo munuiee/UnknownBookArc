@@ -16,6 +16,8 @@
         <attribute name="uuid" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Journal" representedClassName="Journal" syncable="YES">
+        <attribute name="bookAuthor" optional="YES" attributeType="String"/>
+        <attribute name="bookTitle" optional="YES" attributeType="String"/>
         <attribute name="createDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="journalText" optional="YES" attributeType="String"/>
         <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
