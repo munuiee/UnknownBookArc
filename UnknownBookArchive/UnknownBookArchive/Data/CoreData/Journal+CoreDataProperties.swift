@@ -21,6 +21,7 @@ extension Journal {
     @NSManaged public var journalText: String?
     @NSManaged public var liked: Bool
 
+
 }
 
 extension Journal : Identifiable {

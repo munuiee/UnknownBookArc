@@ -75,6 +75,17 @@ class CoreDataManager {
         }
     }
     
+    func momentDelete(moments: MomentEntity) throws {
+        let context = persistentContainer.viewContext
+        context.delete(moments)
+        
+        do {
+            try context.save()
+        } catch {
+            print("기록 삭제에 실패했습니다. \(error)")
+        }
+    }
+    
     func paragraphUpdate(journal: Journal, page: String, text: String, liked: Bool) throws {
         journal.savedPage = page
         journal.journalText = text

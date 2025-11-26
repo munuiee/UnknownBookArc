@@ -15,7 +15,7 @@ final class ParagraphListViewModel {
         didSet { onUpdate?() }
     }
     
-    var onUpdate: (() -> Void)?
+     var onUpdate: (() -> Void)?
     
     // 코어데이터에서 불러오기
     func fetchParagraphs() {

@@ -6,4 +6,11 @@
         <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="savedPage" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="MomentEntity" representedClassName="MomentEntity" syncable="YES">
+        <attribute name="createDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="momentDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="momentPage" optional="YES" attributeType="String"/>
+        <attribute name="momentText" optional="YES" attributeType="String"/>
+        <attribute name="momentTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
 </model>
