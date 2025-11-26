@@ -11,7 +11,7 @@ final class ParagraphViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = UIColor(named: "backgroundColor")
         collectionSet()
         viewModel.onUpdate = { [weak self] in
             self?.collectionView.reloadData()
@@ -35,6 +35,7 @@ final class ParagraphViewController: UIViewController {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.top.equalToSuperview().offset(36)
         }
+        collectionView.backgroundColor = UIColor(named: "backgroundColor")
     }
     
     private func makeLayout() -> UICollectionViewLayout {
@@ -50,6 +51,7 @@ final class ParagraphViewController: UIViewController {
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16)
         section.interGroupSpacing = 16
+        
         
         return UICollectionViewCompositionalLayout(section: section)
     }
