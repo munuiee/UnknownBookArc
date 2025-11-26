@@ -9,8 +9,10 @@ class BookSearchViewModel {
     
     private let apiService = BookRepository()
     
+    // MARK: Output (View로 데이터 내보냄)
     let bookList = BehaviorRelay<[Book]>(value: [])
     let viewState = BehaviorRelay<SearchState>(value: .initial)
+    let selectedBookItem = PublishRelay<BookItem>()
     
     func search(query: String) {
         

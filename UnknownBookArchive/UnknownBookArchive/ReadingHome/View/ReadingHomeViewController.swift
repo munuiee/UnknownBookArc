@@ -196,4 +196,5 @@ final class ReadingHomeViewController: UIViewController {
         // 잠시 멈춘 -> 완독
         contentStackView.setCustomSpacing(24, after: pausedTitleLabel)
     }
+
 }

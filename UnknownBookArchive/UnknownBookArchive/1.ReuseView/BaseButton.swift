@@ -27,8 +27,8 @@ class BaseButton: UIButton {
         layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
         titleLabel?.font = .systemFont(ofSize: 15)
         self.snp.makeConstraints {
-            $0.width.equalTo(77.75)
-            $0.height.equalTo(32)
+            $0.width.equalTo(77.75).priority(.required)
+            $0.height.equalTo(32).priority(.required)
         }
     }
     func configure(title: String,
@@ -63,7 +63,6 @@ class BaseButton: UIButton {
             backgroundColor = defaultBgColor
             self.layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
             setTitleColor(defautTitleColor, for: .normal)
-
         }
     }
 }

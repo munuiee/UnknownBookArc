@@ -16,15 +16,15 @@ class BookSearchViewController: UIViewController {
         sb.backgroundImage = UIImage()
         sb.barTintColor = .white
         sb.backgroundColor = .white
-        sb.searchTextField.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
-        sb.searchTextField.font = .systemFont(ofSize: 15)
+        sb.searchTextField.backgroundColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
+        sb.searchTextField.font = .systemFont(ofSize: 15, weight: .semibold)
         sb.searchTextField.tintColor = .black
         sb.searchTextField.textColor = .black
         sb.searchTextField.leftView?.tintColor = .gray
         sb.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "책 제목, 저자를 검색하세요",
-            attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightGray])
-        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(.gray, renderingMode: .alwaysOriginal) {
+            attributes: [NSAttributedString.Key.foregroundColor : UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)])
+        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1), renderingMode: .alwaysOriginal) {
             sb.setImage(clearImage, for: .clear, state: .normal)
         }
             return sb
@@ -56,7 +56,6 @@ class BookSearchViewController: UIViewController {
         [
             topView, searchBar, tableView
         ].forEach { view.addSubview($0) }
-        
     }
     
     private func setConstraints() {
@@ -79,6 +78,7 @@ class BookSearchViewController: UIViewController {
     }
     
     private func bind() {
+
         topView.backButtonTap
             .bind { [weak self] in
                 guard let self = self else { return }
@@ -149,14 +149,41 @@ class BookSearchViewController: UIViewController {
                 
                 // UI 적용
                 if showEmptyView {
-                    self.tableView.backgroundView = self.createEmptyView(message: message)
+                    let emptyView = self.createEmptyView(message: message)
+                    self.tableView.backgroundView = emptyView
                     self.tableView.separatorStyle = .none
+                    
+                    if let addButton = emptyView.viewWithTag(999) as? UIButton {
+                        addButton.rx.tap
+                            .subscribe(onNext: { [weak self] in
+                                self?.moveToBookInfo()
+                            })
+                            .disposed(by: disposeBag)
+                    }
                 } else {
                     self.tableView.backgroundView = nil
                     self.tableView.separatorStyle = .singleLine
                 }
             })
                 .disposed(by: disposeBag)
+        
+
+        // 테이블 뷰 셀 선택
+        tableView.rx.modelSelected(BookItem.self)
+            .bind(to: viewModel.selectedBookItem)
+            .disposed(by: disposeBag)
+        // 책 선택 후 화면 이동 및 데이터 전달
+        viewModel.selectedBookItem
+            .subscribe(onNext: { [weak self] bookItem in
+                guard let self = self else { return }
+                print("선택된 책: \(bookItem.title)")
+                let bookInfoVC = BookInfoViewController()
+                let bookInfoVM = BookInfoViewModel()
+                bookInfoVC.viewModel = bookInfoVM
+                bookInfoVM.initialBookItem.onNext(bookItem)
+                self.navigationController?.pushViewController(bookInfoVC, animated: true)
+            })
+            .disposed(by: disposeBag)
         }
     
     // MARK: 검색 전, 검색 실패 시 화면
@@ -170,23 +197,24 @@ class BookSearchViewController: UIViewController {
 
         let label = UILabel()
         label.text = message
-        label.textColor = .gray
+        label.textColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1)
         label.textAlignment = .center
         stackView.addArrangedSubview(label)
 
         if showButton {
             let button = UIButton()
-            button.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.95, alpha: 1.0)
+            button.tag = 999
+            button.backgroundColor = .primaryColor
             button.setTitle("직접 책 추가하기", for: .normal)
-            button.setTitleColor(.black, for: .normal)
+            button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-            // 추후 버튼 이벤트 필요
             button.layer.cornerRadius = 5
-            button.snp.makeConstraints {
-                $0.height.equalTo(48)
-                $0.width.equalTo(198)
-            }
+            
             stackView.addArrangedSubview(button)
+            button.snp.makeConstraints {
+                $0.height.equalTo(52)
+                $0.leading.trailing.equalToSuperview().inset(80)
+            }
         }
         containerView.addSubview(stackView)
         
@@ -201,5 +229,14 @@ class BookSearchViewController: UIViewController {
     
     private func setupTopView() {
         topView.configure(title: "책 추가하기", rightButtonImage: nil)
+    }
+    
+    private func moveToBookInfo() {
+        let emptyBookItem = BookItem.empty()
+        let bookInfoVC = BookInfoViewController()
+        let bookInfoVM = BookInfoViewModel()
+        bookInfoVC.viewModel = bookInfoVM
+        bookInfoVM.initialBookItem.onNext(emptyBookItem)
+        self.navigationController?.pushViewController(bookInfoVC, animated: true)
     }
 }
