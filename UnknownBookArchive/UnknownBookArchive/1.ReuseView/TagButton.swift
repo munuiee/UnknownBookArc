@@ -44,8 +44,7 @@ class TagButton: UIButton {
         self.backgroundColor = defaultBgColor
         self.layer.borderColor = borderColor.cgColor
         self.selectTitleColor = selectedTitleColor
-        self.selectBgColor = selectedBgColor
-        
+        self.selectBgColor = selectedBgColor 
     }
     
     override var isSelected: Bool {

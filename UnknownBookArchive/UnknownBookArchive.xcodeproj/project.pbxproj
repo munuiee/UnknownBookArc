@@ -46,8 +46,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-
-
 				6949B8DE2ED52BBC00CD0076 /* RxKeyboard in Frameworks */,
 				58B169C42ED02D2A0046E4E4 /* RxCocoa in Frameworks */,
 
@@ -429,18 +427,15 @@
 			productName = RxSwift;
 		};
 
-
-		6949B8DD2ED52BBC00CD0076 /* RxKeyboard */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6949B8DC2ED52BBC00CD0076 /* XCRemoteSwiftPackageReference "RxKeyboard" */;
-			productName = RxKeyboard;
-      };
-
 		58B169C32ED02D2A0046E4E4 /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 58619E8E2ECC071100333D36 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
-
+		};
+		6949B8DD2ED52BBC00CD0076 /* RxKeyboard */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6949B8DC2ED52BBC00CD0076 /* XCRemoteSwiftPackageReference "RxKeyboard" */;
+			productName = RxKeyboard;
 		};
 
 /* End XCSwiftPackageProductDependency section */

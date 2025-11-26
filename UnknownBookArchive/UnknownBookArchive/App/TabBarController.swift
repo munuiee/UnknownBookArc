@@ -26,6 +26,10 @@ class TabBarController: UITabBarController {
             tabBar.scrollEdgeAppearance = appearance
         }
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
     
     private func setupTabs() {
         let home = UINavigationController(rootViewController: ReadingHomeViewController())

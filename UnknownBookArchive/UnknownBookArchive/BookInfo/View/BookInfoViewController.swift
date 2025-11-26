@@ -7,13 +7,13 @@ import RxKeyboard
 
 class BookInfoViewController: UIViewController {
     
+    var viewModel = BookInfoViewModel()
+    
     let disposeBag = DisposeBag()
     var selectedStateButton: BaseButton?
     var selectedFormatButton: BaseButton?
     
-    // 태그 이름 목록
     private let tags: [BookTag] = BookTag.allCases
-    //    private var tagButtons: [TagButton] = []
     
     private let topView = TopView()
     
@@ -168,6 +168,7 @@ class BookInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         configureUI()
         setConstraints()
         bind()
@@ -197,7 +198,6 @@ class BookInfoViewController: UIViewController {
         [startDateButton, endDateButton].forEach { dateStackView.addArrangedSubview($0) }
         [pageTextField, totalPageTextField].forEach { inputStackView.addArrangedSubview($0) }
         
-        
         setupStateButtons()
         setupBookFormatButtons()
         setupTextField()
@@ -225,7 +225,7 @@ class BookInfoViewController: UIViewController {
             $0.top.equalTo(contentView.snp.top).offset(16)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(120)
-            $0.height.equalTo(178)
+            $0.height.equalTo(170)
         }
         plusIconImage.snp.makeConstraints {
             $0.center.equalTo(coverImageView.snp.center)
@@ -299,6 +299,40 @@ class BookInfoViewController: UIViewController {
 //                guard let self = self else { return }
                 print("저장 버튼 눌림")
             }
+            .disposed(by: disposeBag)
+        // MARK: ViewModel Output 바인딩
+        viewModel.title
+            .bind(to: titleTextField.rx.text)
+            .disposed(by: disposeBag)
+        viewModel.author
+            .bind(to: authorTextField.rx.text)
+            .disposed(by: disposeBag)
+        viewModel.publisher
+            .bind(to: publisherTextField.rx.text)
+            .disposed(by: disposeBag)
+        viewModel.coverImageUrl
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] urlString in
+                if let urlString = urlString, let url = URL(string: urlString) {
+                    print("표지 이미지 URL: \(url)")
+                    self?.plusIconImage.isHidden = true
+                    URLSession.shared.dataTask(with: url) { data, response, error in
+                        guard let data = data, let image = UIImage(data: data), error == nil else {
+                            DispatchQueue.main.async {
+                                self?.coverImageView.image = nil
+                                self?.plusIconImage.isHidden = false
+                            }
+                            return
+                        }
+                        DispatchQueue.main.async {
+                            self?.coverImageView.image = image
+                        }
+                    }.resume()
+                } else {
+                    self?.coverImageView.image = nil
+                    self?.plusIconImage.isHidden = false
+                }
+            })
             .disposed(by: disposeBag)
         
         stateButtons.forEach { button in
@@ -396,6 +430,7 @@ class BookInfoViewController: UIViewController {
             })
             .disposed(by: disposeBag)
     }
+    
     private func findFirstResponder(in view: UIView) -> UIResponder? {
             if view.isFirstResponder {
                 return view
