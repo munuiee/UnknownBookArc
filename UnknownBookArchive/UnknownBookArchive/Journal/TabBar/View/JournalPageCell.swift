@@ -1,3 +1,5 @@
+// MARK: - 저널 상단탭에 따른 페이지 컬렉션뷰셀
+
 import Foundation
 import UIKit
 import SnapKit

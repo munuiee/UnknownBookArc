@@ -1,3 +1,5 @@
+// MARK: - 저널 '문단 수집' 추가/편집 페이지
+
 import Foundation
 import SnapKit
 import UIKit
@@ -12,13 +14,40 @@ final class JournalEditViewController: UIViewController {
     private let pageField = UITextField()
     private let mainField = UITextView()
     private let mainPlaceholderLabel = UILabel()
+    private let viewModel: JournalEditViewModel
+    
+    var journal: Journal?
+    
+    init(journal: Journal?) {
+        self.viewModel = JournalEditViewModel(journal: journal)
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         configureUI()
         configureStack()
+        
+        viewModel.onSaved = { [weak self] in
+            self?.navigationController?.popViewController(animated: true)
+        }
+        
+        if let journal = journal {
+            pageField.text = journal.savedPage
+            mainField.text = journal.journalText
+            if let text = journal.journalText {
+                mainPlaceholderLabel.isHidden = !text.isEmpty
+            }
+        }
     }
+    
+    
     
     private func configureUI() {
         [topView, vStack].forEach { view.addSubview($0) }
@@ -33,7 +62,7 @@ final class JournalEditViewController: UIViewController {
         
         let image = UIImage(named: "saveButton")?.withRenderingMode(.alwaysOriginal)
         saveButton.setImage(image, for: .normal)
-        
+        saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
         
         
         mainLabel.text = "문단 수집"
@@ -117,6 +146,13 @@ final class JournalEditViewController: UIViewController {
     
     @objc private func didTapBackButton() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func saveButtonTapped() {
+        let page = pageField.text ?? ""
+        let text = mainField.text ?? ""
+        
+        viewModel.saveButtonTapped(journal: journal, savedPage: page, journalText: text, liked: false)
     }
 }
 

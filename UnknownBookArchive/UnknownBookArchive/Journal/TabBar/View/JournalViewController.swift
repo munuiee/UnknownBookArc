@@ -1,3 +1,5 @@
+// MARK: - 저널: 메인 컬렉션뷰
+
 import Foundation
 import SnapKit
 import UIKit
@@ -78,7 +80,6 @@ final class JournalViewController: UIViewController {
     
     private func bindViewModel() {
         viewModel.onPageChanged = { [weak self] pageIndex in
-            print("🌀 onPageChanged 콜백: \(pageIndex)")
             guard let self = self else { return }
             
             let indexPath = IndexPath(item: pageIndex, section: 0)
@@ -95,7 +96,7 @@ final class JournalViewController: UIViewController {
         
         viewModel.didTapEdit = { [weak self] in
             guard let self = self else { return }
-            let editVC = JournalEditViewController()
+            let editVC = JournalEditViewController(journal: nil)
             
             if let nav = self.navigationController {
                 nav.pushViewController(editVC, animated: true)
@@ -284,8 +285,7 @@ extension JournalViewController {
         section.visibleItemsInvalidationHandler = { [weak self] items, offset, environment in
             guard let self = self else { return }
             guard !items.isEmpty else { return }
-            
-            //guard self.contentCollectionView.isDragging || self.contentCollectionView.isDecelerating else { return }
+ 
             
             if self.isTabScrolling {
                 return
@@ -343,13 +343,20 @@ extension JournalViewController: UICollectionViewDataSource, UICollectionViewDel
             return cell
 
         } else {
-            guard let cell = collectionView.dequeueReusableCell(
+             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: JournalPageCell.id,
                 for: indexPath
-            ) as? JournalPageCell else { return .init() }
+             ) as? JournalPageCell else {
+                 return UICollectionViewCell()
+             }
+                    
 
             if indexPath.item == 0 {
-                cell.configure(type: .paragraph)
+                let paragraphVC = ParagraphViewController()
+                addChild(paragraphVC)
+                cell.contentView.addSubview(paragraphVC.view)
+                paragraphVC.view.snp.makeConstraints { $0.edges.equalToSuperview() }
+                paragraphVC.didMove(toParent: self)
             } else {
                 cell.configure(type: .moment)
             }
@@ -366,7 +373,7 @@ extension JournalViewController: UICollectionViewDataSource, UICollectionViewDel
             
             contentCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self ] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [weak self] in
                 self?.isTabScrolling = false
             }
         }
