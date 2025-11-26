@@ -29,4 +29,10 @@ extension UIColor {
     static let tagSeletedBoarderColor = UIColor(red: 0.533, green: 0.624, blue: 0.887, alpha: 1)
     static let tagSeletedBGColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1)
 
+    // 탭바
+    static let normalColor = UIColor(red: 0.8039, green: 0.7961, blue: 0.7961, alpha: 1.0) // CDCBCB
+    
+    // 좋아요
+    static let bookTitleColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0) // 676565
+    static let bookAuthorColor = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0) // B4B2B2
 }

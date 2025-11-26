@@ -176,10 +176,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         }
     }
     
-    @objc private func dismissKeyboard() {
-        view.endEditing(true)
-    }
-    
+  
     private func addKeyboardNotification() {
         NotificationCenter.default.addObserver(
             self,
