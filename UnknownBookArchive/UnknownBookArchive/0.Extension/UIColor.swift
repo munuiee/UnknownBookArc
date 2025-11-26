@@ -4,6 +4,8 @@ extension UIColor {
     
     // 프라이머리
     static let primaryColor = UIColor(red: 0.08, green: 0.145, blue: 0.331, alpha: 1)
+    //
+    static let basicBackground = UIColor(red: 0.99, green: 0.99, blue: 0.99, alpha: 1)
     
     // 독서 상태 버튼 용
     static let stateDefaultBGColor = UIColor.white
