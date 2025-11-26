@@ -1,20 +1,23 @@
-// MARK: - 문단 수집 리스트 화면 ViewModel
+// MARK: - 좋아요 한 문단 수집 리스트 화면 ViewModel
 
 import Foundation
 import CoreData
 import UIKit
 
-final class ParagraphListViewModel {
+final class LikeParagraphViewModel {
     private let coreDataManager = CoreDataManager.shared
     
     private var context: NSManagedObjectContext {
         coreDataManager.persistentContainer.viewContext
     }
     
+    private(set) var likedParagraphs: [Journal] = [] {
+           didSet { onUpdate?() }
+       }
+    
     private(set) var journals: [Journal] = [] {
         didSet { onUpdate?() }
     }
-    
      var onUpdate: (() -> Void)?
     
     // 코어데이터에서 불러오기
@@ -30,22 +33,45 @@ final class ParagraphListViewModel {
         }
     }
     
+    func fetchLikedParagraphs() {
+        let request: NSFetchRequest<Journal> = Journal.fetchRequest()
+        request.predicate = NSPredicate(format: "liked == true")
+        
+        let sort = NSSortDescriptor(key: "createDate", ascending: false)
+        request.sortDescriptors = [sort]
+        
+        do {
+            likedParagraphs = try context.fetch(request)
+            onUpdate?()
+        } catch {
+            print("좋아요 불러오기 실패 \(error)")
+        }
+    }
+    
   
     
     var numberOfItems: Int {
-        journals.count
+        likedParagraphs.count
     }
     
     func page(at indexPath: IndexPath) -> String {
-        journals[indexPath.item].savedPage ?? ""
+        likedParagraphs[indexPath.item].savedPage ?? ""
     }
     
     func text(at indexPath: IndexPath) -> String {
-        journals[indexPath.item].journalText ?? ""
+        likedParagraphs[indexPath.item].journalText ?? ""
     }
     
     func liked(at indexPath: IndexPath) -> Bool {
-        journals[indexPath.item].liked
+        likedParagraphs[indexPath.item].liked
+    }
+    
+    func bookTitle(at indexPath: IndexPath) -> String {
+        likedParagraphs[indexPath.item].bookTitle ?? ""
+    }
+    
+    func bookAuthor(at indexPath: IndexPath) -> String {
+        likedParagraphs[indexPath.item].bookAuthor ?? ""
     }
     
     func dateText(at indexPath: IndexPath) -> String {
@@ -57,7 +83,7 @@ final class ParagraphListViewModel {
     }
     
     func journal(at indexPath: IndexPath) -> Journal {
-        journals[indexPath.item]
+        likedParagraphs[indexPath.item]
     }
     
     func toggleLike(at index: Int) {
@@ -67,7 +93,9 @@ final class ParagraphListViewModel {
         
         do {
             try context.save()
-            onUpdate?()
+            if journal.liked == false {
+                likedParagraphs.remove(at: index)
+            }
         } catch {
             journal.liked.toggle()
             print("좋아요 저장 실패 \(error)")
