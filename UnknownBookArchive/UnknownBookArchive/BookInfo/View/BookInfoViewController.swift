@@ -4,6 +4,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 import RxKeyboard
+import CoreData
 
 class BookInfoViewController: UIViewController {
     
@@ -125,8 +126,14 @@ class BookInfoViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         return button
     }()
-    
-    
+    // 날짜 입력 받으면 문자열로 변환
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        formatter.locale = Locale(identifier: "ko_KR")
+        return formatter
+    }()
+
     // 태그 버튼 스택뷰
     private let tagLine1StackView: UIStackView = {
         let stView = UIStackView()
@@ -181,7 +188,7 @@ class BookInfoViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .basicBackground
         [topView, scrollView ].forEach { view.addSubview($0) }
         [contentView].forEach { scrollView.addSubview($0) }
         [
@@ -294,9 +301,9 @@ class BookInfoViewController: UIViewController {
             .disposed(by: disposeBag)
         
         topView.rightButtonTap
-            .bind {
-//                [weak self] in
-//                guard let self = self else { return }
+            .bind { [weak self] in
+                guard let self = self else { return }
+                saveBookInfo()
                 print("저장 버튼 눌림")
             }
             .disposed(by: disposeBag)
@@ -358,12 +365,18 @@ class BookInfoViewController: UIViewController {
             .disposed(by: disposeBag)
         startDateButton.rx.tap
             .bind {
-                print("시작일: 나중에 캘린더 추가")
+                print("시작일 버튼 눌림")
+                self.openCalendar(sourceButton: self.startDateButton) { selectedDate in
+                    self.startDateButton.setTitle(selectedDate, for: .normal)
+                }
             }
             .disposed(by: disposeBag)
         endDateButton.rx.tap
             .bind {
-                print("종료일: 나중에 캘린더 추가")
+                print("종료일 버튼 눌림")
+                self.openCalendar(sourceButton: self.endDateButton) { selectedDate in
+                    self.endDateButton.setTitle(selectedDate, for: .normal)
+                }
             }
             .disposed(by: disposeBag)
     }
@@ -553,6 +566,59 @@ class BookInfoViewController: UIViewController {
         endDateButton.backgroundColor = UIColor(red: 0.95, green: 0.96, blue: 0.99, alpha: 1)
         endDateButton.layer.borderColor = UIColor(red: 0.855, green: 0.883, blue: 0.965, alpha: 1).cgColor
     }
+    // 달력 팝업 띄우기
+    private func openCalendar(sourceButton: UIButton, completion: @escaping (String) -> Void) {
+        // 달력 보여줄 임시 뷰컨
+        let calenderVC = UIViewController()
+        calenderVC.view.backgroundColor = .white
+        calenderVC.modalPresentationStyle = .popover
+        calenderVC.preferredContentSize = CGSize(width: 330, height: 350)
+        
+        if let popover = calenderVC.popoverPresentationController {
+            popover.sourceView = sourceButton
+            popover.sourceRect = sourceButton.bounds
+            popover.permittedArrowDirections = [.up, .down]
+        }
+  
+        // 달력 만들기
+        let datePicker = UIDatePicker()
+        datePicker.datePickerMode = .date
+        datePicker.preferredDatePickerStyle = .inline
+        datePicker.locale = Locale(identifier: "ko_KR")
+        datePicker.tintColor = .systemBlue
+        datePicker.overrideUserInterfaceStyle = .light
+        
+        //완료 버튼
+        let doneButton = UIButton(type: .system)
+        doneButton.setTitle("완료", for: .normal)
+        doneButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        doneButton.setTitleColor(.black, for: .normal)
+        
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 10
+        stackView.distribution = .fill
+        
+        [stackView].forEach { calenderVC.view.addSubview($0) }
+        [datePicker, doneButton].forEach { stackView.addArrangedSubview($0) }
+        
+        stackView.snp.makeConstraints {
+            $0.leading.trailing.top.equalToSuperview().inset(30)
+            $0.bottom.equalToSuperview().inset(100)
+        }
+        doneButton.snp.makeConstraints {
+            $0.height.equalTo(50)
+        }
+        doneButton.rx.tap
+            .bind { [weak self, weak calenderVC] in
+                let dateString = self?.dateFormatter.string(from: datePicker.date) ?? "시작일"
+                completion(dateString)
+                calenderVC?.dismiss(animated: true)
+            }
+            .disposed(by: disposeBag)
+        self.present(calenderVC, animated: true)
+    }
+    
     
     private func setupTagButtons() {
         // 모든 태그 버튼을 배열로 묶어서 설정 코드를 재사용합니다. (DRY 원칙)
@@ -583,6 +649,55 @@ class BookInfoViewController: UIViewController {
                 .forEach { tagLine2StackView.addArrangedSubview($0) }
         [tagButton10]
                 .forEach { tagLine3StackView.addArrangedSubview($0) }
+        
+    }
+    
+    // MARK: 코어데이터 관련 함수
+    // 저장
+    private func saveBookInfo() {
+        let newUUID = UUID().uuidString
+        
+        guard let title = titleTextField.text, !title.isEmpty else {
+            print("제목필수 나중에 알럿 띄우기")
+            return
+        }
+        let author = authorTextField.text ?? ""
+        let publisher = publisherTextField.text ?? ""
+        let readingState = selectedStateButton?.title(for: .normal) ?? ""
+        let bookFormat = selectedFormatButton?.title(for: .normal) ?? ""
+        
+        let allTagButtons: [TagButton] = [tagButton0, tagButton1, tagButton2, tagButton3, tagButton4, tagButton5, tagButton6, tagButton7, tagButton8, tagButton9, tagButton10]
+        // 선택된 태그 타이틀 가져와서 콤마로 연결
+        let selectedTagsString = allTagButtons
+            .filter { $0.isSelected }
+            .compactMap { tags[$0.tag].rawValue }
+            .joined(separator: ",")
+        
+        let currentPage = Int32(pageTextField.text ?? "0") ?? 0
+        let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
+        let percent = Int32(percentTextField.text ?? "0") ?? 0
+        
+        // 시작일, 종료일 버튼 타이틀 문자열로 변환
+        let startDateString = startDateButton.title(for: .normal)
+        let endDateString = endDateButton.title(for: .normal)
+        
+        let startDate = dateFormatter.date(from: startDateString ?? "")
+        let endDate = dateFormatter.date(from: endDateString ?? "")
+        
+        // 이미지 데이터로변환
+        let coverImageData = coverImageView.image?.jpegData(compressionQuality: 0.8)
+        
+        let savedBook = CoreDataManager.shared.bookCreate(
+            uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate)
+        
+        if let saveBook = savedBook {
+            let detailVC = BookDetailViewController()
+            detailVC.book = saveBook
+            
+            self.navigationController?.pushViewController(detailVC, animated: true)
+        } else {
+            print("저장 실패. 알럿 처리필요")
+        }
         
     }
 }

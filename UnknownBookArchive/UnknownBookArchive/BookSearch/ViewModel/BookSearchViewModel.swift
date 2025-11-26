@@ -2,7 +2,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-typealias Book = BookItem
+typealias BookItems = BookItem
 
 class BookSearchViewModel {
     let disposeBag = DisposeBag()
@@ -10,7 +10,7 @@ class BookSearchViewModel {
     private let apiService = BookRepository()
     
     // MARK: Output (View로 데이터 내보냄)
-    let bookList = BehaviorRelay<[Book]>(value: [])
+    let bookList = BehaviorRelay<[BookItems]>(value: [])
     let viewState = BehaviorRelay<SearchState>(value: .initial)
     let selectedBookItem = PublishRelay<BookItem>()
     
