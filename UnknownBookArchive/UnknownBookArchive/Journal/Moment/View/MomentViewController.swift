@@ -176,7 +176,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         }
     }
     
-  
+
     private func addKeyboardNotification() {
         NotificationCenter.default.addObserver(
             self,

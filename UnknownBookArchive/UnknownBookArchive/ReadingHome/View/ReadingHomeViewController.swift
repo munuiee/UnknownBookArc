@@ -40,6 +40,14 @@ final class ReadingHomeViewController: UIViewController {
         setupHierarchy()
         setupConstraints()
         applySpacing()
+        
+        // 책 추가하기 버튼 연결
+        addBookButton.addTarget(self, action: #selector(didTapAddBook), for: .touchUpInside)
+    }
+    
+    @objc private func didTapAddBook() {
+        let searchVC = BookSearchViewController()
+        navigationController?.pushViewController(searchVC, animated: true)
     }
     
     override func viewWillAppear(_ animated: Bool) {
