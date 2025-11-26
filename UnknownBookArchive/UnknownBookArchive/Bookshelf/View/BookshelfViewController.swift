@@ -30,13 +30,13 @@ final class BookshelfViewController: UIViewController {
         return label
     }()
 
-    // 갤러리모드 전환 버튼
-    private let galleryButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
-        btn.tintColor = .label
-        return btn
-    }()
+//    // 갤러리모드 전환 버튼
+//    private let galleryButton: UIButton = {
+//        let btn = UIButton(type: .system)
+//        btn.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
+//        btn.tintColor = .label
+//        return btn
+//    }()
 
     // 검색창
     private lazy var searchTextField: UITextField = {
@@ -105,11 +105,11 @@ final class BookshelfViewController: UIViewController {
             btn.tag = index
             btn.configuration = nil
             btn.titleLabel?.font = .systemFont(ofSize: 14)
-            btn.layer.cornerRadius = 6
+            btn.layer.cornerRadius = 8
             btn.layer.borderWidth = 1
-            btn.layer.borderColor = UIColor.lightGray.cgColor
+            btn.layer.borderColor = UIColor.systemGray5.cgColor
             btn.setTitleColor(.black, for: .normal)
-            btn.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+            btn.contentEdgeInsets = UIEdgeInsets(top: 8, left: 12, bottom: 8, right: 12)
             btn.addTarget(self, action: #selector(categoryTapped(_:)), for: .touchUpInside)
         
 
@@ -142,14 +142,14 @@ final class BookshelfViewController: UIViewController {
         bindViewModel()
         updateCategoryUI(selectedIndex: 0)
 
-        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
+//        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
     }
 
     // 뷰 계층 구성
     private func setupHierarchy() {
         view.addSubview(topBarView)
         topBarView.addSubview(titleLabel)
-        topBarView.addSubview(galleryButton)
+//        topBarView.addSubview(galleryButton)
 
         view.addSubview(searchTextField)
         view.addSubview(categoryScrollView)
@@ -171,11 +171,11 @@ final class BookshelfViewController: UIViewController {
             $0.centerY.equalToSuperview()
         }
 
-        galleryButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.height.equalTo(24)
-        }
+//        galleryButton.snp.makeConstraints {
+//            $0.centerY.equalToSuperview()
+//            $0.trailing.equalToSuperview().inset(20)
+//            $0.width.height.equalTo(24)
+//        }
 
         searchTextField.snp.makeConstraints {
             $0.top.equalTo(topBarView.snp.bottom).offset(10)
@@ -184,7 +184,7 @@ final class BookshelfViewController: UIViewController {
         }
 
         categoryScrollView.snp.makeConstraints {
-            $0.top.equalTo(searchTextField.snp.bottom).offset(8)
+            $0.top.equalTo(searchTextField.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(34)
         }
@@ -242,16 +242,16 @@ final class BookshelfViewController: UIViewController {
         }
     }
 
-    // 갤러리모드 토글
-    @objc private func toggleDisplayMode() {
-        isGalleryMode.toggle()
-        galleryButton.setImage(
-            UIImage(systemName: isGalleryMode ? "list.bullet" : "photo.on.rectangle.angled"),
-            for: .normal
-        )
-        // 갤러리 모드에서 테이블뷰 숨김. 갤러리 모드 생성 예정.
-        tableView.isHidden = isGalleryMode
-    }
+//    // 갤러리모드 토글
+//    @objc private func toggleDisplayMode() {
+//        isGalleryMode.toggle()
+//        galleryButton.setImage(
+//            UIImage(systemName: isGalleryMode ? "list.bullet" : "photo.on.rectangle.angled"),
+//            for: .normal
+//        )
+//        // 갤러리 모드에서 테이블뷰 숨김. 갤러리 모드 생성 예정.
+//        tableView.isHidden = isGalleryMode
+//    }
 }
 
 // MARK: TableView DataSource
