@@ -148,7 +148,6 @@ final class LikeViewController: UIViewController {
     
     // MARK: - 페이지 변경 공통 함수
     
-    /// 페이지 변경은 이 함수 하나를 통해서만 처리
     private func changePage(to index: Int,
                             animated: Bool,
                             fromScroll: Bool) {

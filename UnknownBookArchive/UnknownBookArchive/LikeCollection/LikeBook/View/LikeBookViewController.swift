@@ -4,4 +4,76 @@ import UIKit
 
 final class LikeBookViewController: UIViewController {
     
+    private let viewModel = LikeBookViewModel()
+    private var displayLikeBooks: [LikeBooks] = []
+    
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        collectionSetup()
+        view.backgroundColor = UIColor(named: "backgroundColor")
+        viewModel.onUpdate = { [weak self] in
+            self?.collectionView.reloadData()
+        }
+        viewModel.loadLikeBooksData()
+    }
+
+    
+    private func makeLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/3.0), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(
+                top: 2,
+                leading: 2,
+                bottom: 2,
+                trailing: 2
+            )
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(160))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(
+                top: 16,
+                leading: 20,
+                bottom: 16,
+                trailing: 20
+            )
+        return UICollectionViewCompositionalLayout(section: section)
+        
+    }
+    
+    private func collectionSetup() {
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        collectionView.backgroundColor = UIColor(named: "backgroundColor")
+        collectionView.register(LikeBookCell.self, forCellWithReuseIdentifier: LikeBookCell.id)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+    }
+    
+}
+
+extension LikeBookViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return SampleDataSource.books.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        print("cellForItemAt:", indexPath.item)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LikeBookCell.id, for: indexPath) as? LikeBookCell else {
+            return UICollectionViewCell()
+        }
+        
+        let book = SampleDataSource.books[indexPath.item]
+        
+        cell.configure(with: book)
+        return cell
+    }
+    
+    
 }
