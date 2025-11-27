@@ -20,9 +20,11 @@ final class LikeBookCell: UICollectionViewCell {
     }
     
     private func configureUI() {
-        contentView.layer.cornerRadius = 0
+        contentView.layer.cornerRadius = 8
         contentView.layer.masksToBounds = true
-        contentView.layer.borderColor = UIColor.likeBookBorderColor.cgColor
+        contentView.layer.borderColor = UIColor(red: 0.90196, green: 0.90196, blue: 0.90196, alpha: 1.0).cgColor
+
+
         contentView.layer.borderWidth = 1
         
         contentView.addSubview(imageView)
@@ -32,10 +34,7 @@ final class LikeBookCell: UICollectionViewCell {
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
         imageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(6)
-            $0.bottom.equalToSuperview().inset(6)
-            $0.leading.equalToSuperview().offset(6)
-            $0.trailing.equalToSuperview().inset(6)
+            $0.edges.equalToSuperview()
         }
     }
     
