@@ -11,6 +11,7 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setValue(CustomTabBar(), forKey: "tabBar")
         setupTabs()
         setupTabBarAppearance()
     }
@@ -19,13 +20,29 @@ class TabBarController: UITabBarController {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.white
+        appearance.shadowColor = .clear
+        tabBar.standardAppearance = appearance
+        
+
+        // 색상 설정
+        let normal = appearance.stackedLayoutAppearance.normal
+        normal.titleTextAttributes = [.foregroundColor: UIColor.normalColor]
+        
+        let selected = appearance.stackedLayoutAppearance.selected
+        selected.titleTextAttributes = [.foregroundColor: UIColor.primaryColor]
         
         tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
+        
+        tabBar.tintColor = .primaryColor
+        tabBar.unselectedItemTintColor = .normalColor
         
         if #available(iOS 15.0, *) {
             tabBar.scrollEdgeAppearance = appearance
         }
     }
+    
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -47,4 +64,6 @@ class TabBarController: UITabBarController {
         
         self.viewControllers = [home, bookshelf, like, mypage]
     }
+    
+    
 }

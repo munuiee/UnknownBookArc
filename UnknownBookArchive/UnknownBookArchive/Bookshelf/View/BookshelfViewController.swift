@@ -28,8 +28,7 @@ final class BookshelfViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "책장"
-        label.font = .boldSystemFont(ofSize: 20)
-        label.textColor = .label
+        label.font = .systemFont(ofSize: 18, weight: .semibold)
         return label
     }()
 
@@ -176,14 +175,15 @@ final class BookshelfViewController: UIViewController {
     private func setupConstraints() {
 
         topBarView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(8)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(60)
+            $0.leading.trailing.equalToSuperview()
         }
 
+        
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview()
+            $0.center.equalToSuperview()
+            $0.height.equalTo(32)
         }
 
 //        galleryButton.snp.makeConstraints {

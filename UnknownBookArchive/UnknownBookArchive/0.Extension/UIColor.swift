@@ -4,6 +4,8 @@ extension UIColor {
     
     // 프라이머리
     static let primaryColor = UIColor(red: 0.08, green: 0.145, blue: 0.331, alpha: 1)
+    //
+    static let basicBackground = UIColor(red: 0.99, green: 0.99, blue: 0.99, alpha: 1)
     
     // 독서 상태 버튼 용
     static let stateDefaultBGColor = UIColor.white
@@ -29,6 +31,7 @@ extension UIColor {
     static let tagSeletedBoarderColor = UIColor(red: 0.533, green: 0.624, blue: 0.887, alpha: 1)
     static let tagSeletedBGColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1)
 
+
     // 독서 홈 상단 배너
     static let readinHomeBannerColor = UIColor(red: 0.855, green: 0.882, blue: 0.965, alpha: 1)
     
@@ -37,5 +40,13 @@ extension UIColor {
     
     // 홈 화면 회색
     static let readingHomeGrayColor = UIColor(red: 249/255, green: 250/255, blue: 251/255, alpha: 1)
+
+
+    // 탭바
+    static let normalColor = UIColor(red: 0.8039, green: 0.7961, blue: 0.7961, alpha: 1.0) // CDCBCB
+    
+    // 좋아요
+    static let bookTitleColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0) // 676565
+    static let bookAuthorColor = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0) // B4B2B2
 
 }

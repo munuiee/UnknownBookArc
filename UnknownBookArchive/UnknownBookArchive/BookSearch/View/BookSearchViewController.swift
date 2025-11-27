@@ -6,7 +6,7 @@ import RxCocoa
 class BookSearchViewController: UIViewController {
     
     let viewModel = BookSearchViewModel()
-    let disposeBag = DisposeBag()
+    let disposeBag = DisposeBag()     
     
     // MARK: UI요소
     private let topView = TopView()

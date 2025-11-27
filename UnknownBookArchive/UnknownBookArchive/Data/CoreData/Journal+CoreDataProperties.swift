@@ -20,6 +20,8 @@ extension Journal {
     @NSManaged public var savedPage: String?
     @NSManaged public var journalText: String?
     @NSManaged public var liked: Bool
+    @NSManaged public var bookTitle: String?
+    @NSManaged public var bookAuthor: String?
 
 
 }
