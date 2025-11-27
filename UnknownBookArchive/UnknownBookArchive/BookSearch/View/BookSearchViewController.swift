@@ -208,7 +208,7 @@ class BookSearchViewController: UIViewController {
             button.setTitle("직접 책 추가하기", for: .normal)
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
-            button.layer.cornerRadius = 5
+            button.layer.cornerRadius = 8
             
             stackView.addArrangedSubview(button)
             button.snp.makeConstraints {
@@ -237,6 +237,7 @@ class BookSearchViewController: UIViewController {
         let bookInfoVM = BookInfoViewModel()
         bookInfoVC.viewModel = bookInfoVM
         bookInfoVM.initialBookItem.onNext(emptyBookItem)
+        bookInfoVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(bookInfoVC, animated: true)
     }
 }

@@ -133,7 +133,7 @@ class BookInfoViewController: UIViewController {
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter
     }()
-
+    
     // 태그 버튼 스택뷰
     private let tagLine1StackView: UIStackView = {
         let stView = UIStackView()
@@ -188,7 +188,8 @@ class BookInfoViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .basicBackground
+        view.backgroundColor = .white
+        scrollView.backgroundColor = .basicBackground
         [topView, scrollView ].forEach { view.addSubview($0) }
         [contentView].forEach { scrollView.addSubview($0) }
         [
@@ -445,16 +446,16 @@ class BookInfoViewController: UIViewController {
     }
     
     private func findFirstResponder(in view: UIView) -> UIResponder? {
-            if view.isFirstResponder {
-                return view
-            }
-            for subview in view.subviews {
-                if let responder = findFirstResponder(in: subview) {
-                    return responder
-                }
-            }
-            return nil
+        if view.isFirstResponder {
+            return view
         }
+        for subview in view.subviews {
+            if let responder = findFirstResponder(in: subview) {
+                return responder
+            }
+        }
+        return nil
+    }
     
     @objc
     private func tagButtonTapped(_ sender: TagButton) {
@@ -579,7 +580,7 @@ class BookInfoViewController: UIViewController {
             popover.sourceRect = sourceButton.bounds
             popover.permittedArrowDirections = [.up, .down]
         }
-  
+        
         // 달력 만들기
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .date
@@ -619,7 +620,6 @@ class BookInfoViewController: UIViewController {
         self.present(calenderVC, animated: true)
     }
     
-    
     private func setupTagButtons() {
         // 모든 태그 버튼을 배열로 묶어서 설정 코드를 재사용합니다. (DRY 원칙)
         let allTagButtons: [TagButton] = [
@@ -627,7 +627,7 @@ class BookInfoViewController: UIViewController {
             tagButton5, tagButton6, tagButton7, tagButton8, tagButton9,
             tagButton10
         ]
-
+        
         for (index, button) in allTagButtons.enumerated() {
             guard index < tags.count else { continue }
             let title = tags[index].rawValue
@@ -644,11 +644,11 @@ class BookInfoViewController: UIViewController {
             button.addTarget(self, action: #selector(tagButtonTapped), for: .touchUpInside)
         }
         [tagButton0, tagButton1, tagButton2, tagButton3, tagButton4]
-                .forEach { tagLine1StackView.addArrangedSubview($0) }
+            .forEach { tagLine1StackView.addArrangedSubview($0) }
         [tagButton5, tagButton6, tagButton7, tagButton8, tagButton9]
-                .forEach { tagLine2StackView.addArrangedSubview($0) }
+            .forEach { tagLine2StackView.addArrangedSubview($0) }
         [tagButton10]
-                .forEach { tagLine3StackView.addArrangedSubview($0) }
+            .forEach { tagLine3StackView.addArrangedSubview($0) }
         
     }
     
@@ -691,14 +691,20 @@ class BookInfoViewController: UIViewController {
             uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate)
         
         if let saveBook = savedBook {
-            let detailVC = BookDetailViewController()
-            detailVC.book = saveBook
-            
-            self.navigationController?.pushViewController(detailVC, animated: true)
-        } else {
-            print("저장 실패. 알럿 처리필요")
+                let detailVC = BookDetailViewController()
+                detailVC.book = saveBook
+                detailVC.hidesBottomBarWhenPushed = false
+
+                if let navigationController = self.navigationController {
+                    var viewConrollers = navigationController.viewControllers
+                    viewConrollers.removeLast()
+                    viewConrollers.append(detailVC)
+                
+                    navigationController.setViewControllers(viewConrollers, animated: true)
+                }
+            } else {
+                print("저장 실패. 알럿 처리필요")
+            }
         }
-        
-    }
-}
     
+}
