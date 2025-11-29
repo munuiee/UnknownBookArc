@@ -151,5 +151,19 @@ class CoreDataManager {
         }
     }
     
-
+    func fetchAllBooks() -> [Book] {
+            let request: NSFetchRequest<Book> = Book.fetchRequest()
+  
+            request.sortDescriptors = [
+                NSSortDescriptor(key: "startDate", ascending: true)
+            ]
+            
+            do {
+                let result = try context.fetch(request)
+                return result
+            } catch {
+                print("책 목록 불러오기 실패: \(error)")
+                return []
+            }
+        }
 }
