@@ -456,6 +456,24 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
         
         return cell
     }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        let book: Book
+        
+        if collectionView == plannedCollectionView {
+            book = plannedBooks[indexPath.item]
+        } else if collectionView == pausedCollectionView {
+            book = pausedBooks[indexPath.item]
+        } else {
+            book = finishedBooks[indexPath.item]
+        }
+        
+        let detailVC = BookDetailViewController()
+        detailVC.book = book
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+
 }
 
 
