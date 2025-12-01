@@ -181,6 +181,7 @@ class BookSearchViewController: UIViewController {
                 let bookInfoVM = BookInfoViewModel()
                 bookInfoVC.viewModel = bookInfoVM
                 bookInfoVM.initialBookItem.onNext(bookItem)
+                bookInfoVC.hidesBottomBarWhenPushed = true
                 self.navigationController?.pushViewController(bookInfoVC, animated: true)
             })
             .disposed(by: disposeBag)
