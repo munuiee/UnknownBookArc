@@ -690,7 +690,11 @@ class BookInfoViewController: UIViewController {
         // 페이지 수
         let currentPage = Int32(pageTextField.text ?? "0") ?? 0
         let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
-        let percent = Int32(percentTextField.text ?? "0") ?? 0
+
+        let percentText = percentTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let percent = Int32(percentText) ?? 0
+
+        
         // 진행률 계산
         var progressValue: Float = 0.0
         var progressText: String = ""
@@ -703,9 +707,13 @@ class BookInfoViewController: UIViewController {
                 progressText = ""
             }
         } else {
-            progressValue = Float(percent) / 100.0
-            progressValue = min(max(progressValue, 0.0), 1.0)
-            progressText = "\(percent)%"
+            if !percentText.isEmpty {
+                progressValue = Float(percent) / 100.0
+                progressValue = min(max(progressValue, 0.0), 1.0)
+                progressText = "\(percent)%"
+            } else {
+                progressText = ""
+            }
         }
           
         // 시작일, 종료일 버튼 타이틀 문자열로 변환

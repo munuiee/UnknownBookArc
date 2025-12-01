@@ -1,4 +1,3 @@
-
 import UIKit
 import SnapKit
 import CoreData
@@ -22,6 +21,17 @@ class BookDetailViewController: UIViewController {
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
+    
+    // 전체 정보들을 담을 메인 스택 뷰
+    private let infoStackView: UIStackView = {
+        let stView = UIStackView()
+        stView.axis = .vertical
+        stView.spacing = 10
+        stView.alignment = .fill
+        stView.distribution = .fill
+        return stView
+    }()
+    
     // 상태, 책 포맷 스택뷰
     private let stateFormatStackView: UIStackView = {
         let stView = UIStackView()
@@ -33,6 +43,7 @@ class BookDetailViewController: UIViewController {
     private let formatSpacer = UIView()
     private let stateButton = BaseButton()
     private let formatButton = BaseButton()
+    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
@@ -64,6 +75,7 @@ class BookDetailViewController: UIViewController {
         let label = UILabel()
         label.textColor = .gray
         label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.textAlignment = .right
         return label
     }()
     private let progressBar: UIProgressView = {
@@ -75,7 +87,6 @@ class BookDetailViewController: UIViewController {
     }()
     var progressValue: Float = -1.0
     var progressText: String = ""
-    
     
     // 시작, 종료 스택뷰
     private let dateStackView: UIStackView = {
@@ -107,6 +118,7 @@ class BookDetailViewController: UIViewController {
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
+    private let leadingDatePusher = UIView()
     
     private let tagsStackView: UIStackView = {
         let stackView = UIStackView()
@@ -151,8 +163,8 @@ class BookDetailViewController: UIViewController {
         displayBookInfo()
         bind()
         setupRightTopMenu()
-
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
@@ -163,14 +175,30 @@ class BookDetailViewController: UIViewController {
         contentView.backgroundColor = .basicBackground
 
         [topView, contentView].forEach { view.addSubview($0) }
-        [coverImageView, stateFormatStackView, titleLabel, authorLabel, publisherLabel, progressStackView, dateStackView, tagsStackView, bottomButtonStackView].forEach { contentView.addSubview($0) }
+        
+        [coverImageView, infoStackView, bottomButtonStackView].forEach { contentView.addSubview($0) }
+        
+        [stateFormatStackView, titleLabel, authorLabel, publisherLabel, progressStackView, dateStackView, tagsStackView].forEach {
+            infoStackView.addArrangedSubview($0)
+        }
+        
+        infoStackView.setCustomSpacing(20, after: stateFormatStackView) // 상태 - 제목 사이
+        infoStackView.setCustomSpacing(16, after: progressStackView)    // 진행률 - 날짜 사이
+        infoStackView.setCustomSpacing(20, after: dateStackView)        // 날짜 - 태그 사이
+        
+        // 내부 스택뷰 구성
         [stateButton, formatButton, formatSpacer].forEach { stateFormatStackView.addArrangedSubview($0) }
         [progressLable, progressBar].forEach { progressStackView.addArrangedSubview($0) }
-        [startDateLabel, dateSpacer, endDateLabel].forEach { dateStackView.addArrangedSubview($0) }
+        [leadingDatePusher,startDateLabel, dateSpacer, endDateLabel].forEach { dateStackView.addArrangedSubview($0) }
         [likeButton, journalButton].forEach { bottomButtonStackView.addArrangedSubview($0) }
+        
+        leadingDatePusher.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        leadingDatePusher.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        
         dateSpacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
         dateSpacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
+    
     private func setConstraints() {
         topView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -181,6 +209,44 @@ class BookDetailViewController: UIViewController {
             $0.top.equalTo(topView.snp.bottom)
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+        
+        coverImageView.snp.makeConstraints {
+            $0.top.equalTo(topView.snp.bottom).offset(16)
+            $0.centerX.equalToSuperview()
+            $0.width.equalTo(120)
+            $0.height.equalTo(170)
+        }
+        
+        infoStackView.snp.makeConstraints {
+            $0.top.equalTo(coverImageView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.lessThanOrEqualTo(bottomButtonStackView.snp.top).offset(-20)
+        }
+        
+        stateFormatStackView.snp.makeConstraints {
+            $0.height.equalTo(32)
+        }
+        
+        formatSpacer.snp.makeConstraints {
+            $0.height.equalTo(0)
+        }
+        
+//        leadingDatePusher.snp.makeConstraints {
+//            $0.height.equalTo(0)
+//        }
+//        dateSpacer.snp.makeConstraints {
+//            $0.height.equalTo(0)
+//        }
+        startDateLabel.snp.makeConstraints {
+            $0.width.equalTo(88)
+            $0.height.equalTo(32)
+        }
+        endDateLabel.snp.makeConstraints {
+            $0.width.equalTo(88)
+            $0.height.equalTo(32)
+        }
+        
+        // 하단 버튼
         bottomButtonStackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(10)
@@ -192,63 +258,6 @@ class BookDetailViewController: UIViewController {
         }
         journalButton.snp.makeConstraints {
             $0.height.equalToSuperview()
-        }
-        coverImageView.snp.makeConstraints {
-            $0.top.equalTo(topView.snp.bottom).offset(16)
-            $0.centerX.equalToSuperview()
-            $0.width.equalTo(120)
-            $0.height.equalTo(170)
-        }
-        stateFormatStackView.snp.makeConstraints {
-            $0.top.equalTo(coverImageView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(32)
-        }
-        formatSpacer.snp.makeConstraints {
-            $0.height.equalTo(0)
-        }
-        titleLabel.snp.makeConstraints {
-            $0.top.equalTo(stateFormatStackView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        authorLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        publisherLabel.snp.makeConstraints {
-            $0.top.equalTo(authorLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        progressStackView.snp.makeConstraints {
-            $0.top.equalTo(publisherLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        
-//        progressLable.snp.makeConstraints {
-//            $0.trailing.equalToSuperview().inset(20)
-//        }
-//        
-        dateStackView.snp.makeConstraints {
-            $0.top.equalTo(progressStackView.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(20)
-        }
-        dateSpacer.snp.makeConstraints {
-            $0.height.equalTo(0)
-        }
-        startDateLabel.snp.makeConstraints {
-            $0.width.equalTo(88)
-            $0.height.equalTo(32)
-//            $0.leading.equalTo(dateStackView.snp.leading)
-        }
-        endDateLabel.snp.makeConstraints {
-            $0.width.equalTo(88)
-            $0.height.equalTo(32)
-//            $0.trailing.equalTo(dateStackView.snp.trailing)
-        }
-        tagsStackView.snp.makeConstraints {
-            $0.top.equalTo(dateStackView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.bottom.lessThanOrEqualTo(bottomButtonStackView.snp.top).offset(-20)
         }
     }
     
@@ -278,7 +287,7 @@ class BookDetailViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
-    
+    // MARK: 책 정보 표시
     private func displayBookInfo() {
         guard let bookData = book else {
             print("책 정보를 불러올 수 없습니다")
@@ -290,6 +299,8 @@ class BookDetailViewController: UIViewController {
         } else {
             coverImageView.image = nil
         }
+        
+        // 상태 버튼 처리
         if let state = book?.readingState, !state.isEmpty {
             stateFormatStackView.isHidden = false
             stateButton.isHidden = false
@@ -388,7 +399,7 @@ class BookDetailViewController: UIViewController {
                 progressBar.progress = 0.0
             }
         }
-   
+    
         // 시작일, 종료일
         let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -414,6 +425,11 @@ class BookDetailViewController: UIViewController {
         
         let hasStartDate = (bookData.startDate != nil)
         let hasEndDate = (bookData.endDate != nil)
+        
+        let onlyEndDate = !hasStartDate && hasEndDate
+        
+        leadingDatePusher.isHidden = !onlyEndDate
+        dateSpacer.isHidden = onlyEndDate
         
         let shouldHideDateStack = !hasStartDate && !hasEndDate
         dateStackView.isHidden = shouldHideDateStack
@@ -452,7 +468,7 @@ class BookDetailViewController: UIViewController {
     
     // MARK: 데이터 새로고침
     func reloadBookDataAndDisplay() {
-        displayBookInfo()        
+        displayBookInfo()
     }
     
     // MARK: TopView 오른쪽 버튼 설정
