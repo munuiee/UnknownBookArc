@@ -6,8 +6,20 @@ import SnapKit
 
 final class ParagraphViewController: UIViewController {
     
-    private let viewModel = ParagraphListViewModel()
+    private let viewModel: ParagraphListViewModel
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+    
+    private let book: Book
+    
+    init(book: Book) {
+        self.book = book
+        self.viewModel = ParagraphListViewModel(book: book)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,11 +85,14 @@ extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDat
         
         cell.onEditTapped = { [weak self] in
             guard let self = self else { return }
+
+            let bookToPass = self.book
             
-            let editVC = JournalEditViewController(journal: journal)
+            let editVC = JournalEditViewController(journal: journal, book: self.book, type: "문단 수집")
             editVC.journal = journal
             self.navigationController?.pushViewController(editVC, animated: true)
         }
+
         
         cell.onDeleteTapped = { [weak self] in
             guard let self = self else { return }

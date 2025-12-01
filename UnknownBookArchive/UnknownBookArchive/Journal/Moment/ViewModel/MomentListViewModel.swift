@@ -16,24 +16,32 @@ final class MomentListViewModel {
         coreDataManager.persistentContainer.viewContext
     }
     
+    private let book: Book
+    
+    init(book: Book) {
+        self.book = book
+    }
+    
     private(set) var sections: [MomentSection] = [] {
         didSet { onUpdateMoment?() }
     }
+    
     
     var onUpdateMoment: (() -> Void)?
     
     // MARK: - 코어데이터에서 불러오기
     func fetchMoments() {
         let request: NSFetchRequest<MomentEntity> = MomentEntity.fetchRequest()
-        
-       
+        request.predicate = NSPredicate(format: "parentBook == %@", book)
         let sortDate = NSSortDescriptor(key: "momentDate", ascending: false)
         let sortTime = NSSortDescriptor(key: "momentTime", ascending: false)
         request.sortDescriptors = [sortDate, sortTime]
-
+        
         
         do {
             let moments = try context.fetch(request)
+            print("📦 fetchMoments for book: \(book.title ?? "")")
+            print("가져온 Moment 개수: \(moments.count)")
             sections = makeSections(from: moments)
         } catch {
             print("찰나의 기록 불러오기 실패: \(error)")
@@ -50,10 +58,15 @@ final class MomentListViewModel {
         newMoment.momentDate = now
         newMoment.momentTime = now
         newMoment.createDate = now
+        newMoment.parentBook = book
         
         do {
             try context.save()
-            fetchMoments()   
+            print("✅ Moment 저장 완료")
+            print("text: \(newMoment.momentText ?? "")")
+            print("page: \(newMoment.momentPage ?? "")")
+            print("parentBook title: \(newMoment.parentBook?.title ?? "nil")")
+            fetchMoments()
         } catch {
             print("찰나의 기록 저장 실패: \(error)")
             context.rollback()
@@ -62,7 +75,7 @@ final class MomentListViewModel {
     
     // MARK: - 섹션 구성 (날짜별 그룹핑)
     private func makeSections(from moments: [MomentEntity]) -> [MomentSection] {
-        let valid = moments.compactMap { moments -> MomentEntity? in
+        _ = moments.compactMap { moments -> MomentEntity? in
             guard moments.momentDate != nil else { return nil }
             return moments
         }
@@ -75,7 +88,7 @@ final class MomentListViewModel {
         }
         
         // 날짜 오름차순 정렬
-        let sortedDates = grouped.keys.sorted()
+        let sortedDates = grouped.keys.sorted(by: >)
         
         return sortedDates.map { date in
             let items = grouped[date] ?? []
@@ -131,7 +144,7 @@ final class MomentListViewModel {
         
         do {
             try coreDataManager.momentDelete(moments: target)
-            fetchMoments()   
+            fetchMoments()
         } catch {
             print("[VM] 기록 삭제 실패 \(error)")
         }

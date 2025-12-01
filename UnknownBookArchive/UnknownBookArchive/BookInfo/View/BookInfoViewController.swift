@@ -691,8 +691,8 @@ class BookInfoViewController: UIViewController {
             uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate)
         
         if let saveBook = savedBook {
-                let detailVC = BookDetailViewController()
-                detailVC.book = saveBook
+            let detailVC = BookDetailViewController(book: saveBook)
+                //detailVC.book = saveBook
                 detailVC.hidesBottomBarWhenPushed = false
 
                 if let navigationController = self.navigationController {

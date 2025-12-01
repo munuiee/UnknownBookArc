@@ -18,11 +18,15 @@ final class JournalEditViewController: UIViewController {
     private let saveButton = UIButton(type: .system)
     
     private let viewModel: JournalEditViewModel
+    private let book: Book
+    private let journalType: String
     
     var journal: Journal?
     
-    init(journal: Journal?) {
-        self.viewModel = JournalEditViewModel(journal: journal)
+    init(journal: Journal?, book: Book, type: String) {
+        self.book = book
+        self.journalType = type
+        self.viewModel = JournalEditViewModel(journal: journal, book: book, type: type)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -36,6 +40,7 @@ final class JournalEditViewController: UIViewController {
         view.backgroundColor = .white
         configureUI()
         configureStack()
+        hidesBottomBarWhenPushed = true
         
         pageField.addTarget(self, action: #selector(updateSaveButtonState), for: .editingChanged)
         mainField.delegate = self

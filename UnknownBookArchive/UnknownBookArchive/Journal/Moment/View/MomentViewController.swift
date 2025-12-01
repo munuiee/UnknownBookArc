@@ -7,18 +7,33 @@ import SnapKit
 
 final class MomentViewController: UIViewController, UIGestureRecognizerDelegate {
     
+
     private let chatView = UIView()
     private let buttonView = UIView()
     private let inputText = UITextView()
     private let sendButton = UIButton()
-    
-    private let viewModel = MomentListViewModel()
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeLayout()
     )
     
     private var chatViewBottomConstraint: Constraint?
+    
+    private let viewModel: MomentListViewModel
+    private let book: Book
+    
+    init(book: Book) {
+        self.book = book
+        self.viewModel = MomentListViewModel(book: book)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var records: [MomentEntity] = []
+ 
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,10 +49,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         addKeyboardNotification()
         inputTextUI()
         collectionSet()
-        
-        viewModel.onUpdateMoment = { [weak self] in
-            self?.collectionView.reloadData()
-        }
+
         
         viewModel.onUpdateMoment = { [weak self] in
             guard let self = self else { return }
@@ -46,7 +58,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         }
         
         viewModel.fetchMoments()
-        collectionView.reloadData()
+        // collectionView.reloadData()
+  
     }
     
     deinit {

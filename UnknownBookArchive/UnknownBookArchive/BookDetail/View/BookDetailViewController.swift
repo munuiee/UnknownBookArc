@@ -7,11 +7,29 @@ import RxCocoa
 
 class BookDetailViewController: UIViewController {
     
+    
     let disposeBag = DisposeBag()
     var book: Book?
     
+    var onLikeBookTapped: (() -> Void)?
+    
+    
     private let topView = TopView()
     private let contentView = UIView()
+    
+    init(book: Book) {
+        self.book = book
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let coreDataManager = CoreDataManager.shared
+    private var context: NSManagedObjectContext {
+        coreDataManager.persistentContainer.viewContext
+    }
     
     private let coverImageView: UIImageView = {
         let imageView = UIImageView()
@@ -117,14 +135,16 @@ class BookDetailViewController: UIViewController {
         button.layer.cornerRadius = 8
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         setConstraints()
         displayBookInfo()
         bind()
-
+        
+        // likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -134,7 +154,7 @@ class BookDetailViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         contentView.backgroundColor = .basicBackground
-
+        
         [topView, contentView].forEach { view.addSubview($0) }
         [coverImageView, stateFormatStackView, titleLabel, authorLabel, publisherLabel, dateStackView, tagsStackView, bottomButtonStackView].forEach { contentView.addSubview($0) }
         [stateButton, formatButton, formatSpacer].forEach { stateFormatStackView.addArrangedSubview($0) }
@@ -174,7 +194,7 @@ class BookDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(32)
         }
-                   
+        
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(stateFormatStackView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -220,33 +240,45 @@ class BookDetailViewController: UIViewController {
         // 저널 보기 버튼
         journalButton.rx.tap
             .bind { [weak self] in
-                guard let self = self else { return }
-                let journalVC = JournalViewController()
+                guard let self = self,
+                      let bookToJournal = self.book else { return }
+                let journalVC = JournalViewController(book: bookToJournal)
+                journalVC.hidesBottomBarWhenPushed = true
                 self.navigationController?.pushViewController(journalVC, animated: true)
             }
             .disposed(by: disposeBag)
         // 좋아요 버튼
         likeButton.rx.tap
             .subscribe(onNext: { [weak self] in
-                self?.likeButton.isSelected.toggle()
+                //self?.likeButton.isSelected.toggle()
+                guard let self = self, let book = self.book else { return }
                 
-                // 추후 데이터 저장 로직 필요
+                book.liked.toggle()
+                self.likeButton.isSelected = book.liked
+                
+                do {
+                    try self.context.save()
+                    print("책 좋아요 저장 완료 \(book.liked)")
+                } catch {
+                    print("책 좋아요 저장 실패 \(error)")
+                }
+                
             })
             .disposed(by: disposeBag)
     }
     
     private func displayBookInfo() {
         guard let bookData = book else {
-            print("책 정보를 불러올 수 없습니다")
+            print("BookDetailVC: Book이 없음")
             return
         }
         
-        if let imageData = book?.coverImage, let image = UIImage(data: imageData) {
+        if let imageData = bookData.coverImage, let image = UIImage(data: imageData) {
             coverImageView.image = image
         } else {
             coverImageView.image = nil
         }
-        if let state = book?.readingState, !state.isEmpty {
+        if let state = bookData.readingState, !state.isEmpty {
             stateFormatStackView.isHidden = false
             stateButton.isHidden = false
             
@@ -278,39 +310,39 @@ class BookDetailViewController: UIViewController {
         }
         
         // 책 포맷 버튼
-            if let format = bookData.bookFormat, !format.isEmpty {
-                stateFormatStackView.isHidden = false
-                formatButton.isHidden = false
-                
-                var selectedBgColor: UIColor?
-                var selectedTitleColor: UIColor?
-                
-                switch format {
-                case "종이책":
-                    selectedBgColor = .paperBGColor
-                    selectedTitleColor = .paperTextColor
-                case "전자책":
-                    selectedBgColor = .ebookBGColor
-                    selectedTitleColor = .ebookTextColor
-                default:
-                    formatButton.isHidden = true
-                    return
-                }
-                
-                formatButton.configure(
-                    title: format,
-                    backgroundColor: .formatDefaultBGColor,
-                    titleColor: .formatDefaultTextColor,
-                    borderColor: .formatDefaultBorderColor,
-                    selectedBgColor: selectedBgColor ?? .clear,
-                    selectedTitleColor: selectedTitleColor ?? .black
-                )
-                formatButton.isSelected = true
-                formatButton.isUserInteractionEnabled = false
-                
-            } else {
+        if let format = bookData.bookFormat, !format.isEmpty {
+            stateFormatStackView.isHidden = false
+            formatButton.isHidden = false
+            
+            var selectedBgColor: UIColor?
+            var selectedTitleColor: UIColor?
+            
+            switch format {
+            case "종이책":
+                selectedBgColor = .paperBGColor
+                selectedTitleColor = .paperTextColor
+            case "전자책":
+                selectedBgColor = .ebookBGColor
+                selectedTitleColor = .ebookTextColor
+            default:
                 formatButton.isHidden = true
+                return
             }
+            
+            formatButton.configure(
+                title: format,
+                backgroundColor: .formatDefaultBGColor,
+                titleColor: .formatDefaultTextColor,
+                borderColor: .formatDefaultBorderColor,
+                selectedBgColor: selectedBgColor ?? .clear,
+                selectedTitleColor: selectedTitleColor ?? .black
+            )
+            formatButton.isSelected = true
+            formatButton.isUserInteractionEnabled = false
+            
+        } else {
+            formatButton.isHidden = true
+        }
         
         stateFormatStackView.isHidden = stateButton.isHidden && formatButton.isHidden
         
@@ -331,7 +363,7 @@ class BookDetailViewController: UIViewController {
         } else {
             publisherLabel.isHidden = true
         }
-                
+        
         // 시작일, 종료일
         let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -368,6 +400,8 @@ class BookDetailViewController: UIViewController {
             tagsStackView.isHidden = true
         }
         view.layoutIfNeeded()
+        
+        likeButton.isSelected = bookData.liked
     }
     // 장르 태그 추가
     private func setupDetailTags(tagsString: String?) {
@@ -391,7 +425,19 @@ class BookDetailViewController: UIViewController {
         }
         let spacer = UIView()
         tagsStackView.addArrangedSubview(spacer)
+        
     }
     
-
+    func addButtonTapped() {
+        guard let bookToPass = book else { return }
+        let journalEditVC = JournalEditViewController(
+            journal: nil, book: bookToPass, type: "문단 수집"
+        )
+        navigationController?.pushViewController(journalEditVC, animated: true)
+    }
+    
+    @objc private func likeButtonTapped() {
+        onLikeBookTapped?()
+    }
+    
 }

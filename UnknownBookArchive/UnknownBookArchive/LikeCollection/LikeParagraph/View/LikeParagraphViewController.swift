@@ -25,7 +25,7 @@ final class LikeParagraphViewController: UIViewController {
         viewModel.fetchParagraphs()
         viewModel.fetchLikedParagraphs()
         collectionView.reloadData()
-
+        
     }
     
     private func collectionSet() {
@@ -57,7 +57,7 @@ final class LikeParagraphViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
-
+    
     
 }
 
@@ -71,8 +71,9 @@ extension LikeParagraphViewController: UICollectionViewDelegate, UICollectionVie
             return UICollectionViewCell()
         }
         
-       // let journal = viewModel.journal(at: indexPath)
-     
+        let journal = viewModel.likedParagraphs[indexPath.item]
+        let book = journal.parentBook
+        
         cell.onDeleteTapped = { [weak self] in
             guard let self = self else { return }
             

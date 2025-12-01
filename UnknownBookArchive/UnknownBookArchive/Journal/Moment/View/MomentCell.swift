@@ -38,6 +38,7 @@ final class MomentCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     private func separatorUI() {
         contentView.addSubview(separatorView)
         separatorView.backgroundColor = .systemGray5
