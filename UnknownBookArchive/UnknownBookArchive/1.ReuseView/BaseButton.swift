@@ -1,5 +1,5 @@
 
-// MARK: 독서 상태 체크와 책 유형 체크 용 버튼
+// MARK: 독서 상태 체크와 책 유형 체크 용 버튼 베이스
 
 import UIKit
 import SnapKit

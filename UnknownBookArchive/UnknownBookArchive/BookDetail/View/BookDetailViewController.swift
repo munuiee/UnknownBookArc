@@ -51,6 +51,32 @@ class BookDetailViewController: UIViewController {
         label.font = .systemFont(ofSize: 15, weight: .regular)
         return label
     }()
+    // 진행률 스택뷰
+    private let progressStackView: UIStackView = {
+        let stView = UIStackView()
+        stView.axis = .vertical
+        stView.spacing = 5
+        return stView
+    }()
+    
+    // 진행률
+    private let progressLable: UILabel = {
+        let label = UILabel()
+        label.textColor = .gray
+        label.font = .systemFont(ofSize: 12, weight: .regular)
+        return label
+    }()
+    private let progressBar: UIProgressView = {
+        let progressView = UIProgressView()
+        progressView.trackTintColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
+        progressView.progressTintColor = .primaryColor
+        progressView.progress = 0.1
+        return progressView
+    }()
+    var progressValue: Float = -1.0
+    var progressText: String = ""
+    
+    
     // 시작, 종료 스택뷰
     private let dateStackView: UIStackView = {
         let stView = UIStackView()
@@ -124,6 +150,7 @@ class BookDetailViewController: UIViewController {
         setConstraints()
         displayBookInfo()
         bind()
+        setupRightTopMenu()
 
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -136,10 +163,13 @@ class BookDetailViewController: UIViewController {
         contentView.backgroundColor = .basicBackground
 
         [topView, contentView].forEach { view.addSubview($0) }
-        [coverImageView, stateFormatStackView, titleLabel, authorLabel, publisherLabel, dateStackView, tagsStackView, bottomButtonStackView].forEach { contentView.addSubview($0) }
+        [coverImageView, stateFormatStackView, titleLabel, authorLabel, publisherLabel, progressStackView, dateStackView, tagsStackView, bottomButtonStackView].forEach { contentView.addSubview($0) }
         [stateButton, formatButton, formatSpacer].forEach { stateFormatStackView.addArrangedSubview($0) }
+        [progressLable, progressBar].forEach { progressStackView.addArrangedSubview($0) }
         [startDateLabel, dateSpacer, endDateLabel].forEach { dateStackView.addArrangedSubview($0) }
         [likeButton, journalButton].forEach { bottomButtonStackView.addArrangedSubview($0) }
+        dateSpacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        dateSpacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
     private func setConstraints() {
         topView.snp.makeConstraints {
@@ -174,7 +204,9 @@ class BookDetailViewController: UIViewController {
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(32)
         }
-                   
+        formatSpacer.snp.makeConstraints {
+            $0.height.equalTo(0)
+        }
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(stateFormatStackView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
@@ -187,20 +219,31 @@ class BookDetailViewController: UIViewController {
             $0.top.equalTo(authorLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
         }
-        
-        dateStackView.snp.makeConstraints {
-            $0.top.equalTo(publisherLabel.snp.bottom).offset(16)
+        progressStackView.snp.makeConstraints {
+            $0.top.equalTo(publisherLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
+        }
+        
+//        progressLable.snp.makeConstraints {
+//            $0.trailing.equalToSuperview().inset(20)
+//        }
+//        
+        dateStackView.snp.makeConstraints {
+            $0.top.equalTo(progressStackView.snp.bottom).offset(16)
+            $0.leading.trailing.equalToSuperview().inset(20)
+        }
+        dateSpacer.snp.makeConstraints {
+            $0.height.equalTo(0)
         }
         startDateLabel.snp.makeConstraints {
             $0.width.equalTo(88)
             $0.height.equalTo(32)
-            $0.leading.equalTo(dateStackView.snp.leading)
+//            $0.leading.equalTo(dateStackView.snp.leading)
         }
         endDateLabel.snp.makeConstraints {
             $0.width.equalTo(88)
             $0.height.equalTo(32)
-            $0.trailing.equalTo(dateStackView.snp.trailing)
+//            $0.trailing.equalTo(dateStackView.snp.trailing)
         }
         tagsStackView.snp.makeConstraints {
             $0.top.equalTo(dateStackView.snp.bottom).offset(20)
@@ -235,6 +278,7 @@ class BookDetailViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    
     private func displayBookInfo() {
         guard let bookData = book else {
             print("책 정보를 불러올 수 없습니다")
@@ -258,11 +302,11 @@ class BookDetailViewController: UIViewController {
                 selectedBgColor = .readingSelected
                 selectedBoarderColor = .readingSelected
             case "중단":
-                selectedBgColor = .finishedSelected
-                selectedBoarderColor = .finishedSelected
-            case "완독":
                 selectedBgColor = .pausedSelected
                 selectedBoarderColor = .pausedSelected
+            case "완독":
+                selectedBgColor = .finishedSelected
+                selectedBoarderColor = .finishedSelected
             case "읽을 예정":
                 selectedBgColor = .scheduledSelected
                 selectedBoarderColor = .scheduledSelected
@@ -331,7 +375,20 @@ class BookDetailViewController: UIViewController {
         } else {
             publisherLabel.isHidden = true
         }
-                
+        // 진행률
+        let hasProgressData = !self.progressText.isEmpty
+        
+        progressStackView.isHidden = !hasProgressData
+        
+        if hasProgressData {
+            progressLable.text = self.progressText
+            if self.progressValue >= 0.0 {
+                progressBar.setProgress(self.progressValue, animated: false)
+            } else {
+                progressBar.progress = 0.0
+            }
+        }
+   
         // 시작일, 종료일
         let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -358,8 +415,8 @@ class BookDetailViewController: UIViewController {
         let hasStartDate = (bookData.startDate != nil)
         let hasEndDate = (bookData.endDate != nil)
         
-        dateStackView.isHidden = hasStartDate == hasEndDate
-        dateStackView.isHidden = !hasStartDate && !hasEndDate
+        let shouldHideDateStack = !hasStartDate && !hasEndDate
+        dateStackView.isHidden = shouldHideDateStack
         
         if let tagsString = bookData.selectedTags, !tagsString.isEmpty {
             setupDetailTags(tagsString: tagsString)
@@ -393,5 +450,60 @@ class BookDetailViewController: UIViewController {
         tagsStackView.addArrangedSubview(spacer)
     }
     
-
+    // MARK: 데이터 새로고침
+    func reloadBookDataAndDisplay() {
+        displayBookInfo()        
+    }
+    
+    // MARK: TopView 오른쪽 버튼 설정
+    private func setupRightTopMenu() {
+        // 수정
+        let menuEdit = UIAction(title: "책 정보 수정", image: UIImage(systemName: "pencil")
+        ) { [weak self] _ in
+            self?.editBookInfo()
+        }
+        // 삭제
+        let menuDelete = UIAction(title: "책 삭제", image: UIImage(systemName: "trash")
+        ) { [weak self] _ in
+            self?.showDeleteAlert()
+        }
+        topView.rightButton.menu = UIMenu(children: [menuEdit, menuDelete])
+        topView.rightButton.showsMenuAsPrimaryAction = true
+        topView.rightButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        topView.rightButton.tintColor = .black
+    }
+    
+    // MARK: 수정 및 삭제 기능 함수
+    private func editBookInfo() {
+        guard let bookUUID = self.book?.uuid else {
+            print("책 정보가 없거나 UUID가 유효하지 않습니다.")
+            return
+        }
+        let bookInfoVC = BookInfoViewController()
+        bookInfoVC.bookUUID = bookUUID
+        self.navigationController?.pushViewController(bookInfoVC, animated: true)
+    }
+    private func deletedBook() {
+        guard let bootToDelete = self.book, let bookUUID = bootToDelete.uuid else {
+            print("삭제할 책이 없습니다.")
+            return
+        }
+        CoreDataManager.shared.deleteBook(uuid: bookUUID) { success in
+            DispatchQueue.main.async { [weak self] in
+                if success {
+                    print("책 정보 삭제 성공")
+                    self?.navigationController?.popViewController(animated: true)
+                } else {
+                    print("책 정보 삭제 실패")
+                }
+            }
+        }
+    }
+    
+    private func showDeleteAlert() {
+        showConfirmAlert(title: "책 정보 삭제", message: "이 책의 모든 정보와 저널 기록이 삭제됩니다. 정말 삭제하시겠습니까?", confirmTitle: "삭제"
+        ) { [weak self] in
+            self?.deletedBook()
+        }
+    }
 }

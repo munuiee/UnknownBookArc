@@ -133,7 +133,7 @@ class CoreDataManager {
         newBook.setValue(readingState, forKey: "readingState")
         newBook.setValue(bookFormat, forKey: "bookFormat")
         newBook.setValue(selectedTags, forKey: "selectedTags")
-        newBook.setValue(coverImage, forKey: "coverImage")
+         newBook.setValue(coverImage, forKey: "coverImage")
         newBook.setValue(currentPage, forKey: "currentPage")
         newBook.setValue(totalPage, forKey: "totalPage")
         newBook.setValue(percent, forKey: "percent")
@@ -149,6 +149,112 @@ class CoreDataManager {
             print("책 저장 실패")
             return nil
         }
+    }
+    
+    // 책 정보 수정 함수
+    func bookUpdate(
+            uuid: String,
+            title: String,
+            author: String?,
+            publisher: String?,
+            readingState: String?,
+            bookFormat: String?,
+            selectedTags: String?,
+            coverImage: Data?,
+            currentPage: Int32?,
+            totalPage: Int32?,
+            percent: Int32?,
+            startDate: Date?,
+            endDate: Date?
+    ) -> Book? {
+        
+        let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+        
+        do {
+            let fetchedBooks = try context.fetch(fetchRequest)
+            guard let bookToUpdate = fetchedBooks.first else {
+                print("수정할 책(\(uuid))을 찾을 수 없습니다.")
+                return nil
+            }
+            
+            bookToUpdate.setValue(uuid, forKey: "uuid")
+            bookToUpdate.setValue(title, forKey: "title")
+            bookToUpdate.setValue(author, forKey: "author")
+            bookToUpdate.setValue(publisher, forKey: "publisher")
+            bookToUpdate.setValue(readingState, forKey: "readingState")
+            bookToUpdate.setValue(bookFormat, forKey: "bookFormat")
+            bookToUpdate.setValue(selectedTags, forKey: "selectedTags")
+            bookToUpdate.setValue(coverImage, forKey: "coverImage")
+            bookToUpdate.setValue(currentPage, forKey: "currentPage")
+            bookToUpdate.setValue(totalPage, forKey: "totalPage")
+            bookToUpdate.setValue(percent, forKey: "percent")
+            bookToUpdate.setValue(startDate, forKey: "startDate")
+            bookToUpdate.setValue(endDate, forKey: "endDate")
+            
+            try context.save()
+            print("책 수정 성공")
+            return bookToUpdate
+        } catch {
+            let _ = error as NSError
+            print("책 수정 실패")
+            return nil
+        }
+
+    }
+    
+    // 첵 정보 불러오기
+    func fetchBook(uuid: String) -> Book? {
+        let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+        
+        do {
+            let fetchedBooks = try context.fetch(fetchRequest)
+            if let book = fetchedBooks.first {
+                print("책 정보 불러오기 성공")
+                return book
+            } else {
+                print("책 정보 불러오기 실패\(uuid)")
+                return nil
+            }
+        } catch {
+            let nsError = error as NSError
+            print("책 정보 불러오기 실패(에러\(nsError)")
+            return nil
+        }
+    }
+    
+    // 책 정보 삭제
+    func deleteBook(uuid: String, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global().async { [weak self] in
+            guard let self = self else {
+                completion(false)
+                return
+            }
+        }
+        
+        let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+        do {
+            let fetchedBooks = try context.fetch(fetchRequest)
+            guard let bookToDelete = fetchedBooks.first else {
+                print("삭제할 책을 찾을 수 없습니다.")
+                completion(false)
+                return
+            }
+            context.delete(bookToDelete)
+            
+            try context.save()
+            print("책 삭제 성공")
+            completion(true)
+            return
+        } catch {
+            let nsError = error as NSError
+            print("책 삭제 실패(에러: \(nsError))")
+            completion(false)
+            return
+        }
+        
     }
     
 
