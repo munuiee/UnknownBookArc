@@ -6,10 +6,21 @@ import UIKit
 
 final class JournalViewController: UIViewController {
     
-    private let viewModel = JournalViewModel()
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
-    private lazy var paragraphViewController = ParagraphViewController()
-    private lazy var momentViewController = MomentViewController()
+    private let book: Book
+    private let viewModel: JournalViewModel
+    
+    init(book: Book) {
+        self.book = book
+        self.viewModel = JournalViewModel(book: book)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    private lazy var paragraphViewController = ParagraphViewController(book: book)
+    private lazy var momentViewController = MomentViewController(book: book)
     
     private let bookTitle = UILabel()
     private let addButton = UIButton(type: .system)
@@ -20,6 +31,9 @@ final class JournalViewController: UIViewController {
     private var isTabScrolling = false
     // 현재 페이지 인덱스는 VC가 직접 관리
     private var currentPageIndex: Int = 0
+    
+    
+    
     
     // MARK: - 탭바
     private lazy var tabCollectionView: UICollectionView = {
@@ -75,6 +89,8 @@ final class JournalViewController: UIViewController {
         setupUI()
         bindViewModel()
         setupInitialSelection()
+        viewModel.fetchJournalRecords()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -88,7 +104,9 @@ final class JournalViewController: UIViewController {
         // 페이지 변경(onPageChanged)은 VC가 직접 관리하므로 여기서는 편집 버튼만 연결
         viewModel.didTapEdit = { [weak self] in
             guard let self = self else { return }
-            let editVC = JournalEditViewController(journal: nil)
+            
+            
+            let editVC = JournalEditViewController(journal: nil, book: self.book, type: "문단 수집")
             
             if let nav = self.navigationController {
                 nav.pushViewController(editVC, animated: true)
@@ -101,7 +119,8 @@ final class JournalViewController: UIViewController {
     // MARK: - UI 세팅
     
     private func setupUI() {
-        bookTitle.text = "책 제목"
+        
+        bookTitle.text = book.title ?? ""
         bookTitle.font = .systemFont(ofSize: 18, weight: .semibold)
         
         let addConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
@@ -116,6 +135,7 @@ final class JournalViewController: UIViewController {
         backButton.setImage(backImage, for: .normal)
         backButton.tintColor = .black
         backButton.sizeToFit()
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         
         [backButton, bookTitle, addButton]
             .forEach { topView.addSubview($0) }
@@ -254,6 +274,10 @@ final class JournalViewController: UIViewController {
     @objc private func didTapEditButton() {
         viewModel.editButtonTapped()
     }
+    
+    @objc private func backButtonTapped() {
+        self.navigationController?.popViewController(animated: true)
+    }
 }
 
 // MARK: - 레이아웃
@@ -335,7 +359,6 @@ extension JournalViewController {
                             fromScroll: true)
         }
         
-        // 메인 스크롤 방향은 세로, 페이지는 가로 스크롤
         let config = UICollectionViewCompositionalLayoutConfiguration()
         config.scrollDirection = .vertical
         
@@ -360,7 +383,7 @@ extension JournalViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
+        
         if collectionView == tabCollectionView {
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: JournalTabCell.id,
@@ -379,10 +402,9 @@ extension JournalViewController: UICollectionViewDataSource, UICollectionViewDel
                 return UICollectionViewCell()
             }
             
-            // ✅ 혹시 남아 있는 이전 뷰 제거
+            // 남아 있는 이전 뷰 제거
             cell.contentView.subviews.forEach { $0.removeFromSuperview() }
             
-            // ✅ 인덱스에 따라 미리 만들어 둔 자식 뷰컨을 가져오기
             let childVC: UIViewController
             if indexPath.item == 0 {
                 childVC = paragraphViewController
@@ -390,25 +412,24 @@ extension JournalViewController: UICollectionViewDataSource, UICollectionViewDel
                 childVC = momentViewController
             }
             
-            // ✅ 아직 자식으로 안 붙어있으면 한 번만 addChild
             if childVC.parent == nil {
                 addChild(childVC)
                 childVC.didMove(toParent: self)
             }
             
-            // ✅ 셀에 자식 뷰컨의 view 붙이기
             cell.contentView.addSubview(childVC.view)
             childVC.view.snp.makeConstraints { $0.edges.equalToSuperview() }
             
             return cell
         }
+        return UICollectionViewCell()
     }
-
+    
     
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {
         
-        view.window?.endEditing(true)  
+        view.window?.endEditing(true)
         if collectionView == tabCollectionView {
             // 탭을 눌러서 페이지 변경
             changePage(to: indexPath.item,

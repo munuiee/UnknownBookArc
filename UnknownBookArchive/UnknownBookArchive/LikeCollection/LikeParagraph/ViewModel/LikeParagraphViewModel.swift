@@ -12,13 +12,13 @@ final class LikeParagraphViewModel {
     }
     
     private(set) var likedParagraphs: [Journal] = [] {
-           didSet { onUpdate?() }
-       }
+        didSet { onUpdate?() }
+    }
     
     private(set) var journals: [Journal] = [] {
         didSet { onUpdate?() }
     }
-     var onUpdate: (() -> Void)?
+    var onUpdate: (() -> Void)?
     
     // 코어데이터에서 불러오기
     func fetchParagraphs() {
@@ -48,7 +48,7 @@ final class LikeParagraphViewModel {
         }
     }
     
-  
+    
     
     var numberOfItems: Int {
         likedParagraphs.count
@@ -67,29 +67,32 @@ final class LikeParagraphViewModel {
     }
     
     func bookTitle(at indexPath: IndexPath) -> String {
-        likedParagraphs[indexPath.item].bookTitle ?? ""
+        let journal = likedParagraphs[indexPath.item]
+        return journal.parentBook?.title ?? ""
     }
     
     func bookAuthor(at indexPath: IndexPath) -> String {
-        likedParagraphs[indexPath.item].bookAuthor ?? ""
+        let journal = likedParagraphs[indexPath.item]
+        return journal.parentBook?.author ?? ""
     }
     
+    
     func dateText(at indexPath: IndexPath) -> String {
-        guard let date = journals[indexPath.item].createDate else { return "" }
+        guard let date = likedParagraphs[indexPath.item].createDate else { return "" }
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "yyyy. MM. dd HH:mm"
         return formatter.string(from: date)
     }
     
+    
     func journal(at indexPath: IndexPath) -> Journal {
         likedParagraphs[indexPath.item]
     }
     
     func toggleLike(at index: Int) {
-        let journal = journals[index]
+        let journal = likedParagraphs[index]
         journal.liked.toggle()
-        
         
         do {
             try context.save()
@@ -103,13 +106,14 @@ final class LikeParagraphViewModel {
     }
     
     func delete(at indexPath: IndexPath) {
-        let target = journals[indexPath.item]
+        let target = likedParagraphs[indexPath.item]
         
         do {
             try coreDataManager.paragraphDelete(journal: target)
-            journals.remove(at: indexPath.item)
+            likedParagraphs.remove(at: indexPath.item)
         } catch {
             print("[VM] 문단 삭제 실패 \(error)")
         }
     }
+    
 }

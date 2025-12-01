@@ -11,15 +11,25 @@ final class ParagraphListViewModel {
         coreDataManager.persistentContainer.viewContext
     }
     
+    private let book: Book
+    
+    init(book: Book) {
+           self.book = book
+       }
+       
+    
     private(set) var journals: [Journal] = [] {
         didSet { onUpdate?() }
     }
+    
     
      var onUpdate: (() -> Void)?
     
     // 코어데이터에서 불러오기
     func fetchParagraphs() {
         let request: NSFetchRequest<Journal> = Journal.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "parentBook == %@", book)
         // 최신순 정렬
         let sort = NSSortDescriptor(key: "createDate", ascending: false)
         request.sortDescriptors = [sort]

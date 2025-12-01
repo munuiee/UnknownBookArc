@@ -8,7 +8,7 @@ class CoreDataManager {
     
     
     // MARK: - Core Data stack
-
+    
     lazy var persistentContainer: NSPersistentCloudKitContainer = {
         let container = NSPersistentCloudKitContainer(name: "UnknownBookArchive")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -18,14 +18,14 @@ class CoreDataManager {
         })
         
         let context = container.viewContext
-            context.automaticallyMergesChangesFromParent = true
-            context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-
+        context.automaticallyMergesChangesFromParent = true
+        context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        
         return container
     }()
-
+    
     // MARK: - Core Data Saving support
-
+    
     func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
@@ -39,8 +39,8 @@ class CoreDataManager {
     }
     
     lazy var context: NSManagedObjectContext = {
-           persistentContainer.viewContext
-       }()
+        persistentContainer.viewContext
+    }()
     
     func paragraphCreate(savedPage: String, journalText: String, liked: Bool) {
         guard let entity = NSEntityDescription.entity(forEntityName: "Journal", in: self.persistentContainer.viewContext) else { return }
@@ -61,8 +61,8 @@ class CoreDataManager {
         }
     }
     
-
-
+    
+    
     
     func paragraphDelete(journal: Journal) throws {
         let context = persistentContainer.viewContext
@@ -103,23 +103,40 @@ class CoreDataManager {
     }
     
     
+    func fetchJournals(for book: Book) -> [Journal] {
+        let request: NSFetchRequest<Journal> = Journal.fetchRequest()
+        request.predicate = NSPredicate(format: "parentBook == %@", book)
+        let sort = NSSortDescriptor(key: "createDate", ascending: false)
+        request.sortDescriptors = [sort]
+        
+        do {
+            let records = try context.fetch(request)
+            return records
+        } catch {
+            print("fetchJournals 실패: \(error)")
+            return []
+        }
+    }
+    
+    
+    
     // MARK: 책 정보
-
+    
     // 책 정보 저장 함수
     func bookCreate(
-            uuid: String,
-            title: String,
-            author: String?,
-            publisher: String?,
-            readingState: String?,
-            bookFormat: String?,
-            selectedTags: String?,
-            coverImage: Data?,
-            currentPage: Int32?,
-            totalPage: Int32?,
-            percent: Int32?,
-            startDate: Date?,
-            endDate: Date?
+        uuid: String,
+        title: String,
+        author: String?,
+        publisher: String?,
+        readingState: String?,
+        bookFormat: String?,
+        selectedTags: String?,
+        coverImage: Data?,
+        currentPage: Int32?,
+        totalPage: Int32?,
+        percent: Int32?,
+        startDate: Date?,
+        endDate: Date?
     ) -> Book? {
         guard let entity = NSEntityDescription.entity(forEntityName: "Book", in: context) else {
             print("Book엔티티를 찾을 수 없습니다.")

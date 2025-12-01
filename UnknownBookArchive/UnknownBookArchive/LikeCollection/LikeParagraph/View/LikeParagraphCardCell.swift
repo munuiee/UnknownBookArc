@@ -1,4 +1,4 @@
-// MARK: - 좋아요 한 문단 수집 섹션 
+// MARK: - 좋아요 한 문단 수집 섹션
 
 import Foundation
 import SnapKit
@@ -6,6 +6,8 @@ import UIKit
 
 final class LikeParagraphCardCell: UICollectionViewCell {
     static let id = "LikeParagraphCardCell"
+    
+    
     
     var onEditTapped: (() -> Void)?
     var onDeleteTapped: (() -> Void)?
@@ -36,24 +38,28 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+        authorLabel.text = nil
+    }
+    
     
     private func topStackUI() {
         [titleLabel, multiButton].forEach { infoStack.addArrangedSubview($0) }
         contentView.addSubview(topStack)
         
         [infoStack, authorLabel].forEach { topStack.addArrangedSubview($0)}
- 
-
+        
+        
         titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
         titleLabel.textColor = UIColor.bookTitleColor
-        titleLabel.text = "맨스필드파크"
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
         }
         
         authorLabel.font = .systemFont(ofSize: 12, weight: .medium)
         authorLabel.textColor = UIColor.bookAuthorColor
-        authorLabel.text = "제인 오스틴"
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
         }
@@ -80,8 +86,8 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         multiButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
         multiButton.setContentHuggingPriority(.required, for: .horizontal)
         multiButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-
-    
+        
+        
         infoStack.axis = .horizontal
         infoStack.distribution = .fill
         infoStack.spacing = 8
@@ -90,7 +96,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
             $0.bottom.equalTo(authorLabel.snp.top).offset(-1)
         }
         
-
+        
         topStack.axis = .vertical
         topStack.spacing = 2
         topStack.distribution = .fill
@@ -98,7 +104,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.top.equalToSuperview().inset(20)
         }
-
+        
     }
     
     private func bottomStackUI() {
@@ -176,8 +182,8 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         let image = UIImage(systemName: imageName, withConfiguration: config)
         likeButton.setImage(image, for: .normal)
         likeButton.tintColor = liked
-            ? UIColor(red: 21/255, green: 37/255, blue: 85/255, alpha: 1.0)
-            : UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
+        ? UIColor(red: 21/255, green: 37/255, blue: 85/255, alpha: 1.0)
+        : UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
     }
     
     
@@ -185,14 +191,22 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         pageLabel.text = "\(page)p"
         dateLabel.text = dateText
         
-        if let t = bookTitle,
-           let a = bookAuthor {
+        if let t = bookTitle, !t.isEmpty {
             titleLabel.isHidden = false
-            authorLabel.isHidden = false
             titleLabel.text = t
-            authorLabel.text = a
+        } else {
+            titleLabel.isHidden = true
+            titleLabel.text = nil
         }
-
+        
+        if let a = bookAuthor, !a.isEmpty {
+            authorLabel.isHidden = false
+            authorLabel.text = a
+        } else {
+            authorLabel.isHidden = true
+            authorLabel.text = nil
+        }
+        
         
         let font = UIFont.systemFont(ofSize: 14, weight: .regular)
         

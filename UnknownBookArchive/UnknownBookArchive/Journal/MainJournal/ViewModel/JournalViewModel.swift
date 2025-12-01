@@ -1,11 +1,20 @@
 // MARK: - 저널 탭바 ViewModel
-
+import UIKit
 import Foundation
 
 final class JournalViewModel {
     var onPageChanged: ((Int) -> Void)?
     var didTapEdit: (() -> Void)?
     
+    
+    let book: Book
+    
+    var paragraphRecords: [Journal] = []
+    var momentRecords: [MomentEntity] = []
+    
+    init(book: Book) {
+        self.book = book
+    }
     private(set) var tabItems: [String] = ["문단 수집", "찰나의 기록"]
     
     private(set) var currentPage: Int = 0 {
@@ -13,6 +22,13 @@ final class JournalViewModel {
             onPageChanged?(currentPage)
         }
     }
+    
+    private(set) var books: [Book] = []
+    
+    func title(at indexPath: IndexPath) -> String {
+        books[indexPath.item].title ?? ""
+    }
+  
     
     func setPage(index: Int) {
         guard index >= 0, index < tabItems.count else { return }
@@ -35,6 +51,19 @@ final class JournalViewModel {
     
     func editButtonTapped() {
         didTapEdit?()
+    }
+    
+    func fetchJournalRecords() {
+        let allRecords = CoreDataManager.shared.fetchJournals(for: self.book)
+        print("📚 fetchJournals for book: \(book.title ?? "")")
+           print("   전체 Journal 개수: \(allRecords.count)")
+        allRecords.forEach { j in
+              let type = j.type ?? "nil"
+              let page = j.savedPage ?? ""
+              let parentTitle = j.parentBook?.title ?? "nil"
+              print("   - type: \(type), page: \(page), parent: \(parentTitle)")
+          }
+        self.paragraphRecords = allRecords.filter { $0.type == "문단 수집"}
     }
     
     

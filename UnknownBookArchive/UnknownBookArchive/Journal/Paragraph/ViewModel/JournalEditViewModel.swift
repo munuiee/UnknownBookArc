@@ -9,12 +9,17 @@ final class JournalEditViewModel {
         coreDataManager.persistentContainer.viewContext
     }
     
+    private let book: Book
+    private let type: String
+    
     private(set) var journal: Journal?
     var onSaved: (() -> Void)?
     var onError: ((Error) -> Void)?
     
-    init(journal: Journal?) {
+    init(journal: Journal?, book: Book, type: String) {
         self.journal = journal
+        self.book = book
+        self.type = type
     }
     
     func saveButtonTapped(journal: Journal?, savedPage: String, journalText: String, liked: Bool) {
@@ -22,6 +27,7 @@ final class JournalEditViewModel {
             // 수정
             journal.savedPage = savedPage
             journal.journalText = journalText
+            journal.liked = liked
             
             if journal.createDate == nil {
                 journal.createDate = Date()
@@ -33,6 +39,12 @@ final class JournalEditViewModel {
             newJournal.journalText = journalText
             newJournal.liked = liked
             newJournal.createDate = Date()
+            
+            newJournal.parentBook = self.book
+            newJournal.bookTitle = self.journal?.bookTitle
+            newJournal.bookAuthor = self.journal?.bookAuthor ?? ""
+            newJournal.type = self.type
+            
         }
         
         do {
