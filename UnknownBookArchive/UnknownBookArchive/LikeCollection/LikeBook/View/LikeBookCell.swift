@@ -9,6 +9,8 @@ final class LikeBookCell: UICollectionViewCell {
     
     private let imageView = UIImageView()
     
+    var onLikeTapped: (() -> Void)?
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,8 +25,8 @@ final class LikeBookCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 8
         contentView.layer.masksToBounds = true
         contentView.layer.borderColor = UIColor(red: 0.90196, green: 0.90196, blue: 0.90196, alpha: 1.0).cgColor
-
-
+        
+        
         contentView.layer.borderWidth = 1
         
         contentView.addSubview(imageView)
@@ -38,16 +40,20 @@ final class LikeBookCell: UICollectionViewCell {
         }
     }
     
-    func configure(with book: LikeBooks) {
-        if let url = URL(string: book.thumbnailURL) {
-            URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-                guard let self = self,
-                      let data = data,
-                      let image = UIImage(data: data) else { return }
-                DispatchQueue.main.async {
-                    self.imageView.image = image
-                }
-            }.resume()
+    func configure(with book: Book) {
+        //        if let url = URL(string: book.thumbnailURL) {
+        //            URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
+        //                guard let self = self,
+        //                      let data = data,
+        //                      let image = UIImage(data: data) else { return }
+        //                DispatchQueue.main.async {
+        //                    self.imageView.image = image
+        //                }
+        //            }.resume()
+        //        }
+        
+        if let data = book.coverImage {
+            imageView.image = UIImage(data: data)
         }
     }
     

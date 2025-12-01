@@ -21,7 +21,7 @@ extension MomentEntity {
     @NSManaged public var momentPage: String?
     @NSManaged public var momentText: String?
     @NSManaged public var momentTime: Date?
-
+    @NSManaged public var parentBook: Book?
 }
 
 extension MomentEntity : Identifiable {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="24G90" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23788.4" systemVersion="25A354" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="YES" userDefinedModelVersionIdentifier="">
     <entity name="Book" representedClassName="Book" syncable="YES" codeGenerationType="class">
         <attribute name="author" optional="YES" attributeType="String"/>
         <attribute name="bookFormat" optional="YES" attributeType="String"/>
@@ -7,6 +7,7 @@
         <attribute name="currentPage" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="isPageMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="percent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="publisher" optional="YES" attributeType="String"/>
         <attribute name="readingState" optional="YES" attributeType="String"/>
@@ -15,6 +16,8 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="totalPage" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
+        <relationship name="journals" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Journal" inverseName="parentBook" inverseEntity="Journal"/>
+        <relationship name="moments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MomentEntity" inverseName="parentBook" inverseEntity="MomentEntity"/>
     </entity>
     <entity name="Journal" representedClassName="Journal" syncable="YES">
         <attribute name="bookAuthor" optional="YES" attributeType="String"/>
@@ -23,6 +26,8 @@
         <attribute name="journalText" optional="YES" attributeType="String"/>
         <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="savedPage" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <relationship name="parentBook" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="journals" inverseEntity="Book"/>
     </entity>
     <entity name="MomentEntity" representedClassName="MomentEntity" syncable="YES">
         <attribute name="createDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -30,5 +35,6 @@
         <attribute name="momentPage" optional="YES" attributeType="String"/>
         <attribute name="momentText" optional="YES" attributeType="String"/>
         <attribute name="momentTime" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="parentBook" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="moments" inverseEntity="Book"/>
     </entity>
 </model>
