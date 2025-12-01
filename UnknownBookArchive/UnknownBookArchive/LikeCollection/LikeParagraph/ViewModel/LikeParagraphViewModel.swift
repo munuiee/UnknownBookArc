@@ -19,6 +19,12 @@ final class LikeParagraphViewModel {
         didSet { onUpdate?() }
     }
     var onUpdate: (() -> Void)?
+
+       
+    
+    private(set) var journal: Journal?
+    var onSaved: (() -> Void)?
+    var onError: ((Error) -> Void)?
     
     // 코어데이터에서 불러오기
     func fetchParagraphs() {
@@ -48,6 +54,7 @@ final class LikeParagraphViewModel {
         }
     }
     
+
     
     
     var numberOfItems: Int {

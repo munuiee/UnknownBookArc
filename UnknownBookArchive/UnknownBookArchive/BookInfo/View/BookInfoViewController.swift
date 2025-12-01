@@ -656,7 +656,7 @@ class BookInfoViewController: UIViewController {
     }
     // 화면 전환용
     private func navigateToNewDetailVC(with book: Book, progressValue: Float, progressText: String) {
-        let detailVC = BookDetailViewController()
+        let detailVC = BookDetailViewController(book: book)
         detailVC.book = book
         detailVC.hidesBottomBarWhenPushed = false
         detailVC.progressValue = progressValue

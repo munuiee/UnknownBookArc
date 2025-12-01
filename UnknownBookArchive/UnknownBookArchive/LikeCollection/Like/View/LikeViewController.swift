@@ -5,7 +5,6 @@ import SnapKit
 import UIKit
 
 final class LikeViewController: UIViewController {
-    
     private let viewModel = LikeViewModel()
     
     private lazy var LikeParagraphVC = LikeParagraphViewController()
@@ -13,6 +12,9 @@ final class LikeViewController: UIViewController {
     
     private let likeTitle = UILabel()
     private let topView = UIView()
+    
+    
+   
     
     // 탭을 눌러서 스크롤 중인지 여부
     private var isTabScrolling = false
