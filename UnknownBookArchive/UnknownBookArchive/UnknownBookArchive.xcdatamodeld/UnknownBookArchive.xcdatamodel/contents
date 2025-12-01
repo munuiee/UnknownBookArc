@@ -6,6 +6,7 @@
         <attribute name="coverImage" optional="YES" attributeType="Binary"/>
         <attribute name="currentPage" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="isPageMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="percent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="publisher" optional="YES" attributeType="String"/>
         <attribute name="readingState" optional="YES" attributeType="String"/>

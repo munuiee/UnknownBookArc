@@ -8,6 +8,7 @@ class BookDetailViewController: UIViewController {
     
     let disposeBag = DisposeBag()
     var book: Book?
+    var bookUUID: String?
     
     private let topView = TopView()
     private let contentView = UIView()
@@ -85,8 +86,6 @@ class BookDetailViewController: UIViewController {
         progressView.progress = 0.1
         return progressView
     }()
-    var progressValue: Float = -1.0
-    var progressText: String = ""
     
     // 시작, 종료 스택뷰
     private let dateStackView: UIStackView = {
@@ -160,14 +159,15 @@ class BookDetailViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
         setConstraints()
-        displayBookInfo()
-        bind()
         setupRightTopMenu()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        loadBookData()
+        displayBookInfo()
     }
     
     private func configureUI() {
@@ -211,7 +211,7 @@ class BookDetailViewController: UIViewController {
         }
         
         coverImageView.snp.makeConstraints {
-            $0.top.equalTo(topView.snp.bottom).offset(16)
+            $0.top.equalToSuperview().offset(16)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(120)
             $0.height.equalTo(170)
@@ -226,17 +226,6 @@ class BookDetailViewController: UIViewController {
         stateFormatStackView.snp.makeConstraints {
             $0.height.equalTo(32)
         }
-        
-        formatSpacer.snp.makeConstraints {
-            $0.height.equalTo(0)
-        }
-        
-//        leadingDatePusher.snp.makeConstraints {
-//            $0.height.equalTo(0)
-//        }
-//        dateSpacer.snp.makeConstraints {
-//            $0.height.equalTo(0)
-//        }
         startDateLabel.snp.makeConstraints {
             $0.width.equalTo(88)
             $0.height.equalTo(32)
@@ -281,7 +270,6 @@ class BookDetailViewController: UIViewController {
         likeButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.likeButton.isSelected.toggle()
-                
                 // 추후 데이터 저장 로직 필요
             })
             .disposed(by: disposeBag)
@@ -293,7 +281,96 @@ class BookDetailViewController: UIViewController {
             print("책 정보를 불러올 수 없습니다")
             return
         }
+        setupUIWithBook(bookData)
+    }
+    // 장르 태그 추가
+    private func setupDetailTags(tagsString: String?) {
+        guard let tagsString = tagsString, !tagsString.isEmpty else { return }
+        tagsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
+        let tagNames = tagsString.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+        for tagName in tagNames {
+            let tagButton = TagButton(type: .custom)
+            
+            tagButton.configure(
+                title: tagName,
+                titleColor: .tagSeletedTextColor,
+                borderColor: .tagSeletedBoarderColor,
+                selectedBgColor: .tagSeletedBGColor,
+                selectedTitleColor: .tagSeletedTextColor
+            )
+            tagButton.isSelected = true
+            
+            tagsStackView.addArrangedSubview(tagButton)
+        }
+        let spacer = UIView()
+        tagsStackView.addArrangedSubview(spacer)
+    }
+    
+    // MARK: 데이터 새로고침 (외부 호출 용)
+    func reloadBookDataAndDisplay() {
+        loadBookData()
+    }
+    
+    // MARK: TopView 오른쪽 버튼 설정
+    private func setupRightTopMenu() {
+        // 수정
+        let menuEdit = UIAction(title: "책 정보 수정", image: UIImage(systemName: "pencil")
+        ) { [weak self] _ in
+            self?.editBookInfo()
+        }
+        // 삭제
+        let menuDelete = UIAction(title: "책 삭제", image: UIImage(systemName: "trash")
+        ) { [weak self] _ in
+            self?.showDeleteAlert()
+        }
+        topView.rightButton.menu = UIMenu(children: [menuEdit, menuDelete])
+        topView.rightButton.showsMenuAsPrimaryAction = true
+        topView.rightButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        topView.rightButton.tintColor = .black
+    }
+    
+    // MARK: 수정 및 삭제 기능 함수
+    private func editBookInfo() {
+        guard let bookUUID = self.book?.uuid else {
+            print("책 정보가 없거나 UUID가 유효하지 않습니다.")
+            return
+        }
+        let bookInfoVC = BookInfoViewController()
+        bookInfoVC.bookUUID = bookUUID
+        self.navigationController?.pushViewController(bookInfoVC, animated: true)
+    }
+    private func deletedBook() {
+        guard let bootToDelete = self.book, let bookUUID = bootToDelete.uuid else {
+            print("삭제할 책이 없습니다.")
+            return
+        }
+        CoreDataManager.shared.deleteBook(uuid: bookUUID) { success in
+            DispatchQueue.main.async { [weak self] in
+                if success {
+                    print("책 정보 삭제 성공")
+                    self?.navigationController?.popViewController(animated: true)
+                } else {
+                    print("책 정보 삭제 실패")
+                }
+            }
+        }
+    }
+    private func loadBookData() {
+        guard let uuid = self.bookUUID else {
+            print("책 정보를 불러올 수 없습니다.")
+            return
+        }
+        if let existingBook = CoreDataManager.shared.fetchBook(uuid: uuid) {
+            self.book = existingBook
+            setupUIWithBook(existingBook)
+            print("상세화면 데이터 로드 완료")
+        } else {
+            print("상세화면 데이터 로드 실패")
+        }
+    }
+    // MARK: 책 상세 정보 셋업
+    private func setupUIWithBook(_ bookData: Book) {
         if let imageData = book?.coverImage, let image = UIImage(data: imageData) {
             coverImageView.image = image
         } else {
@@ -387,18 +464,19 @@ class BookDetailViewController: UIViewController {
             publisherLabel.isHidden = true
         }
         // 진행률
-        let hasProgressData = !self.progressText.isEmpty
+        let progress = calculateProgress(book: bookData)
+        let hasProgressData = !progress.text.isEmpty
         
         progressStackView.isHidden = !hasProgressData
         
         if hasProgressData {
-            progressLable.text = self.progressText
-            if self.progressValue >= 0.0 {
-                progressBar.setProgress(self.progressValue, animated: false)
+            progressLable.text = progress.text
+            progressBar.setProgress(progress.value, animated: false)
             } else {
+                progressLable.text = ""
                 progressBar.progress = 0.0
             }
-        }
+        
     
         // 시작일, 종료일
         let dateFormatter: DateFormatter = {
@@ -442,80 +520,37 @@ class BookDetailViewController: UIViewController {
         }
         view.layoutIfNeeded()
     }
-    // 장르 태그 추가
-    private func setupDetailTags(tagsString: String?) {
-        guard let tagsString = tagsString, !tagsString.isEmpty else { return }
-        tagsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+    
+    // 진행률 계산
+    private func calculateProgress(book: Book) -> (value: Float, text: String) {
+        let currentPage = book.currentPage
+        let totalPage = book.totalPage
+        let percent  = book.percent
         
-        let tagNames = tagsString.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-        for tagName in tagNames {
-            let tagButton = TagButton(type: .custom)
-            
-            tagButton.configure(
-                title: tagName,
-                titleColor: .tagSeletedTextColor,
-                borderColor: .tagSeletedBoarderColor,
-                selectedBgColor: .tagSeletedBGColor,
-                selectedTitleColor: .tagSeletedTextColor
-            )
-            tagButton.isSelected = true
-            
-            tagsStackView.addArrangedSubview(tagButton)
-        }
-        let spacer = UIView()
-        tagsStackView.addArrangedSubview(spacer)
-    }
-    
-    // MARK: 데이터 새로고침
-    func reloadBookDataAndDisplay() {
-        displayBookInfo()
-    }
-    
-    // MARK: TopView 오른쪽 버튼 설정
-    private func setupRightTopMenu() {
-        // 수정
-        let menuEdit = UIAction(title: "책 정보 수정", image: UIImage(systemName: "pencil")
-        ) { [weak self] _ in
-            self?.editBookInfo()
-        }
-        // 삭제
-        let menuDelete = UIAction(title: "책 삭제", image: UIImage(systemName: "trash")
-        ) { [weak self] _ in
-            self?.showDeleteAlert()
-        }
-        topView.rightButton.menu = UIMenu(children: [menuEdit, menuDelete])
-        topView.rightButton.showsMenuAsPrimaryAction = true
-        topView.rightButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        topView.rightButton.tintColor = .black
-    }
-    
-    // MARK: 수정 및 삭제 기능 함수
-    private func editBookInfo() {
-        guard let bookUUID = self.book?.uuid else {
-            print("책 정보가 없거나 UUID가 유효하지 않습니다.")
-            return
-        }
-        let bookInfoVC = BookInfoViewController()
-        bookInfoVC.bookUUID = bookUUID
-        self.navigationController?.pushViewController(bookInfoVC, animated: true)
-    }
-    private func deletedBook() {
-        guard let bootToDelete = self.book, let bookUUID = bootToDelete.uuid else {
-            print("삭제할 책이 없습니다.")
-            return
-        }
-        CoreDataManager.shared.deleteBook(uuid: bookUUID) { success in
-            DispatchQueue.main.async { [weak self] in
-                if success {
-                    print("책 정보 삭제 성공")
-                    self?.navigationController?.popViewController(animated: true)
-                } else {
-                    print("책 정보 삭제 실패")
-                }
+        let lastSelectedIsPageMode = book.isPageMode
+        
+        var progressValue: Float = 0.0
+        var progressText: String = ""
+        if lastSelectedIsPageMode {
+            if totalPage > 0 {
+                progressValue = Float(currentPage) / Float(totalPage)
+                progressText = "\(currentPage)/\(totalPage) P"
+            } else {
+                progressText = ""
+            }
+        } else {
+            if percent > 0 {
+                progressValue = Float(percent) / 100.0
+                progressValue = min(max(progressValue, 0.0), 1.0)
+                progressText = "\(percent)%"
+            } else {
+                progressText = ""
             }
         }
+        return (value: progressValue, text: progressText)
     }
-    
+
+
     private func showDeleteAlert() {
         showConfirmAlert(title: "책 정보 삭제", message: "이 책의 모든 정보와 저널 기록이 삭제됩니다. 정말 삭제하시겠습니까?", confirmTitle: "삭제"
         ) { [weak self] in
