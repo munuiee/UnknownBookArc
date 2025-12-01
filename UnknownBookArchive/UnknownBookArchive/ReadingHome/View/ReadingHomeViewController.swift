@@ -163,7 +163,7 @@ final class ReadingHomeViewController: UIViewController {
         greetingLabel.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                .font: UIFont.systemFont(ofSize: 24, weight: .bold),
+                .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
                 .paragraphStyle: paragraph
             ]
         )
@@ -469,7 +469,7 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
             book = finishedBooks[indexPath.item]
         }
         
-        let detailVC = BookDetailViewController()
+        let detailVC = BookDetailViewController(book: book)
         detailVC.book = book
         navigationController?.pushViewController(detailVC, animated: true)
     }

@@ -6,8 +6,12 @@ import SnapKit
 
 final class LikeParagraphViewController: UIViewController {
     
+    
+    
     private let viewModel = LikeParagraphViewModel()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -96,6 +100,19 @@ extension LikeParagraphViewController: UICollectionViewDelegate, UICollectionVie
             self.viewModel.toggleLike(at: indexPath.item)
             self.collectionView.reloadItems(at: [indexPath])
         }
+        
+        cell.onEditTapped = { [weak self] in
+            guard let self = self else { return }
+            guard let parentBook = journal.parentBook else { return }   // CoreData 관계
+
+            let editVC = JournalEditViewController(
+                journal: journal,
+                book: parentBook,
+                type: "문단 수집"
+            )
+            self.navigationController?.pushViewController(editVC, animated: true)
+        }
+
         
         cell.configure(
             page: viewModel.page(at: indexPath),

@@ -89,7 +89,14 @@ extension LikeBookViewController: UICollectionViewDelegate, UICollectionViewData
             self.collectionView.reloadItems(at: [indexPath])
         }
         
+        
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let book = viewModel.likedBooks[indexPath.item]
+        let detailVC = BookDetailViewController(book: book)
+        navigationController?.pushViewController(detailVC, animated: true)
     }
     
     
