@@ -9,32 +9,56 @@ import Foundation
 
 final class ReadingHomeViewModel {
     
-    // View에 UI 업데이트를 알려줄 때 사용
     var onUpdate: (() -> Void)?
     
-    // 버튼 탭 등 이벤트 콜백
     var onAddBookTapped: (() -> Void)?
+
+    private(set) var model: ReadingHomeModel = .empty
     
-    // 화면에서 사용할 데이터
-    private(set) var model: ReadingHomeModel = ReadingHomeModel(currentReadingBooks: [], plannedBooks: [],
-        pausedBooks: [],
-        finishedBooks: []
-    )
-    
+
     func loadInitialData() {
-        // 나중에 서버/ DB 연동 시 여기서 데이터 로딩
-        onUpdate?()
+        reloadFromCoreData()
+       
     }
     
-    func addDummyBook() {
-        // 예시용 (테스트용 더미 데이터)
-        var current = model.currentReadingBooks
-        current.append("예시 책 제목")
+    // MARK: - CoreData에서 다시 불러오기 
+    func reloadFromCoreData() {
         
-        model = ReadingHomeModel(currentReadingBooks: current,
-        plannedBooks: model.plannedBooks,
-        pausedBooks: model.pausedBooks,
-        finishedBooks: model.finishedBooks
+        let allBooks: [Book] = CoreDataManager.shared.fetchAllBooks()
+        
+        var current: [Book] = []
+        var planned: [Book] = []
+        var paused: [Book] = []
+        var finished: [Book] = []
+        
+        for book in allBooks {
+            let state = book.readingState ?? ""
+    
+            switch state {
+            case "읽는 중":
+                current.append(book)
+            case "읽을 예정":
+                planned.append(book)
+            case "중단":
+                paused.append(book)
+            case "완독":
+                finished.append(book)
+            default:
+                break
+            }
+        }
+        
+        // 가장 최근에 저장된 책이 앞으로 오도록 역순 정렬
+        current.reverse()
+        planned.reverse()
+        paused.reverse()
+        finished.reverse()
+        
+        model = ReadingHomeModel(
+            currentReadingBooks: current,
+            plannedBooks: planned,
+            pausedBooks: paused,
+            finishedBooks: finished
         )
         
         onUpdate?()
