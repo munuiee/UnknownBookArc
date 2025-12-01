@@ -9,6 +9,8 @@ import CoreData
 class BookInfoViewController: UIViewController {
     
     var viewModel = BookInfoViewModel()
+    var book: Book?
+    var bookUUID: String?
     
     let disposeBag = DisposeBag()
     var selectedStateButton: BaseButton?
@@ -181,6 +183,7 @@ class BookInfoViewController: UIViewController {
         bind()
         keyboardDismiss()
         setupRxKeyboard()
+        loadBookDataForEdit()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -651,11 +654,31 @@ class BookInfoViewController: UIViewController {
             .forEach { tagLine3StackView.addArrangedSubview($0) }
         
     }
+    // 화면 전환용
+    private func navigateToNewDetailVC(with book: Book, progressValue: Float, progressText: String) {
+        let detailVC = BookDetailViewController()
+        detailVC.book = book
+        detailVC.hidesBottomBarWhenPushed = false
+        detailVC.progressValue = progressValue
+        detailVC.progressText = progressText
+        
+        if let navigationController = self.navigationController {
+            var viewConrollers = navigationController.viewControllers
+            viewConrollers.removeLast()
+            viewConrollers.append(detailVC)
+            navigationController.setViewControllers(viewConrollers, animated: true)
+        }
+    }
     
     // MARK: 코어데이터 관련 함수
-    // 저장
+    // 저장 버튼에 들어갈 함수
     private func saveBookInfo() {
-        let newUUID = UUID().uuidString
+
+        // 데이터 추출-----------------------------------------
+        let coverImageData = coverImageView.image?.jpegData(compressionQuality: 0.8)
+        
+        let readingState = selectedStateButton?.title(for: .normal) ?? ""
+        let bookFormat = selectedFormatButton?.title(for: .normal) ?? ""
         
         guard let title = titleTextField.text, !title.isEmpty else {
             print("제목필수 나중에 알럿 띄우기")
@@ -663,8 +686,42 @@ class BookInfoViewController: UIViewController {
         }
         let author = authorTextField.text ?? ""
         let publisher = publisherTextField.text ?? ""
-        let readingState = selectedStateButton?.title(for: .normal) ?? ""
-        let bookFormat = selectedFormatButton?.title(for: .normal) ?? ""
+       
+        // 페이지 수
+        let currentPage = Int32(pageTextField.text ?? "0") ?? 0
+        let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
+
+        let percentText = percentTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let percent = Int32(percentText) ?? 0
+
+        
+        // 진행률 계산
+        var progressValue: Float = 0.0
+        var progressText: String = ""
+        
+        if toggleButton.isPageMode {
+            if totalPage > 0 {
+                progressValue = Float(currentPage) / Float(totalPage)
+                progressText = "\(currentPage)/\(totalPage) P"
+            } else {
+                progressText = ""
+            }
+        } else {
+            if !percentText.isEmpty {
+                progressValue = Float(percent) / 100.0
+                progressValue = min(max(progressValue, 0.0), 1.0)
+                progressText = "\(percent)%"
+            } else {
+                progressText = ""
+            }
+        }
+          
+        // 시작일, 종료일 버튼 타이틀 문자열로 변환
+        let startDateString = startDateButton.title(for: .normal)
+        let endDateString = endDateButton.title(for: .normal)
+        
+        let startDate = dateFormatter.date(from: startDateString ?? "")
+        let endDate = dateFormatter.date(from: endDateString ?? "")
         
         let allTagButtons: [TagButton] = [tagButton0, tagButton1, tagButton2, tagButton3, tagButton4, tagButton5, tagButton6, tagButton7, tagButton8, tagButton9, tagButton10]
         // 선택된 태그 타이틀 가져와서 콤마로 연결
@@ -673,38 +730,112 @@ class BookInfoViewController: UIViewController {
             .compactMap { tags[$0.tag].rawValue }
             .joined(separator: ",")
         
-        let currentPage = Int32(pageTextField.text ?? "0") ?? 0
-        let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
-        let percent = Int32(percentTextField.text ?? "0") ?? 0
         
-        // 시작일, 종료일 버튼 타이틀 문자열로 변환
-        let startDateString = startDateButton.title(for: .normal)
-        let endDateString = endDateButton.title(for: .normal)
+        // 코어 데이터 저장 및 수정 분기 -----------------------------------------
+        var savedBook: Book?
         
-        let startDate = dateFormatter.date(from: startDateString ?? "")
-        let endDate = dateFormatter.date(from: endDateString ?? "")
+        if let existingUUID = self.bookUUID {
+            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
+            )
+        } else {
+            let newUUID = UUID().uuidString
+            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
+            )
+        }
         
-        // 이미지 데이터로변환
-        let coverImageData = coverImageView.image?.jpegData(compressionQuality: 0.8)
-        
-        let savedBook = CoreDataManager.shared.bookCreate(
-            uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate)
-        
+        // 화면 전환 및 데이터 전달-----------------------------------------
         if let saveBook = savedBook {
-            let detailVC = BookDetailViewController(book: saveBook)
-                //detailVC.book = saveBook
-                detailVC.hidesBottomBarWhenPushed = false
 
-                if let navigationController = self.navigationController {
-                    var viewConrollers = navigationController.viewControllers
-                    viewConrollers.removeLast()
-                    viewConrollers.append(detailVC)
-                
-                    navigationController.setViewControllers(viewConrollers, animated: true)
+            if self.bookUUID != nil {
+                if let detailVC = self.navigationController?.viewControllers.dropLast().last as? BookDetailViewController {
+                    detailVC.book = saveBook
+                    detailVC.hidesBottomBarWhenPushed = false
+                    detailVC.progressValue = progressValue
+                    detailVC.progressText = progressText
+                    
+                    detailVC.reloadBookDataAndDisplay()
+                    
+                    self.navigationController?.popViewController(animated: true)
+                } else {
+                    navigateToNewDetailVC(with: saveBook, progressValue: progressValue, progressText: progressText)
                 }
             } else {
-                print("저장 실패. 알럿 처리필요")
+                navigateToNewDetailVC(with: saveBook, progressValue: progressValue, progressText: progressText)
+            }
+
+        } else {
+            print("저장 실패. 알럿 처리필요")
+        }
+    }
+    
+    private func loadBookDataForEdit() {
+        guard let uuid = self.bookUUID else {
+            return
+        }
+        if let existingBook = CoreDataManager.shared.fetchBook(uuid: uuid) {
+            self.book = existingBook
+            setupUIWithExistingBook(existingBook)
+            print("책 정보 수정 모드: 데이터 로드 완료")
+        } else {
+            print("\(uuid)에 해당하는 책을 찾을 수 없습니다.")
+        }
+    }
+    private func setupUIWithExistingBook(_ book: Book) {
+        titleTextField.text = book.title
+        authorTextField.text = book.author
+        publisherTextField.text = book.publisher
+        
+        if let imageData = book.coverImage, let image = UIImage(data: imageData) {
+            coverImageView.image = image
+        } else {
+            coverImageView.image = nil
+        }
+        
+        if let state = book.readingState {
+            let stateButtons: [BaseButton] = [readingButton, pausedButton, finishedButton, scheduledButton]
+            if let targetButton = stateButtons.first(where: { $0.title(for: .normal) == state}) {
+                handleStateButtonTap(targetButton)
             }
         }
+        if let format = book.bookFormat {
+            let formatButtons: [BaseButton] = [paperButton, ebookButton]
+            if let targetButton = formatButtons.first(where: { $0.title(for: .normal) == format}) {
+                handleFormatButtonTap(targetButton)
+            }
+        }
+        pageTextField.text = (book.currentPage > 0) ? String(book.currentPage) : nil
+        totalPageTextField.text = (book.totalPage > 0) ? String(book.totalPage) : nil
+        percentTextField.text = (book.percent > 0) ? String(book.percent) : nil
+        
+        if book.totalPage > 0 && book.currentPage > 0 {
+            toggleButton.isPageMode = true
+        } else if book.percent > 0 {
+            toggleButton.isPageMode = false
+        } else {
+            toggleButton.isPageMode = true
+        }
+        
+        handleToggleTap()
+        
+        if let startDate = book.startDate {
+            startDateButton.setTitle(dateFormatter.string(from: startDate), for: .normal)
+        }
+        if let endDate = book.endDate {
+            endDateButton.setTitle(dateFormatter.string(from: endDate), for: .normal)
+        }
+        if let selectedTagsString = book.selectedTags, !selectedTagsString.isEmpty {
+            let selectedTagsArray = selectedTagsString.components(separatedBy: ",")
+            let allTagButtons: [TagButton] = [
+                tagButton0, tagButton1, tagButton2, tagButton3, tagButton4, tagButton5, tagButton6, tagButton7, tagButton8, tagButton9, tagButton10
+            ]
+            
+            for button in allTagButtons {
+                if button.tag < tags.count {
+                    let tagName = tags[button.tag].rawValue
+                    button.isSelected = selectedTagsArray.contains(tagName)
+                }
+            }
+        }
+    }
     
 }

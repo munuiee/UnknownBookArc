@@ -1,3 +1,4 @@
+// MARK: 커스텀 내비게이션 바 베이스
 
 import UIKit
 import SnapKit
@@ -20,7 +21,7 @@ class TopView: UIView {
         label.font = .systemFont(ofSize: 18, weight: .semibold)
         return label
     }()
-    private lazy var rightButton: UIButton = {
+    lazy var rightButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .black
         return button

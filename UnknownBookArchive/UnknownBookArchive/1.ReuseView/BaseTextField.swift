@@ -1,5 +1,5 @@
 
-// MARK: 책 상세페이지 텍스트 필드
+// MARK: 책 상세페이지 텍스트 필드 베이스
 
 import UIKit
 import SnapKit
