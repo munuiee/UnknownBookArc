@@ -21,6 +21,17 @@ final class ReadingHomeViewController: UIViewController {
     private let currentReadingCardTitleLabel = UILabel()
     private let currentReadingCardSubtitleLabel = UILabel()
     
+    // 현재 읽는 중 카드 placeholder 스택
+    private let currentReadingEmptyStack = UIStackView()
+    
+    // 현재 읽는 중 책들 가로 스크롤용 컬렉션뷰
+    private var currentReadingCollectionView: UICollectionView!
+    
+    private let greetingMoreButton = UIButton(type: .system)
+    
+    // 현재 읽는 중 책 데이터 (최대 10개)
+    private var currentReadingBooks: [Book] = []
+    
     private let addBookButton = UIButton(type: .system)
     
     // MARK: - 섹션 UI
@@ -65,18 +76,18 @@ final class ReadingHomeViewController: UIViewController {
         
         addBookButton.addTarget(self, action: #selector(didTapAddBook), for: .touchUpInside)
         
-        bindViewModel()
         viewModel.loadInitialData()
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.reloadFromCoreData()
     }
     
+    
     private func bindViewModel() {
         viewModel.onUpdate = { [weak self] in
-            print("onUpdate 실행됨")
             self?.updateUI()
         }
     }
@@ -86,16 +97,36 @@ final class ReadingHomeViewController: UIViewController {
     private func updateUI() {
         let model = viewModel.model
         
+        // 현재 읽는 중 책 (최대 10개)
+        currentReadingBooks = Array(model.currentReadingBooks.prefix(10))
+        
         plannedBooks = Array(model.plannedBooks.prefix(10))
         pausedBooks = Array(model.pausedBooks.prefix(10))
         finishedBooks = Array(model.finishedBooks.prefix(10))
         
+        updateCurrentReadingCardUI()
         updateSectionVisibility()
         updateDynamicSpacing()
         
+        currentReadingCollectionView.reloadData()
         plannedCollectionView.reloadData()
         pausedCollectionView.reloadData()
         finishedCollectionView.reloadData()
+        
+    }
+    
+    
+    // MARK: - 현재 읽는 중 카드 UI
+    private func updateCurrentReadingCardUI() {
+        if currentReadingBooks.isEmpty {
+            currentReadingEmptyStack.isHidden = false
+            currentReadingCollectionView.isHidden = true
+            
+        } else {
+            currentReadingEmptyStack.isHidden = true
+            currentReadingCollectionView.isHidden = false
+           
+        }
     }
     
     
@@ -117,31 +148,17 @@ final class ReadingHomeViewController: UIViewController {
     private func updateDynamicSpacing() {
         
         // 읽을 예정인 책
-        if plannedBooks.isEmpty {
-            contentStackView.setCustomSpacing(20, after: plannedHeader)      // 제목 <-> emptyCard
-        } else {
-            contentStackView.setCustomSpacing(0, after: plannedHeader)       // 제목 <-> 컬렉션뷰 (붙이기)
-        }
+        contentStackView.setCustomSpacing(plannedBooks.isEmpty ? 20 : 0, after: plannedHeader)
         contentStackView.setCustomSpacing(40, after: plannedEmptyCard)
         contentStackView.setCustomSpacing(16, after: plannedCollectionView)
         
-        
         // 잠시 멈춘 책
-        if pausedBooks.isEmpty {
-            contentStackView.setCustomSpacing(20, after: pausedHeader)
-        } else {
-            contentStackView.setCustomSpacing(0, after: pausedHeader)
-        }
+        contentStackView.setCustomSpacing(pausedBooks.isEmpty ? 20 : 0, after: pausedHeader)
         contentStackView.setCustomSpacing(40, after: pausedEmptyCard)
         contentStackView.setCustomSpacing(40, after: pausedCollectionView)
         
-        
         // 완독한 책
-        if finishedBooks.isEmpty {
-            contentStackView.setCustomSpacing(20, after: finishedHeader)
-        } else {
-            contentStackView.setCustomSpacing(0, after: finishedHeader)
-        }
+        contentStackView.setCustomSpacing(finishedBooks.isEmpty ? 20 : 0, after: finishedHeader)
         contentStackView.setCustomSpacing(60, after: finishedEmptyCard)
         contentStackView.setCustomSpacing(60, after: finishedCollectionView)
     }
@@ -149,7 +166,7 @@ final class ReadingHomeViewController: UIViewController {
     
     @objc private func didTapAddBook() {
         let searchVC = BookSearchViewController()
-       navigationController?.pushViewController(searchVC, animated: true)
+        navigationController?.pushViewController(searchVC, animated: true)
     }
     
     
@@ -167,11 +184,19 @@ final class ReadingHomeViewController: UIViewController {
                 .paragraphStyle: paragraph
             ]
         )
+        
+        greetingMoreButton.setTitle("더보기", for: .normal)
+            greetingMoreButton.setTitleColor(.addBookButtonColor, for: .normal)
+            greetingMoreButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        
+    
         greetingLabel.numberOfLines = 0
         greetingLabel.textColor = .black
         
         greetingSectionView.backgroundColor = .readinHomeBannerColor
         greetingSectionView.layer.cornerRadius = 8
+        greetingSectionView.clipsToBounds = true
+
         
         currentReadingCardView.backgroundColor = .white
         currentReadingCardView.layer.cornerRadius = 8
@@ -179,23 +204,18 @@ final class ReadingHomeViewController: UIViewController {
         currentReadingCardTitleLabel.text = "읽고 있는 책을 추가해보세요"
         currentReadingCardTitleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
         currentReadingCardTitleLabel.textAlignment = .center
-        currentReadingCardTitleLabel.textColor = .black
         
         currentReadingCardSubtitleLabel.text = "현재 읽고 있는 책이 여기에 표시돼요"
         currentReadingCardSubtitleLabel.font = .systemFont(ofSize: 14)
         currentReadingCardSubtitleLabel.textAlignment = .center
         currentReadingCardSubtitleLabel.textColor = .lightGray
         
-        addBookButton.setTitle("책 추가하기", for: .normal)
-        addBookButton.layer.cornerRadius = 8
-        addBookButton.backgroundColor = .addBookButtonColor
-        addBookButton.setTitleColor(.white, for: .normal)
         
+        // 읽을 예정인 책 / 잠시 멈춘 책 / 완독한 책
         func styleTitle(_ label: UILabel, _ text: String) {
             label.text = text
             label.font = .boldSystemFont(ofSize: 20)
         }
-        
         styleTitle(plannedTitleLabel, "읽을 예정인 책")
         styleTitle(pausedTitleLabel, "잠시 멈춘 책")
         styleTitle(finishedTitleLabel, "완독한 책")
@@ -205,11 +225,17 @@ final class ReadingHomeViewController: UIViewController {
             button.setTitleColor(.lightGray, for: .normal)
             button.titleLabel?.font = .systemFont(ofSize: 14)
         }
-        
         styleMore(plannedMoreButton)
         styleMore(pausedMoreButton)
         styleMore(finishedMoreButton)
         
+        addBookButton.setTitle("책 추가하기", for: .normal)
+        addBookButton.layer.cornerRadius = 8
+        addBookButton.backgroundColor = .addBookButtonColor
+        addBookButton.setTitleColor(.white, for: .normal)
+        addBookButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
+        
+        // Empty 카드 공통 스타일
         func styleCard(_ card: UIView, _ label: UILabel, _ text: String) {
             card.backgroundColor = .readingHomeGrayColor
             card.layer.cornerRadius = 8
@@ -220,10 +246,10 @@ final class ReadingHomeViewController: UIViewController {
             label.textAlignment = .center
             label.textColor = .lightGray
         }
-        
         styleCard(plannedEmptyCard, plannedEmptyLabel, "읽을 예정인 책이 없어요")
         styleCard(pausedEmptyCard, pausedEmptyLabel, "잠시 멈춘 책이 없어요")
         styleCard(finishedEmptyCard, finishedEmptyLabel, "완독한 책이 없어요")
+        
         
         contentStackView.axis = .vertical
         contentStackView.spacing = 0
@@ -233,6 +259,31 @@ final class ReadingHomeViewController: UIViewController {
     // MARK: - CollectionView 설정
     private func setupCollectionViews() {
         
+        // 현재 읽는 책 카드 — 한 권씩 스와이프되도록 스냅 페이징 적용
+        currentReadingCollectionView = UICollectionView(
+            frame: .zero,
+            collectionViewLayout: makeCurrentReadingLayout()
+            
+        )
+        currentReadingCollectionView.backgroundColor = .clear
+        currentReadingCollectionView.showsHorizontalScrollIndicator = false
+        currentReadingCollectionView.dataSource = self
+        currentReadingCollectionView.delegate = self
+        
+        currentReadingCollectionView.alwaysBounceVertical = false   // 세로 바운스 제거
+        currentReadingCollectionView.isScrollEnabled = true         // 가로 스크롤 유지
+        
+
+        currentReadingCollectionView.register(
+            CurrentReadingCell.self,
+            forCellWithReuseIdentifier: CurrentReadingCell.identifier
+        )
+        currentReadingCollectionView.isHidden = true
+        
+
+        
+        
+        // 아래 3개 섹션 공통 레이아웃
         func layout() -> UICollectionViewFlowLayout {
             let l = UICollectionViewFlowLayout()
             l.scrollDirection = .horizontal
@@ -245,7 +296,7 @@ final class ReadingHomeViewController: UIViewController {
         plannedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
         pausedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
         finishedCollectionView = UICollectionView(frame: .zero, collectionViewLayout: layout())
-        
+
         [plannedCollectionView, pausedCollectionView, finishedCollectionView].forEach {
             $0?.backgroundColor = .clear
             $0?.showsHorizontalScrollIndicator = false
@@ -253,12 +304,12 @@ final class ReadingHomeViewController: UIViewController {
             $0?.delegate = self
             $0?.register(ThumbnailCell.self, forCellWithReuseIdentifier: ThumbnailCell.identifier)
         }
-        
-        // 데이터 없을 때는 collectionView 숨기기
+
         plannedCollectionView.isHidden = true
         pausedCollectionView.isHidden = true
         finishedCollectionView.isHidden = true
     }
+
     
     
     // MARK: - 계층 구성
@@ -272,23 +323,43 @@ final class ReadingHomeViewController: UIViewController {
         
         greetingSectionView.addSubview(greetingLabel)
         greetingSectionView.addSubview(currentReadingCardView)
+        
+        greetingSectionView.addSubview(greetingMoreButton)
+
+        greetingMoreButton.snp.makeConstraints {
+            $0.top.equalTo(greetingSectionView).offset(12)
+            $0.trailing.equalTo(greetingSectionView).inset(12)
+        }
+        
         contentStackView.addArrangedSubview(greetingSectionView)
         
-        let cardStack = UIStackView(arrangedSubviews: [
-            currentReadingCardTitleLabel,
-            currentReadingCardSubtitleLabel
-        ])
-        cardStack.axis = .vertical
-        cardStack.alignment = .center
-        currentReadingCardView.addSubview(cardStack)
+        currentReadingEmptyStack.axis = .vertical
+        currentReadingEmptyStack.alignment = .center
+        currentReadingEmptyStack.spacing = 2
+        currentReadingEmptyStack.addArrangedSubview(currentReadingCardTitleLabel)
+        currentReadingEmptyStack.addArrangedSubview(currentReadingCardSubtitleLabel)
         
-        cardStack.snp.makeConstraints { $0.center.equalToSuperview() }
+        currentReadingCardView.addSubview(currentReadingEmptyStack)
+        currentReadingCardView.addSubview(currentReadingCollectionView)
         
-       
+        currentReadingEmptyStack.snp.makeConstraints { $0.center.equalToSuperview()
+        }
+        
+        currentReadingCollectionView.snp.makeConstraints { $0.edges.equalToSuperview().inset(12)
+            $0.height.equalTo(180)
+        }
+        
         contentStackView.addArrangedSubview(addBookButton)
         
+        greetingSectionView.addSubview(greetingMoreButton)
+
+        greetingMoreButton.snp.makeConstraints {
+            $0.top.equalTo(greetingSectionView).offset(12)
+            $0.trailing.equalTo(greetingSectionView).inset(12)
+        }
         
-        // 섹션 생성 (header를 반환)
+        
+        // 공통 섹션 생성
         plannedHeader = addSection(titleLabel: plannedTitleLabel,
                                    moreButton: plannedMoreButton,
                                    emptyCard: plannedEmptyCard,
@@ -309,10 +380,11 @@ final class ReadingHomeViewController: UIViewController {
         
         topGap.snp.makeConstraints { $0.height.equalTo(20) }
         
+        view.bringSubviewToFront(addBookButton)
     }
     
     
-    // MARK: - 섹션 생성 함수 (제목 + 더보기 + 카드/컬렉션뷰)
+    // MARK: - 섹션 생성 함수
     @discardableResult
     private func addSection(titleLabel: UILabel,
                             moreButton: UIButton,
@@ -365,6 +437,7 @@ final class ReadingHomeViewController: UIViewController {
         contentStackView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalTo(scrollView.frameLayoutGuide)
+            $0.bottom.equalToSuperview()
         }
         
         greetingSectionView.snp.makeConstraints {
@@ -380,58 +453,123 @@ final class ReadingHomeViewController: UIViewController {
         currentReadingCardView.snp.makeConstraints {
             $0.top.equalTo(greetingLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalTo(greetingSectionView).inset(16)
-            $0.height.equalTo(200)
+            $0.height.equalTo(180)
             $0.bottom.equalTo(greetingSectionView.snp.bottom).offset(-16)
         }
         
         addBookButton.snp.makeConstraints {
-            $0.height.equalTo(52)
+            $0.top.equalTo(greetingSectionView.snp.bottom).offset(24)
             $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(52)
         }
+
     }
 }
 
+// MARK: - 현재 읽는 중 컬렉션 레이아웃
+private func makeCurrentReadingLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0)
+        )
 
-// MARK: - 썸네일 셀
-final class ThumbnailCell: UICollectionViewCell {
-    
-    static let identifier = "ThumbnailCell"
-    
-    let imageView = UIImageView()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        
-        contentView.addSubview(imageView)
-        imageView.layer.cornerRadius = 8
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.systemGray4.cgColor
-        imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFill
-        
-        imageView.snp.makeConstraints { $0.edges.equalToSuperview() }
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(160)
+        )
+
+        let group = NSCollectionLayoutGroup.horizontal(
+            layoutSize: groupSize,
+            subitems: [item]
+        )
+
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .groupPagingCentered
+        section.interGroupSpacing = 16
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+
+        return UICollectionViewCompositionalLayout(section: section)
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
 
 
-// MARK: - CollectionView DataSource
+
+// MARK: - CollectionView DataSource + Delegate
 extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView,
                         numberOfItemsInSection section: Int) -> Int {
+        
+        if collectionView == currentReadingCollectionView {
+            return currentReadingBooks.count
+        }
         
         if collectionView == plannedCollectionView { return plannedBooks.count }
         if collectionView == pausedCollectionView { return pausedBooks.count }
         return finishedBooks.count
     }
     
+    
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
+        // 현재 읽는 중 카드 셀
+        if collectionView == currentReadingCollectionView {
+            
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: CurrentReadingCell.identifier,
+                for: indexPath
+            ) as! CurrentReadingCell
+            
+            let book = currentReadingBooks[indexPath.item]
+            
+            // 책 정보 적용
+            cell.titleLabel.text = book.title
+            cell.authorLabel.text = book.author
+            
+            if let imgData = book.coverImage,
+               let image = UIImage(data: imgData) {
+                cell.thumbnailImageView.image = image
+            }
+            
+            if let startDate = book.startDate {
+                let df = DateFormatter()
+                df.dateFormat = "yyyy.MM.dd"
+                cell.dateLabel.text = df.string(from: startDate)
+            }
+            
+            let currentPage = Int(book.currentPage)
+            let totalPage = Int(book.totalPage)
+            let percent = Int(book.percent)   
+
+            var progressValue: Float = 0.0
+            var progressText: String = ""
+
+            // 페이지 기반 진행률 (totalPage가 0보다 클 때만)
+            if totalPage > 0 {
+                progressValue = Float(currentPage) / Float(totalPage)
+                progressText = "\(currentPage)/\(totalPage) P"
+            } else {
+                // 퍼센트 기반 진행률 (0~100 사이 보정)
+                let clamped = max(0, min(percent, 100))
+                progressValue = Float(clamped) / 100.0
+                progressText = "\(clamped)%"
+            }
+
+            cell.progressBar.progress = progressValue
+            cell.percentLabel.text = progressText
+
+            
+            cell.onJournalButtonTapped = { [weak self] in
+                let vc = JournalViewController()
+                self?.navigationController?.pushViewController(vc, animated: true)
+            }
+            return cell
+        }
+        
+        
+        // 기존 섹션 썸네일 셀
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: ThumbnailCell.identifier,
             for: indexPath
@@ -450,18 +588,20 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
         if let data = book.coverImage,
            let img = UIImage(data: data) {
             cell.imageView.image = img
-        } else {
-            cell.imageView.image = nil
         }
         
         return cell
     }
     
+    
+    // 썸네일 클릭 -> 책 상세 화면 이동
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let book: Book
         
-        if collectionView == plannedCollectionView {
+        if collectionView == currentReadingCollectionView {
+            book = currentReadingBooks[indexPath.item]
+        } else if collectionView == plannedCollectionView {
             book = plannedBooks[indexPath.item]
         } else if collectionView == pausedCollectionView {
             book = pausedBooks[indexPath.item]
@@ -473,7 +613,4 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
         detailVC.book = book
         navigationController?.pushViewController(detailVC, animated: true)
     }
-
 }
-
-
