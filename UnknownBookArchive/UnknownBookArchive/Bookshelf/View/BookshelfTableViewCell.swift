@@ -97,7 +97,6 @@ final class BookshelfTableViewCell: UITableViewCell {
         }
     }
 
-    
     func configure(title: String, author: String, image: UIImage? = nil) {
         titleLabel.text = title
         authorLabel.text = author

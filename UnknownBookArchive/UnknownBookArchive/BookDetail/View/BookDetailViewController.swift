@@ -292,21 +292,6 @@ class BookDetailViewController: UIViewController {
         // 좋아요 버튼
         likeButton.rx.tap
             .subscribe(onNext: { [weak self] in
-
-                //self?.likeButton.isSelected.toggle()
-                //                guard let self = self, let book = self.book else { return }
-                //
-                //                book.liked.toggle()
-                //                self.likeButton.isSelected = book.liked
-                //
-                //                do {
-                //                    try self.context.save()
-                //                    print("책 좋아요 저장 완료 \(book.liked)")
-                //                } catch {
-                //                    print("책 좋아요 저장 실패 \(error)")
-                //                }
-                //
-                //            })
                 guard let self = self, let book = self.book else { return }
                 
                 self.viewModel.toggleLike(for: book)

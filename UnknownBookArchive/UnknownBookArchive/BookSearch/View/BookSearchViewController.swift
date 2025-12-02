@@ -10,6 +10,7 @@ class BookSearchViewController: UIViewController {
     
     // MARK: UI요소
     private let topView = TopView()
+    private var currentQuery: String = ""
 
     private lazy var searchBar: UISearchBar = {
         let sb = UISearchBar()
@@ -17,7 +18,7 @@ class BookSearchViewController: UIViewController {
         sb.barTintColor = .white
         sb.backgroundColor = .white
         sb.searchTextField.backgroundColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
-        sb.searchTextField.font = .systemFont(ofSize: 15, weight: .semibold)
+        sb.searchTextField.font = .systemFont(ofSize: 16, weight: .regular)
         sb.searchTextField.tintColor = .black
         sb.searchTextField.textColor = .black
         sb.searchTextField.leftView?.tintColor = .gray
@@ -33,7 +34,8 @@ class BookSearchViewController: UIViewController {
         let tv = UITableView()
         tv.backgroundColor = .white
         tv.register(BookSearchCell.self, forCellReuseIdentifier: BookSearchCell.id)
-        tv.rowHeight = 100
+        tv.rowHeight = 124
+        tv.separatorStyle = .none
        return tv
     }()
     
@@ -56,6 +58,7 @@ class BookSearchViewController: UIViewController {
         [
             topView, searchBar, tableView
         ].forEach { view.addSubview($0) }
+        
     }
     
     private func setConstraints() {
@@ -72,7 +75,7 @@ class BookSearchViewController: UIViewController {
 
         tableView.snp.makeConstraints {
             $0.top.equalTo(searchBar.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview()
         }
     }
@@ -91,6 +94,7 @@ class BookSearchViewController: UIViewController {
         searchBar.rx.searchButtonClicked
                     .withLatestFrom(searchBar.rx.text.orEmpty)
                     .bind(onNext: { [weak self] text in
+                        self?.currentQuery = text
                         self?.viewModel.search(query: text)
                         self?.searchBar.resignFirstResponder()
                     })
@@ -122,34 +126,51 @@ class BookSearchViewController: UIViewController {
             .disposed(by: disposeBag)
         
         // 상태에 따라 UI 업데이트
-        Observable.combineLatest(viewModel.viewState, viewModel.bookList)
+        Observable.combineLatest(viewModel.viewState, viewModel.bookList) { state, items in
+            return (state, items)
+        }
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] state, items in
                 guard let self = self else { return }
                 var message: String = ""
                 var showEmptyView: Bool = false
+                var labelYOffset: CGFloat = -80
+                var buttonYOffset: CGFloat = -40
+                var isLeadingAlignment: Bool = false
                 
                 switch state {
                 case .initial:
                     message = "직접 책을 추가하고 싶으신가요?"
                     showEmptyView = true
+                    labelYOffset = -130
+                    buttonYOffset = -65
+                    isLeadingAlignment = false
                 case .loading:
                     showEmptyView = false
+
                 case .success:
                     if items.isEmpty {
-                        message = "검색 결과가 안나오시나요?"
+                        let queryMessage = self.currentQuery.isEmpty ? "" : "'\(self.currentQuery)'"
+                        message = "\(queryMessage)에 대한 검색 결과가 없습니다."
                         showEmptyView = true
+                        labelYOffset = -310
+                        buttonYOffset = -110
+                        isLeadingAlignment = true
                     } else {
                         showEmptyView = false
+
                     }
                 case .error:
                     message = "검색에 실패했습니다."
                     showEmptyView = true
+                    labelYOffset = -104
+                    buttonYOffset = -40
+                    isLeadingAlignment = false
                 }
                 
                 // UI 적용
                 if showEmptyView {
-                    let emptyView = self.createEmptyView(message: message)
+                    let emptyView = self.createEmptyView(message: message, labelYOffset: labelYOffset, buttonYOffset: buttonYOffset, isLeadingAlignment: isLeadingAlignment)
                     self.tableView.backgroundView = emptyView
                     self.tableView.separatorStyle = .none
                     
@@ -162,12 +183,11 @@ class BookSearchViewController: UIViewController {
                     }
                 } else {
                     self.tableView.backgroundView = nil
-                    self.tableView.separatorStyle = .singleLine
+                    self.tableView.separatorStyle = .none
                 }
             })
                 .disposed(by: disposeBag)
         
-
         // 테이블 뷰 셀 선택
         tableView.rx.modelSelected(BookItem.self)
             .bind(to: viewModel.selectedBookItem)
@@ -188,19 +208,26 @@ class BookSearchViewController: UIViewController {
         }
     
     // MARK: 검색 전, 검색 실패 시 화면
-    private func createEmptyView(message: String, showButton: Bool = true) -> UIView {
+    private func createEmptyView(message: String, showButton: Bool = true, labelYOffset: CGFloat, buttonYOffset: CGFloat, isLeadingAlignment: Bool = false) -> UIView {
         let containerView = UIView()
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.spacing = 24
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+
 
         let label = UILabel()
         label.text = message
         label.textColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1)
         label.textAlignment = .center
-        stackView.addArrangedSubview(label)
+        label.textAlignment = isLeadingAlignment ? .left : .center
+        containerView.addSubview(label)
+        
+        label.snp.makeConstraints {
+            if isLeadingAlignment {
+                $0.leading.equalToSuperview().offset(15)
+                $0.trailing.lessThanOrEqualToSuperview().offset(-20)
+            } else {
+                $0.centerX.equalToSuperview()
+            }
+            $0.centerY.equalToSuperview().offset(labelYOffset)
+        }
 
         if showButton {
             let button = UIButton()
@@ -211,20 +238,15 @@ class BookSearchViewController: UIViewController {
             button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
             button.layer.cornerRadius = 8
             
-            stackView.addArrangedSubview(button)
+            containerView.addSubview(button)
             button.snp.makeConstraints {
+                $0.centerX.equalToSuperview()
+                $0.centerY.equalToSuperview().offset(buttonYOffset)
                 $0.height.equalTo(52)
                 $0.leading.trailing.equalToSuperview().inset(80)
             }
         }
-        containerView.addSubview(stackView)
         
-        stackView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.centerY.equalToSuperview().offset(-80)
-            $0.height.equalTo(130)
-            $0.width.equalToSuperview()
-        }
      return containerView
     }
     

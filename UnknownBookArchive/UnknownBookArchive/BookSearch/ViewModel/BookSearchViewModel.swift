@@ -20,6 +20,7 @@ class BookSearchViewModel {
             viewState.accept(.initial)
             return
         }
+        
         apiService.searchBooks(query: query)
             .subscribe(onSuccess: { [weak self] items in
                 self?.bookList.accept(items)

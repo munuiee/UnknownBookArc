@@ -10,7 +10,7 @@ class BookSearchCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 5
         imageView.layer.borderWidth = 1.0
-        imageView.layer.borderColor = UIColor.gray.cgColor
+        imageView.layer.borderColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1).cgColor
         imageView.clipsToBounds = true
         return imageView
     }()
@@ -22,13 +22,13 @@ class BookSearchCell: UITableViewCell {
     }()
     private let authorLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .gray
+        label.textColor = UIColor(red: 0.505, green: 0.495, blue: 0.495, alpha: 1)
         label.font = .systemFont(ofSize: 14)
         return label
     }()
     private let publisherLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .gray
+        label.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
         label.font = .systemFont(ofSize: 14)
         return label
     }()
@@ -48,29 +48,43 @@ class BookSearchCell: UITableViewCell {
         [
             thumnailImage, titleLabel, authorLabel, publisherLabel
         ].forEach { contentView.addSubview($0) }
+        contentView.layer.cornerRadius = 8
+        contentView.layer.borderWidth = 1.0
+        contentView.layer.borderColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1).cgColor
     }
+    
     private func setConstraints() {
         thumnailImage.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().inset(30)
-            $0.height.equalTo(80)
-            $0.width.equalTo(60)
+            $0.leading.equalTo(contentView.snp.leading).offset(8)
+            $0.top.equalTo(contentView).offset(8)
+            $0.bottom.equalTo(contentView).offset(-8)
+            $0.height.equalTo(108)
+            $0.width.equalTo(73)
         }
         titleLabel.snp.makeConstraints {
-            $0.leading.equalTo(thumnailImage.snp.trailing).offset(10)
-            $0.trailing.equalToSuperview().inset(20)
+            $0.leading.equalTo(thumnailImage.snp.trailing).offset(8)
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-8)
             $0.top.equalToSuperview().inset(15)
         }
         authorLabel.snp.makeConstraints {
-            $0.leading.equalTo(thumnailImage.snp.trailing).offset(10)
-            $0.trailing.equalToSuperview().inset(30)
+            $0.leading.equalTo(thumnailImage.snp.trailing).offset(8)
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-8)
             $0.top.equalTo(titleLabel.snp.bottom).offset(5)
         }
         publisherLabel.snp.makeConstraints {
-            $0.leading.equalTo(thumnailImage.snp.trailing).offset(10)
-            $0.trailing.equalToSuperview().inset(30)
+            $0.leading.equalTo(thumnailImage.snp.trailing).offset(8)
+            $0.trailing.equalTo(contentView.snp.trailing).offset(-8)
             $0.top.equalTo(authorLabel.snp.bottom).offset(5)
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        let verticalMargin: CGFloat = 4
+        let horizontalMargin: CGFloat = 0
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: verticalMargin, left: horizontalMargin, bottom: verticalMargin, right: horizontalMargin))
     }
     
     func setData(item: BookItem) {
