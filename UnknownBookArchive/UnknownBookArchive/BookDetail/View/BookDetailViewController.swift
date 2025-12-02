@@ -376,6 +376,10 @@ class BookDetailViewController: UIViewController {
             DispatchQueue.main.async { [weak self] in
                 if success {
                     print("책 정보 삭제 성공")
+                    
+                    // 책 삭제 시 메인화면에서도 사라지게 하는 코드
+                    NotificationCenter.default.post(name: .bookDeleted, object: nil)
+
                     self?.navigationController?.popViewController(animated: true)
                 } else {
                     print("책 정보 삭제 실패")

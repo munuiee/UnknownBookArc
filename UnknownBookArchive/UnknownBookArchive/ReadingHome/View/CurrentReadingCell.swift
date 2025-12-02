@@ -61,7 +61,7 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         // 제목
         titleLabel.font = .boldSystemFont(ofSize: 16)
-        titleLabel.numberOfLines = 2
+        titleLabel.numberOfLines = 1
         titleLabel.textColor = .black
         
         // 지은이
