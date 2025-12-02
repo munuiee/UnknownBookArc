@@ -9,19 +9,22 @@ import Foundation
 
 final class ReadingHomeViewModel {
     
+    // View에 UI 업데이트를 알려줄 때 사용
     var onUpdate: (() -> Void)?
     
+    // 버튼 탭 등 이벤트 콜백
     var onAddBookTapped: (() -> Void)?
 
+    // 화면에서 사용할 데이터
     private(set) var model: ReadingHomeModel = .empty
     
-
+    
     func loadInitialData() {
         reloadFromCoreData()
-       
     }
     
-    // MARK: - CoreData에서 다시 불러오기 
+    
+    // MARK: - CoreData에서 다시 불러오기 (UUID 문자열 비교를 사용)
     func reloadFromCoreData() {
         
         let allBooks: [Book] = CoreDataManager.shared.fetchAllBooks()
@@ -33,7 +36,7 @@ final class ReadingHomeViewModel {
         
         for book in allBooks {
             let state = book.readingState ?? ""
-    
+            
             switch state {
             case "읽는 중":
                 current.append(book)
@@ -48,11 +51,21 @@ final class ReadingHomeViewModel {
             }
         }
         
-        // 가장 최근에 저장된 책이 앞으로 오도록 역순 정렬
-        current.reverse()
-        planned.reverse()
-        paused.reverse()
-        finished.reverse()
+        func sortByUUIDDescending(_ books: [Book]) -> [Book] {
+            return books.sorted(by: { book1, book2 in
+               
+                let uuid1 = book1.uuid ?? ""
+                let uuid2 = book2.uuid ?? ""
+             
+                return uuid1 > uuid2
+            })
+        }
+        
+        // 정렬 적용
+        current = sortByUUIDDescending(current)
+        planned = sortByUUIDDescending(planned)
+        paused = sortByUUIDDescending(paused)
+        finished = sortByUUIDDescending(finished)
         
         model = ReadingHomeModel(
             currentReadingBooks: current,
@@ -61,11 +74,12 @@ final class ReadingHomeViewModel {
             finishedBooks: finished
         )
         
+        // 데이터 로드 및 정렬 완료 후 View에 업데이트를 알림
         onUpdate?()
     }
+    
     
     func addBookButtonTapped() {
         onAddBookTapped?()
     }
 }
-
