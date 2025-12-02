@@ -7,6 +7,7 @@
         <attribute name="currentPage" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="likedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="percent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="publisher" optional="YES" attributeType="String"/>
         <attribute name="readingState" optional="YES" attributeType="String"/>
@@ -15,8 +16,8 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="totalPage" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="uuid" optional="YES" attributeType="String"/>
-        <relationship name="journals" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Journal" inverseName="parentBook" inverseEntity="Journal"/>
-        <relationship name="moments" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MomentEntity" inverseName="parentBook" inverseEntity="MomentEntity"/>
+        <relationship name="journals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Journal" inverseName="parentBook" inverseEntity="Journal"/>
+        <relationship name="moments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MomentEntity" inverseName="parentBook" inverseEntity="MomentEntity"/>
     </entity>
     <entity name="Journal" representedClassName="Journal" syncable="YES">
         <attribute name="bookAuthor" optional="YES" attributeType="String"/>

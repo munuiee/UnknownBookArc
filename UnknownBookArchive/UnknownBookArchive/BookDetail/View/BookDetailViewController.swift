@@ -12,7 +12,7 @@ class BookDetailViewController: UIViewController {
     
     var onLikeBookTapped: (() -> Void)?
     
-    
+    private let viewModel = BookDetailViewModel()
     private let topView = TopView()
     private let contentView = UIView()
     
@@ -180,9 +180,9 @@ class BookDetailViewController: UIViewController {
         setConstraints()
         displayBookInfo()
         bind()
-
+        
         setupRightTopMenu()
-
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -251,12 +251,12 @@ class BookDetailViewController: UIViewController {
             $0.height.equalTo(0)
         }
         
-//        leadingDatePusher.snp.makeConstraints {
-//            $0.height.equalTo(0)
-//        }
-//        dateSpacer.snp.makeConstraints {
-//            $0.height.equalTo(0)
-//        }
+        //        leadingDatePusher.snp.makeConstraints {
+        //            $0.height.equalTo(0)
+        //        }
+        //        dateSpacer.snp.makeConstraints {
+        //            $0.height.equalTo(0)
+        //        }
         startDateLabel.snp.makeConstraints {
             $0.width.equalTo(88)
             $0.height.equalTo(32)
@@ -303,18 +303,23 @@ class BookDetailViewController: UIViewController {
         likeButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 //self?.likeButton.isSelected.toggle()
+                //                guard let self = self, let book = self.book else { return }
+                //
+                //                book.liked.toggle()
+                //                self.likeButton.isSelected = book.liked
+                //
+                //                do {
+                //                    try self.context.save()
+                //                    print("책 좋아요 저장 완료 \(book.liked)")
+                //                } catch {
+                //                    print("책 좋아요 저장 실패 \(error)")
+                //                }
+                //
+                //            })
                 guard let self = self, let book = self.book else { return }
                 
-                book.liked.toggle()
+                self.viewModel.toggleLike(for: book)
                 self.likeButton.isSelected = book.liked
-                
-                do {
-                    try self.context.save()
-                    print("책 좋아요 저장 완료 \(book.liked)")
-                } catch {
-                    print("책 좋아요 저장 실패 \(error)")
-                }
-                
             })
             .disposed(by: disposeBag)
     }
@@ -331,7 +336,7 @@ class BookDetailViewController: UIViewController {
         } else {
             coverImageView.image = nil
         }
-
+        
         
         // 상태 버튼 처리
         if let state = book?.readingState, !state.isEmpty {
@@ -419,7 +424,7 @@ class BookDetailViewController: UIViewController {
         } else {
             publisherLabel.isHidden = true
         }
-
+        
         // 진행률
         let hasProgressData = !self.progressText.isEmpty
         
@@ -433,7 +438,7 @@ class BookDetailViewController: UIViewController {
                 progressBar.progress = 0.0
             }
         }
-    
+        
         // 시작일, 종료일
         let dateFormatter: DateFormatter = {
             let formatter = DateFormatter()
@@ -515,7 +520,7 @@ class BookDetailViewController: UIViewController {
         onLikeBookTapped?()
     }
     
-
+    
     // MARK: 데이터 새로고침
     func reloadBookDataAndDisplay() {
         displayBookInfo()

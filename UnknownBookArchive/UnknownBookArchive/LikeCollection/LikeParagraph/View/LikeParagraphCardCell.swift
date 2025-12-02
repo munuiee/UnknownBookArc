@@ -59,7 +59,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         }
         
         authorLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        authorLabel.textColor = UIColor.bookAuthorColor
+        authorLabel.textColor = UIColor.secondTextColor
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
         }
@@ -188,6 +188,9 @@ final class LikeParagraphCardCell: UICollectionViewCell {
     
     
     func configure(page: String, text: String, dateText: String, liked: Bool, bookTitle: String? = nil, bookAuthor: String? = nil) {
+        
+        titleLabel.isHidden = false
+           authorLabel.isHidden = false
         pageLabel.text = "\(page)p"
         dateLabel.text = dateText
         

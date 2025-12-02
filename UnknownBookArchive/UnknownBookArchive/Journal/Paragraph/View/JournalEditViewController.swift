@@ -208,9 +208,9 @@ final class JournalEditViewController: UIViewController {
     @objc private func saveButtonTapped() {
         let page = pageField.text ?? ""
         let text = mainField.text ?? ""
+        let currentLiked = journal?.liked ?? false
         
-        
-        viewModel.saveButtonTapped(journal: journal, savedPage: page, journalText: text, liked: false)
+        viewModel.saveButtonTapped(journal: journal, savedPage: page, journalText: text, liked: currentLiked)
     }
     
     @objc private func updateSaveButtonState() {
