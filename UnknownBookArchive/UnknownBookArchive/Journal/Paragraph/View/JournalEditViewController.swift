@@ -21,6 +21,8 @@ final class JournalEditViewController: UIViewController {
     private let book: Book
     private let journalType: String
     
+    private var mainFieldHeightConstraint: Constraint? // 높이 줄이기
+    
     var journal: Journal?
     
     init(journal: Journal?, book: Book, type: String) {
@@ -59,10 +61,26 @@ final class JournalEditViewController: UIViewController {
             }
             updateSaveButtonState()
         }
+        
+        // MARK: 키보드 등록
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleKeyboard(_:)),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
     
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+
     
     
+    // MARK: UI 설정
     private func configureUI() {
         [topView, vStack].forEach { view.addSubview($0) }
         [backButton, mainLabel, saveButton].forEach { topView.addSubview($0) }
@@ -83,17 +101,10 @@ final class JournalEditViewController: UIViewController {
         saveButton.setImage(disabledImage, for: .disabled)
         saveButton.backgroundColor = .clear
 
-
-
-
         // 초기 상태 비활성화
         saveButton.isEnabled = false
-        
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
 
-
-        
-        
         mainLabel.text = "문단 수집"
         mainLabel.font = .systemFont(ofSize: 18, weight: .semibold)
         
@@ -118,9 +129,9 @@ final class JournalEditViewController: UIViewController {
             $0.trailing.equalToSuperview().inset(25)
         }
         saveButton.isEnabled = false
-        
     }
     
+    // 스택뷰 설정
     private func configureStack() {
         [pageField, mainField].forEach { vStack.addArrangedSubview($0) }
         
@@ -131,15 +142,16 @@ final class JournalEditViewController: UIViewController {
         
         pageField.placeholder = " 책의 페이지를 기록해주세요."
         pageField.layer.cornerRadius = 10
-        pageField.backgroundColor = .systemGray6
+        pageField.backgroundColor = UIColor.colorFAFAFA
         pageField.font = .systemFont(ofSize: 15)
         pageField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 0))
         pageField.leftViewMode = .always
         pageField.keyboardType = .numberPad
+        pageField.delegate = self
         
         
         mainField.layer.cornerRadius = 10
-        mainField.backgroundColor = .systemGray6
+        mainField.backgroundColor = UIColor.colorFAFAFA
         mainField.font = .systemFont(ofSize: 15)
         mainField.textColor = .black
         mainField.isScrollEnabled = true
@@ -150,6 +162,8 @@ final class JournalEditViewController: UIViewController {
         mainPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
         mainPlaceholderLabel.font = .systemFont(ofSize: 15)
         mainField.addSubview(mainPlaceholderLabel)
+        
+        
         mainPlaceholderLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
             $0.leading.equalToSuperview().inset(16)
@@ -170,15 +184,22 @@ final class JournalEditViewController: UIViewController {
         mainField.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(pageField.snp.bottom).offset(24)
-            $0.height.equalTo(260)
+            mainFieldHeightConstraint = $0.height.equalTo(512).constraint
         }
     }
     
+    // 키보드 제스처
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if touch.view?.isDescendant(of: mainField) == true {
+            return false
+        }
+        return true
+    }
+
     
-    
+    // 뒤로가기 버튼 예외처리
     @objc private func didTapBackButton() {
-        
-        if backButtonCheck() {
+        if saveCheck() {
             let alert = UIAlertController(title: "나가기", message: "작성한 내용이 저장되지 않았어요. 나가시겠습니까?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "취소", style: .cancel))
             alert.addAction(UIAlertAction(title: "나가기", style: .destructive, handler: { _ in
@@ -189,10 +210,41 @@ final class JournalEditViewController: UIViewController {
         } else {
             navigationController?.popViewController(animated: true)
         }
-        
     }
     
-    private func backButtonCheck() -> Bool {
+    
+    // 키보드 높이 설정
+    @objc private func handleKeyboard(_ notification: Notification) {
+        guard
+            let userInfo = notification.userInfo,
+            let frameValue = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue,
+            let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
+            let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+        else { return }
+
+        let keyboardFrame = frameValue.cgRectValue
+        let keyboardInView = view.convert(keyboardFrame, from: nil)
+
+        // 키보드가 화면 안에 얼마나 들어와 있는지 계산
+        let safeBottom = view.safeAreaInsets.bottom
+        let overlap = max(0, view.bounds.height - keyboardInView.origin.y - safeBottom)
+
+        let isKeyboardVisible = overlap > 0
+
+        let expandedHeight: CGFloat = 512   // 키보드 없을 때
+        let collapsedHeight: CGFloat = 318  // 키보드 있을 때
+
+        mainFieldHeightConstraint?.update(offset: isKeyboardVisible ? collapsedHeight : expandedHeight)
+
+        let options = UIView.AnimationOptions(rawValue: curveValue << 16)
+
+        UIView.animate(withDuration: duration, delay: 0, options: options) {
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    
+    private func saveCheck() -> Bool {
         let newPage = (pageField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let newText = (mainField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -205,13 +257,15 @@ final class JournalEditViewController: UIViewController {
         return textChanged
     }
     
+    
     @objc private func saveButtonTapped() {
         let page = pageField.text ?? ""
         let text = mainField.text ?? ""
+        let currentLiked = journal?.liked ?? false
         
-        
-        viewModel.saveButtonTapped(journal: journal, savedPage: page, journalText: text, liked: false)
+        viewModel.saveButtonTapped(journal: journal, savedPage: page, journalText: text, liked: currentLiked)
     }
+    
     
     @objc private func updateSaveButtonState() {
         let newPage = (pageField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -234,9 +288,32 @@ final class JournalEditViewController: UIViewController {
     
 }
 
+
 extension JournalEditViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         mainPlaceholderLabel.isHidden = !textView.text.isEmpty
         updateSaveButtonState()
     }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        mainField.becomeFirstResponder()
+        mainField.layer.borderWidth = 1
+        mainField.layer.borderColor = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 1.0).cgColor
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        mainField.layer.borderWidth = 0
+    }
+}
+
+extension JournalEditViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        pageField.becomeFirstResponder()
+        pageField.layer.borderWidth = 1
+        pageField.layer.borderColor = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 1.0).cgColor
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+          textField.layer.borderWidth = 0
+      }
 }

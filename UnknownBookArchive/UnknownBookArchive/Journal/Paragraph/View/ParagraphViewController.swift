@@ -28,15 +28,16 @@ final class ParagraphViewController: UIViewController {
         viewModel.onUpdate = { [weak self] in
             self?.collectionView.reloadData()
         }
-        
         viewModel.fetchParagraphs()
     }
+    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.fetchParagraphs()
         collectionView.reloadData()
     }
+    
     
     private func collectionSet() {
         collectionView.delegate = self
@@ -50,27 +51,21 @@ final class ParagraphViewController: UIViewController {
         collectionView.backgroundColor = UIColor(named: "backgroundColor")
     }
     
+    
     private func makeLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(180))
-        
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(180))
-        
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        
-        
         let section = NSCollectionLayoutSection(group: group)
         section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16)
         section.interGroupSpacing = 16
-        
-        
         return UICollectionViewCompositionalLayout(section: section)
     }
-
-    
 }
 
+
+// MARK: 문단 수집 수정 및 삭제 
 extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel.numberOfItems
@@ -85,14 +80,12 @@ extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDat
         
         cell.onEditTapped = { [weak self] in
             guard let self = self else { return }
-
-            let bookToPass = self.book
-            
+                        
             let editVC = JournalEditViewController(journal: journal, book: self.book, type: "문단 수집")
             editVC.journal = journal
             self.navigationController?.pushViewController(editVC, animated: true)
         }
-
+        
         
         cell.onDeleteTapped = { [weak self] in
             guard let self = self else { return }
@@ -102,7 +95,6 @@ extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDat
             alert.addAction(UIAlertAction(title: "삭제", style: .destructive) { _ in
                 self.viewModel.delete(at: indexPath)
             })
-            
             self.present(alert, animated: true)
         }
         

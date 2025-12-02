@@ -14,16 +14,15 @@ final class ParagraphListViewModel {
     private let book: Book
     
     init(book: Book) {
-           self.book = book
-       }
-       
+        self.book = book
+    }
     
     private(set) var journals: [Journal] = [] {
         didSet { onUpdate?() }
     }
     
+    var onUpdate: (() -> Void)?
     
-     var onUpdate: (() -> Void)?
     
     // 코어데이터에서 불러오기
     func fetchParagraphs() {
@@ -39,8 +38,6 @@ final class ParagraphListViewModel {
             print("문단 수집 불러오기 실패: \(error)")
         }
     }
-    
-  
     
     var numberOfItems: Int {
         journals.count
@@ -73,14 +70,11 @@ final class ParagraphListViewModel {
     func toggleLike(at index: Int) {
         let journal = journals[index]
         journal.liked.toggle()
-        
-        
         do {
             try context.save()
             onUpdate?()
         } catch {
             journal.liked.toggle()
-            print("좋아요 저장 실패 \(error)")
         }
     }
     
@@ -91,7 +85,7 @@ final class ParagraphListViewModel {
             try coreDataManager.paragraphDelete(journal: target)
             journals.remove(at: indexPath.item)
         } catch {
-            print("[VM] 문단 삭제 실패 \(error)")
+            print("[ParagraphListViewModel] 문단 삭제 실패 \(error)")
         }
     }
 }

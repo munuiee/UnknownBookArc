@@ -98,7 +98,7 @@ extension LikeParagraphViewController: UICollectionViewDelegate, UICollectionVie
             else { return }
             
             self.viewModel.toggleLike(at: indexPath.item)
-            self.collectionView.reloadItems(at: [indexPath])
+            self.collectionView.reloadData()
         }
         
         cell.onEditTapped = { [weak self] in
