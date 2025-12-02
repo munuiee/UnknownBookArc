@@ -562,7 +562,7 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
 
             
             cell.onJournalButtonTapped = { [weak self] in
-                let vc = JournalViewController()
+                let vc = JournalViewController(book: book)
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
             return cell

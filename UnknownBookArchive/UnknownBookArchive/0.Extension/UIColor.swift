@@ -47,7 +47,8 @@ extension UIColor {
     
     // 좋아요
     static let bookTitleColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0) // 676565
-    static let secondTextColor = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0) // B4B2B2
+    static let colorB4B2B2 = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0) // B4B2B2
     static let likeBookBorderColor = UIColor(red: 0.988235, green: 0.988235, blue: 0.988235, alpha: 1.0) // FCFCFC
+    static let colorFAFAFA = UIColor(red: 0.980392, green: 0.980392, blue: 0.980392, alpha: 1.0) // FAFAFA
 
 }

@@ -66,7 +66,7 @@ final class JournalViewController: UIViewController {
     // MARK: - 인디케이터
     private let indicatorView: UIView = {
         let indicate = UIView()
-        indicate.backgroundColor = .black
+        indicate.backgroundColor = UIColor.primaryColor
         return indicate
     }()
     
