@@ -59,7 +59,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         }
         
         authorLabel.font = .systemFont(ofSize: 12, weight: .medium)
-        authorLabel.textColor = UIColor.secondTextColor
+        authorLabel.textColor = UIColor.colorB4B2B2
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
         }
