@@ -23,7 +23,7 @@ class TopView: UIView {
     }()
     lazy var rightButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .black
+        button.tintColor = .primaryColor
         return button
     }()
     private lazy var backButton: UIButton = {

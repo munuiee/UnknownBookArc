@@ -5,8 +5,9 @@ import RxSwift
 import RxCocoa
 import RxKeyboard
 import CoreData
+import Photos
 
-class BookInfoViewController: UIViewController {
+class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     
     var viewModel = BookInfoViewModel()
     var book: Book?
@@ -33,6 +34,8 @@ class BookInfoViewController: UIViewController {
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
+    private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(openImagePicker))
+    
     private let plusIconImage: UIImageView = {
         let imageView = UIImageView()
         let plusConfig = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
@@ -192,7 +195,7 @@ class BookInfoViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
-        scrollView.backgroundColor = .basicBackground
+        scrollView.backgroundColor = .white
         [topView, scrollView ].forEach { view.addSubview($0) }
         [contentView].forEach { scrollView.addSubview($0) }
         [
@@ -208,6 +211,8 @@ class BookInfoViewController: UIViewController {
         [inputStackView, toggleButton].forEach { progressStackView.addArrangedSubview($0) }
         [startDateButton, endDateButton].forEach { dateStackView.addArrangedSubview($0) }
         [pageTextField, totalPageTextField].forEach { inputStackView.addArrangedSubview($0) }
+        
+        coverImageView.addGestureRecognizer(tapGesture)
         
         setupStateButtons()
         setupBookFormatButtons()
@@ -380,6 +385,7 @@ class BookInfoViewController: UIViewController {
             .disposed(by: disposeBag)
     }
     
+    // 독서 상태 버튼 탭
     private func handleStateButtonTap(_ sender: BaseButton) {
         if selectedStateButton != sender {
             selectedStateButton?.isSelected = false
@@ -387,6 +393,7 @@ class BookInfoViewController: UIViewController {
             selectedStateButton = sender
         }
     }
+    // 책 포맷 버튼 탭
     private func handleFormatButtonTap(_ sender: BaseButton) {
         if selectedFormatButton != sender {
             selectedFormatButton?.isSelected = false
@@ -394,6 +401,7 @@ class BookInfoViewController: UIViewController {
             selectedFormatButton = sender
         }
     }
+    // 페이지, 퍼센트 모드 토글 버튼 탭
     private func handleToggleTap() {
         let isPageMode = toggleButton.isPageMode
         
@@ -463,7 +471,7 @@ class BookInfoViewController: UIViewController {
     // MARK: UI setup 함수들
     private func setupTopView() {
         let saveConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
-        let saveImage = UIImage(systemName: "text.page", withConfiguration: saveConfig)
+        let saveImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: saveConfig)
         topView.configure(title: "", rightButtonImage: saveImage)
     }
     
@@ -585,7 +593,7 @@ class BookInfoViewController: UIViewController {
             let currentStartDateTitle = startDateButton.title(for: .normal) ?? ""
             
             if currentStartDateTitle != "시작일",
-                let minDate = dateFormatter.date(from: currentStartDateTitle) {
+               let minDate = dateFormatter.date(from: currentStartDateTitle) {
                 datePicker.minimumDate = minDate
             }
         }
@@ -649,9 +657,9 @@ class BookInfoViewController: UIViewController {
             .forEach { tagLine2StackView.addArrangedSubview($0) }
         [tagButton10]
             .forEach { tagLine3StackView.addArrangedSubview($0) }
-        
     }
-    // 화면 전환용
+    
+    // MARK: 화면 전환용
     private func navigateToNewDetailVC(with book: Book, progressValue: Float, progressText: String) {
         let detailVC = BookDetailViewController(book: book)
         detailVC.book = book
@@ -664,12 +672,12 @@ class BookInfoViewController: UIViewController {
             navigationController.setViewControllers(viewConrollers, animated: true)
         }
     }
-
+    
     
     // MARK: 코어데이터 관련 함수
     // 저장 버튼에 들어갈 함수
     private func saveBookInfo() {
-
+        
         // 데이터 추출-----------------------------------------
         let coverImageData = coverImageView.image?.jpegData(compressionQuality: 0.8)
         
@@ -682,7 +690,7 @@ class BookInfoViewController: UIViewController {
         }
         let author = authorTextField.text ?? ""
         let publisher = publisherTextField.text ?? ""
-       
+        
         // 페이지 수
         let currentPage = Int32(pageTextField.text ?? "0") ?? 0
         let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
@@ -705,8 +713,7 @@ class BookInfoViewController: UIViewController {
             showAlert(title: "진행률 입력 오류", message: "0부터 100 사이의 값만 입력할 수 있습니다.")
             return
         }
-
-
+        
         // 진행률 계산
         var progressValue: Float = 0.0
         var progressText: String = ""
@@ -727,7 +734,7 @@ class BookInfoViewController: UIViewController {
                 progressText = ""
             }
         }
-          
+        
         // 시작일, 종료일 버튼 타이틀 문자열로 변환
         let startDateString = startDateButton.title(for: .normal)
         let endDateString = endDateButton.title(for: .normal)
@@ -758,7 +765,7 @@ class BookInfoViewController: UIViewController {
         
         // 화면 전환 및 데이터 전달-----------------------------------------
         if let saveBook = savedBook {
-
+            
             if self.bookUUID != nil {
                 if let detailVC = self.navigationController?.viewControllers.dropLast().last as? BookDetailViewController {
                     detailVC.book = saveBook
@@ -773,7 +780,7 @@ class BookInfoViewController: UIViewController {
             } else {
                 navigateToNewDetailVC(with: saveBook, progressValue: progressValue, progressText: progressText)
             }
-
+            
         } else {
             print("저장 실패. 알럿 처리필요")
         }
@@ -843,4 +850,74 @@ class BookInfoViewController: UIViewController {
         }
     }
     
+    // MARK: 앨범에서 사진 추가 기능
+    @objc
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        var newImage: UIImage?
+        if let editiedImage = info[.editedImage] as? UIImage {
+            newImage = editiedImage
+        } else if let originalImage = info[.originalImage] as? UIImage {
+            newImage = originalImage
+        }
+        if let image = newImage {
+            coverImageView.image = image
+            plusIconImage.isHidden = true
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
+    
+    @objc
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+    // MARK: 사진앨범 접근 권한 요청
+    @objc private func openImagePicker() {
+        
+        let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        
+        switch photoAuthorizationStatus {
+        case .authorized, .limited:
+            presentImagePicker()
+        case .denied, .restricted:
+            showPermissionDeniedAlert()
+        case .notDetermined:
+            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [weak self] status in
+                DispatchQueue.main.async {
+                    switch status {
+                    case .authorized, .limited:
+                        self?.presentImagePicker()
+                    case .denied, .restricted:
+                        self?.showPermissionDeniedAlert()
+                    case .notDetermined:
+                        print("권한 요청 상태가 결정되지 않았습니다.")
+                    @unknown default:
+                        print("알 수 없는 권한 상태입니다.")
+                    }
+                }
+            }
+        @unknown default:
+            print("알 수 없는 권한 상태입니다.")
+        }
+    }
+    private func presentImagePicker() {
+        let picker = UIImagePickerController()
+        picker.delegate = self
+        picker.sourceType = .photoLibrary
+        present(picker, animated: true, completion: nil)
+    }
+    // 권한 거부되었을 때 표시할 알럿
+    private func showPermissionDeniedAlert() {
+        let alert = UIAlertController(title: "권한 설정 필요", message: "책 표지 이미지를 설정하려면 사진 접근 권한이 필요합니다. 설정에서 권한을 허용해 주세요.", preferredStyle: .alert)
+        
+        let settingsAction = UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(settingsURL)
+            }
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        alert.addAction(settingsAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+
 }
