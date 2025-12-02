@@ -60,11 +60,9 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         viewModel.onUpdateMoment = { [weak self] in
             guard let self = self else { return }
             self.collectionView.reloadData()
-            //self.scrollToLastItem()
         }
         
         viewModel.fetchMoments()
-        // collectionView.reloadData()
         
         if let moments = moments {
             inputPage.text = moments.momentPage
@@ -158,25 +156,32 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         [inputContainer, buttonView].forEach { chatView.addSubview($0) }
         buttonView.addSubview(sendButton)
         
-        chatView.backgroundColor = UIColor(red: 0.945098, green: 0.945098, blue: 0.945098, alpha: 1.0)
+        chatView.backgroundColor = .white
         chatView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             chatViewBottomConstraint = $0.bottom.equalTo(view.snp.bottom).constraint
             $0.height.equalTo(126)
         }
         
-        buttonView.backgroundColor = UIColor(red: 0.980392, green: 0.980392, blue: 0.980392, alpha: 1.0)
+        buttonView.backgroundColor = .white
         buttonView.layer.cornerRadius = 21
         buttonView.layer.masksToBounds = false
-        buttonView.layer.shadowOpacity = 0.12
-        buttonView.layer.shadowOffset = CGSize(width: 2, height: 2)
+
+        buttonView.layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
+        buttonView.layer.shadowOpacity = 1
+        buttonView.layer.shadowOffset = CGSize(width: 0, height: 8)
+        buttonView.layer.shadowRadius = 32
+
         buttonView.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.top.equalToSuperview().offset(42)
             $0.width.height.equalTo(42)
         }
+
+ 
+
         
-        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
+        let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         let image = UIImage(systemName: "arrow.up", withConfiguration: config)
         sendButton.setImage(image, for: .normal)
         sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
@@ -184,11 +189,13 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             $0.center.equalToSuperview()
         }
         
-        inputContainer.backgroundColor = .white
+        inputContainer.backgroundColor = .clear
         inputContainer.layer.cornerRadius = 8
         inputContainer.layer.masksToBounds = false
-        inputContainer.layer.shadowOpacity = 0.12
-        inputContainer.layer.shadowOffset = CGSize(width: 2, height: 2)
+        inputContainer.layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
+        inputContainer.layer.shadowOpacity = 1
+        inputContainer.layer.shadowOffset = CGSize(width: 0, height: 8)
+        inputContainer.layer.shadowRadius = 32
         inputContainer.snp.makeConstraints {
             $0.width.equalTo(285)
             $0.height.equalTo(76)
@@ -199,11 +206,45 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         }
 
         
-        
+        let blurBackgroundView = UIView()
+        blurBackgroundView.layer.cornerRadius = 10
+        blurBackgroundView.clipsToBounds = true
+
+        inputContainer.addSubview(blurBackgroundView)
+        blurBackgroundView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterial))
+        blurBackgroundView.addSubview(blurView)
+        blurView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        // 블랙 10% 오버레이
+        let dimView = UIView()
+        dimView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        blurBackgroundView.addSubview(dimView)
+        dimView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        let whiteContentView = UIView()
+        whiteContentView.backgroundColor = .white
+        whiteContentView.layer.cornerRadius = 10
+        whiteContentView.layer.masksToBounds = true
+
+        inputContainer.addSubview(whiteContentView)
+        whiteContentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+
+        // 블러보다 위에 오게
+        inputContainer.bringSubviewToFront(whiteContentView)
+
 
         
      
-        [inputPage, separatorView, inputText].forEach { inputContainer.addSubview($0) }
+        [inputPage, separatorView, inputText].forEach { whiteContentView.addSubview($0) }
         
         inputPage.placeholder = "책의 페이지를 기록해 주세요"
         inputPage.font = .systemFont(ofSize: 14, weight: .regular)
@@ -241,6 +282,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             $0.bottom.equalToSuperview().inset(6)
         }
         
+
+        
         textPlaceholderLabel.text = "내용을 입력하세요."
         textPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
         textPlaceholderLabel.font = .systemFont(ofSize: 13.8, weight: .regular)
@@ -250,17 +293,6 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             $0.leading.equalToSuperview().inset(7.5)
             $0.trailing.lessThanOrEqualToSuperview().inset(16)
         }
-        
-        //        inputText.layer.cornerRadius = 8
-        //        inputText.snp.makeConstraints {
-        //            $0.top.equalToSuperview().inset(8.5)
-        //            $0.bottom.equalToSuperview().inset(42.5)
-        //            $0.leading.equalToSuperview().inset(20)
-        //            $0.trailing.equalTo(buttonView.snp.leading).offset(-8)
-        //            $0.height.equalTo(40)
-        //        }
-        
-        
     }
     private func addKeyboardNotification() {
         NotificationCenter.default.addObserver(
@@ -271,6 +303,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         )
     }
     
+    
+    // MARK: 키보드가 올라오고 내려갈 때 chatView 조절
     @objc private func handleKeyboard(notification: Notification) {
         guard
             let userInfo = notification.userInfo,
@@ -286,6 +320,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         let safeBottom = view.safeAreaInsets.bottom
         let overlap = max(0, view.bounds.height - keyboardInView.origin.y - safeBottom)
         
+        // 입력창을 키보드 높이만큼
         chatViewBottomConstraint?.update(offset: -overlap)
         
         let options = UIView.AnimationOptions(rawValue: curveValue << 16)
@@ -308,6 +343,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         inputText.resignFirstResponder()
     }
     
+    // 단일섹션의 경우
     private func scrollToBottom() {
         let section = 0
         let itemCount = collectionView.numberOfItems(inSection: section)
@@ -317,6 +353,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         collectionView.scrollToItem(at: indexPath, at: .bottom, animated: true)
     }
     
+    // 다중섹션의 경우
     private func scrollToLastItem() {
         let sectionCount = viewModel.numberOfSections
         guard sectionCount > 0 else { return }
@@ -336,6 +373,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         }
         return true
     }
+    
+ 
 }
 
 extension MomentViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -390,7 +429,7 @@ extension MomentViewController: UICollectionViewDelegate, UICollectionViewDataSo
         return cell
     }
     
-    // 헤더 (날짜 바)
+    // 헤더
     func collectionView(_ collectionView: UICollectionView,
                         viewForSupplementaryElementOfKind kind: String,
                         at indexPath: IndexPath) -> UICollectionReusableView {
@@ -414,5 +453,19 @@ extension MomentViewController: UICollectionViewDelegate, UICollectionViewDataSo
 extension MomentViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         textPlaceholderLabel.isHidden = !textView.text.isEmpty
+        
+        let isEmpty = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+             
+             if isEmpty {
+                 // 입력 없음
+                 buttonView.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
+                 sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
+
+             } else {
+                 // 입력 있음
+                 buttonView.backgroundColor = .primaryColor
+                 sendButton.tintColor = .white
+
+             }
     }
 }

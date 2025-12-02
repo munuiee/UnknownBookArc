@@ -25,7 +25,7 @@ final class MomentCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         contentView.layer.cornerRadius = 8
-        contentView.layer.borderWidth = 1
+        contentView.layer.borderWidth = 0
         contentView.layer.borderColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0).cgColor
         contentView.clipsToBounds = true
         
@@ -46,7 +46,6 @@ final class MomentCell: UICollectionViewCell {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1)
             $0.top.equalToSuperview().offset(18)
-           // $0.bottom.equalTo(vStack.snp.top).offset(10)
         }
     }
 

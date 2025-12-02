@@ -16,7 +16,6 @@ final class LikeBookViewController: UIViewController {
         viewModel.onUpdate = { [weak self] in
             self?.collectionView.reloadData()
         }
-        // viewModel.loadLikeBooksData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -75,7 +74,6 @@ extension LikeBookViewController: UICollectionViewDelegate, UICollectionViewData
             return UICollectionViewCell()
         }
         
-        //let book = SampleDataSource.books[indexPath.item]
         let book = viewModel.likedBooks[indexPath.item]
         cell.configure(with: book)
         

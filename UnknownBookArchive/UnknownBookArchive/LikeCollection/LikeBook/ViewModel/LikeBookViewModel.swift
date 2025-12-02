@@ -7,19 +7,6 @@ import CoreData
 
 
 final class LikeBookViewModel {
-    
-    //    var allLikeBooks: [LikeBooks] = []
-    //    var onUpdate: (() -> Void)?
-    //
-    //    init() {
-    //        loadLikeBooksData()
-    //    }
-    //
-    //    func loadLikeBooksData() {
-    //        allLikeBooks = SampleDataSource.books
-    //        onUpdate?()
-    //    }
-    
     private let coreDataManager = CoreDataManager.shared
     
     private var context: NSManagedObjectContext {
@@ -36,14 +23,14 @@ final class LikeBookViewModel {
         request.predicate = NSPredicate(format: "liked == true")
         
         let sort = NSSortDescriptor(key: "likedAt", ascending: false)
-           request.sortDescriptors = [sort]
+        request.sortDescriptors = [sort]
         
         do {
             likedBooks = try context.fetch(request)
             
             likedBooks.forEach { book in
-                        print("title: \(book.title ?? "제목 없음"), likedAt:", book.likedAt as Any)
-                    }
+                print("title: \(book.title ?? "제목 없음"), likedAt:", book.likedAt as Any)
+            }
         } catch {
             print("좋아요한 책 불러오기 실패")
         }

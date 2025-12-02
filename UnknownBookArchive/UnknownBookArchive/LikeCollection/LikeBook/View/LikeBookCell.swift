@@ -41,17 +41,6 @@ final class LikeBookCell: UICollectionViewCell {
     }
     
     func configure(with book: Book) {
-        //        if let url = URL(string: book.thumbnailURL) {
-        //            URLSession.shared.dataTask(with: url) { [weak self] data, _, _ in
-        //                guard let self = self,
-        //                      let data = data,
-        //                      let image = UIImage(data: data) else { return }
-        //                DispatchQueue.main.async {
-        //                    self.imageView.image = image
-        //                }
-        //            }.resume()
-        //        }
-        
         imageView.image = UIImage(systemName: "book")
 
            // 그 다음 커버 이미지가 있으면 덮어쓰기

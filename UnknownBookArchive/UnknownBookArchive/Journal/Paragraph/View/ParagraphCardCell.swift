@@ -59,10 +59,7 @@ final class ParagraphCardCell: UICollectionViewCell {
         
         
         multiButton.menu = UIMenu(children: [menuEdit, menuDelete])
-        
-        
         multiButton.showsMenuAsPrimaryAction = true
-        
         multiButton.setImage(UIImage(named: "journalMultiB"), for: .normal)
         multiButton.imageView?.contentMode = .scaleAspectFit
         multiButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
@@ -75,8 +72,8 @@ final class ParagraphCardCell: UICollectionViewCell {
             $0.top.equalToSuperview().offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
-        
     }
+    
     
     private func bottomStackUI() {
         contentView.addSubview(bottomStack)
@@ -107,8 +104,8 @@ final class ParagraphCardCell: UICollectionViewCell {
             $0.bottom.equalToSuperview().inset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
         }
-        
     }
+    
     
     private func configureUI() {
         [separatorView, sententceLabel].forEach { contentView.addSubview($0) }
@@ -127,7 +124,6 @@ final class ParagraphCardCell: UICollectionViewCell {
         }
         
         sententceLabel.textColor = UIColor(red: 0.101, green: 0.099, blue: 0.099, alpha: 1)
-        // sententceLabel.font = .systemFont(ofSize: 14, weight: .regular)
         sententceLabel.numberOfLines = 0
         sententceLabel.lineBreakMode = .byWordWrapping
         sententceLabel.textColor = UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1.0)
@@ -153,6 +149,7 @@ final class ParagraphCardCell: UICollectionViewCell {
     }
     
     
+    
     func configure(page: String, text: String, dateText: String, liked: Bool) {
         pageLabel.text = "\(page)p"
         dateLabel.text = dateText
@@ -174,7 +171,6 @@ final class ParagraphCardCell: UICollectionViewCell {
             string: text,
             attributes: attributes
         )
-        
         applyLiked(liked)
     }
     

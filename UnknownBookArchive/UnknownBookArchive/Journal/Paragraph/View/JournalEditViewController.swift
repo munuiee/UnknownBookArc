@@ -61,10 +61,11 @@ final class JournalEditViewController: UIViewController {
             }
             updateSaveButtonState()
         }
+        
+        // MARK: 키보드 등록
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
         
-        // 키보드 노티 등록
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleKeyboard(_:)),
@@ -146,6 +147,7 @@ final class JournalEditViewController: UIViewController {
         pageField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 0))
         pageField.leftViewMode = .always
         pageField.keyboardType = .numberPad
+        pageField.delegate = self
         
         
         mainField.layer.cornerRadius = 10
@@ -195,9 +197,9 @@ final class JournalEditViewController: UIViewController {
     }
 
     
-    
+    // 뒤로가기 버튼 예외처리
     @objc private func didTapBackButton() {
-        if backButtonCheck() {
+        if saveCheck() {
             let alert = UIAlertController(title: "나가기", message: "작성한 내용이 저장되지 않았어요. 나가시겠습니까?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "취소", style: .cancel))
             alert.addAction(UIAlertAction(title: "나가기", style: .destructive, handler: { _ in
@@ -209,6 +211,7 @@ final class JournalEditViewController: UIViewController {
             navigationController?.popViewController(animated: true)
         }
     }
+    
     
     // 키보드 높이 설정
     @objc private func handleKeyboard(_ notification: Notification) {
@@ -240,7 +243,8 @@ final class JournalEditViewController: UIViewController {
         }
     }
     
-    private func backButtonCheck() -> Bool {
+    
+    private func saveCheck() -> Bool {
         let newPage = (pageField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         let newText = (mainField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         
@@ -290,4 +294,26 @@ extension JournalEditViewController: UITextViewDelegate {
         mainPlaceholderLabel.isHidden = !textView.text.isEmpty
         updateSaveButtonState()
     }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        mainField.becomeFirstResponder()
+        mainField.layer.borderWidth = 1
+        mainField.layer.borderColor = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 1.0).cgColor
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        mainField.layer.borderWidth = 0
+    }
+}
+
+extension JournalEditViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        pageField.becomeFirstResponder()
+        pageField.layer.borderWidth = 1
+        pageField.layer.borderColor = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 1.0).cgColor
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+          textField.layer.borderWidth = 0
+      }
 }
