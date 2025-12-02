@@ -14,7 +14,7 @@ final class LikeViewController: UIViewController {
     private let topView = UIView()
     
     
-   
+    
     
     // 탭을 눌러서 스크롤 중인지 여부
     private var isTabScrolling = false
@@ -81,7 +81,7 @@ final class LikeViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-
+    
     
     // MARK: - UI 세팅
     
@@ -101,7 +101,7 @@ final class LikeViewController: UIViewController {
             $0.leading.trailing.equalToSuperview()
         }
         
-    
+        
         likeTitle.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.height.equalTo(32)
@@ -205,9 +205,9 @@ final class LikeViewController: UIViewController {
             animations()
         }
     }
-  
     
-
+    
+    
 }
 
 // MARK: - 레이아웃
@@ -314,7 +314,7 @@ extension LikeViewController: UICollectionViewDataSource, UICollectionViewDelega
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-
+        
         if collectionView == tabCollectionView {
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: LikeTabCell.id,
@@ -354,7 +354,7 @@ extension LikeViewController: UICollectionViewDataSource, UICollectionViewDelega
             return cell
         }
     }
-
+    
     
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {

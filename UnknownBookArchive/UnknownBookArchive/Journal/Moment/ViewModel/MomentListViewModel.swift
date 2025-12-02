@@ -146,7 +146,7 @@ final class MomentListViewModel {
             try coreDataManager.momentDelete(moments: target)
             fetchMoments()
         } catch {
-            print("[VM] 기록 삭제 실패 \(error)")
+            print("[MomentListViewModel] 기록 삭제 실패 \(error)")
         }
     }
 }

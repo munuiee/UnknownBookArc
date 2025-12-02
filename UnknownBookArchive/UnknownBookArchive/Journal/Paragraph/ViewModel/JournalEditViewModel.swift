@@ -44,14 +44,12 @@ final class JournalEditViewModel {
             newJournal.bookTitle = self.journal?.bookTitle
             newJournal.bookAuthor = self.journal?.bookAuthor ?? ""
             newJournal.type = self.type
-            
         }
-        
         do {
             try context.save()
             onSaved?()
         } catch {
-            print("문단 수집 저장 실패")
+            print("[JournalEditVC] 문단 수집 저장 실패")
             onError?(error)
         }
     }
