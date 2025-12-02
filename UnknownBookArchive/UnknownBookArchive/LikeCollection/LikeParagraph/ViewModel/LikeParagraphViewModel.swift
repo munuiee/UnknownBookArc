@@ -101,6 +101,8 @@ final class LikeParagraphViewModel {
         let journal = likedParagraphs[index]
         journal.liked.toggle()
         
+     
+        
         do {
             try context.save()
             if journal.liked == false {

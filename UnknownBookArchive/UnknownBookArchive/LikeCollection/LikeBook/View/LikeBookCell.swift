@@ -52,9 +52,13 @@ final class LikeBookCell: UICollectionViewCell {
         //            }.resume()
         //        }
         
-        if let data = book.coverImage {
-            imageView.image = UIImage(data: data)
-        }
+        imageView.image = UIImage(systemName: "book")
+
+           // 그 다음 커버 이미지가 있으면 덮어쓰기
+           if let data = book.coverImage,
+              let image = UIImage(data: data) {
+               imageView.image = image
+           }
     }
     
     

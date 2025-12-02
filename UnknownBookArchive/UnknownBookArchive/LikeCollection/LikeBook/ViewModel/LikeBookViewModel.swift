@@ -34,8 +34,16 @@ final class LikeBookViewModel {
     func fetchLikeBooks() {
         let request: NSFetchRequest<Book> = Book.fetchRequest()
         request.predicate = NSPredicate(format: "liked == true")
+        
+        let sort = NSSortDescriptor(key: "likedAt", ascending: false)
+           request.sortDescriptors = [sort]
+        
         do {
             likedBooks = try context.fetch(request)
+            
+            likedBooks.forEach { book in
+                        print("title: \(book.title ?? "제목 없음"), likedAt:", book.likedAt as Any)
+                    }
         } catch {
             print("좋아요한 책 불러오기 실패")
         }
@@ -52,6 +60,12 @@ final class LikeBookViewModel {
     func toggleLikeBook(at index: Int) {
         let book = likedBooks[index]
         book.liked.toggle()
+        
+        if book.liked {
+            book.likedAt = Date()
+        } else {
+            book.likedAt = nil
+        }
         
         do {
             try context.save()
