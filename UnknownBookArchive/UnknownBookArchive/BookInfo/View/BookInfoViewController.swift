@@ -299,7 +299,6 @@ class BookInfoViewController: UIViewController {
         topView.backButtonTap
             .bind { [weak self] in
                 guard let self = self else { return }
-                print("백버튼 눌림")
                 self.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
@@ -308,7 +307,6 @@ class BookInfoViewController: UIViewController {
             .bind { [weak self] in
                 guard let self = self else { return }
                 saveBookInfo()
-                print("저장 버튼 눌림")
             }
             .disposed(by: disposeBag)
         // MARK: ViewModel Output 바인딩
@@ -325,7 +323,6 @@ class BookInfoViewController: UIViewController {
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] urlString in
                 if let urlString = urlString, let url = URL(string: urlString) {
-                    print("표지 이미지 URL: \(url)")
                     self?.plusIconImage.isHidden = true
                     URLSession.shared.dataTask(with: url) { data, response, error in
                         guard let data = data, let image = UIImage(data: data), error == nil else {
@@ -369,7 +366,6 @@ class BookInfoViewController: UIViewController {
             .disposed(by: disposeBag)
         startDateButton.rx.tap
             .bind {
-                print("시작일 버튼 눌림")
                 self.openCalendar(sourceButton: self.startDateButton) { selectedDate in
                     self.startDateButton.setTitle(selectedDate, for: .normal)
                 }
@@ -377,7 +373,6 @@ class BookInfoViewController: UIViewController {
             .disposed(by: disposeBag)
         endDateButton.rx.tap
             .bind {
-                print("종료일 버튼 눌림")
                 self.openCalendar(sourceButton: self.endDateButton) { selectedDate in
                     self.endDateButton.setTitle(selectedDate, for: .normal)
                 }
@@ -390,7 +385,6 @@ class BookInfoViewController: UIViewController {
             selectedStateButton?.isSelected = false
             sender.isSelected = true
             selectedStateButton = sender
-            print("\(sender.title(for: .normal)!) 상태가 선택되었습니다.")
         }
     }
     private func handleFormatButtonTap(_ sender: BaseButton) {
@@ -398,7 +392,6 @@ class BookInfoViewController: UIViewController {
             selectedFormatButton?.isSelected = false
             sender.isSelected = true
             selectedFormatButton = sender
-            print("\(sender.title(for: .normal)!) 유형이 선택되었습니다.")
         }
     }
     private func handleToggleTap() {
@@ -409,11 +402,9 @@ class BookInfoViewController: UIViewController {
         if isPageMode {
             [pageTextField, totalPageTextField].forEach { inputStackView.addArrangedSubview($0) }
             inputStackView.distribution = .fillEqually
-            print("페이지 입력 모드")
         } else {
             inputStackView.addArrangedSubview(percentTextField)
             inputStackView.distribution = .fill
-            print("퍼센트 입력 모드")
         }
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
@@ -464,12 +455,9 @@ class BookInfoViewController: UIViewController {
     private func tagButtonTapped(_ sender: TagButton) {
         sender.isSelected.toggle()
         
-        let tagName = tags[sender.tag].rawValue
+        _ = tags[sender.tag].rawValue
         if sender.isSelected {
-            print("\(tagName) 태그 선택됨")
-        } else {
-            print("\(tagName) 태그 선택 해제됨")
-        }
+        } else {}
     }
     
     // MARK: UI setup 함수들
@@ -592,6 +580,16 @@ class BookInfoViewController: UIViewController {
         datePicker.tintColor = .systemBlue
         datePicker.overrideUserInterfaceStyle = .light
         
+        // 종료일 버튼 클릭 시 최소 날짜 설정
+        if sourceButton == endDateButton {
+            let currentStartDateTitle = startDateButton.title(for: .normal) ?? ""
+            
+            if currentStartDateTitle != "시작일",
+                let minDate = dateFormatter.date(from: currentStartDateTitle) {
+                datePicker.minimumDate = minDate
+            }
+        }
+        
         //완료 버튼
         let doneButton = UIButton(type: .system)
         doneButton.setTitle("완료", for: .normal)
@@ -624,7 +622,6 @@ class BookInfoViewController: UIViewController {
     }
     
     private func setupTagButtons() {
-        // 모든 태그 버튼을 배열로 묶어서 설정 코드를 재사용합니다. (DRY 원칙)
         let allTagButtons: [TagButton] = [
             tagButton0, tagButton1, tagButton2, tagButton3, tagButton4,
             tagButton5, tagButton6, tagButton7, tagButton8, tagButton9,
@@ -659,8 +656,6 @@ class BookInfoViewController: UIViewController {
         let detailVC = BookDetailViewController(book: book)
         detailVC.book = book
         detailVC.hidesBottomBarWhenPushed = false
-        detailVC.progressValue = progressValue
-        detailVC.progressText = progressText
         
         if let navigationController = self.navigationController {
             var viewConrollers = navigationController.viewControllers
@@ -669,6 +664,7 @@ class BookInfoViewController: UIViewController {
             navigationController.setViewControllers(viewConrollers, animated: true)
         }
     }
+
     
     // MARK: 코어데이터 관련 함수
     // 저장 버튼에 들어갈 함수
@@ -680,8 +676,8 @@ class BookInfoViewController: UIViewController {
         let readingState = selectedStateButton?.title(for: .normal) ?? ""
         let bookFormat = selectedFormatButton?.title(for: .normal) ?? ""
         
-        guard let title = titleTextField.text, !title.isEmpty else {
-            print("제목필수 나중에 알럿 띄우기")
+        guard let title = titleTextField.text, !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            showAlert(title: "책 제목이 비어있습니다.", message: "제목을 입력하세요.")
             return
         }
         let author = authorTextField.text ?? ""
@@ -690,11 +686,27 @@ class BookInfoViewController: UIViewController {
         // 페이지 수
         let currentPage = Int32(pageTextField.text ?? "0") ?? 0
         let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
-
+        
+        let maxPageValue: Int32 = 999
+        
+        if totalPage > maxPageValue || currentPage > maxPageValue {
+            showAlert(title: "페이지 입력 오류", message: "페이지 수는 9,999페이지를 초과할 수 없습니다.")
+            return
+        }
+        
+        if totalPage > 0 && currentPage > totalPage {
+            showAlert(title: "페이지 입력 오류", message: "읽은 페이지가 전체 페이지보다 클 수 없습니다.")
+            return
+        }
+        
         let percentText = percentTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         let percent = Int32(percentText) ?? 0
+        if !percentText.isEmpty && (percent < 0 || percent > 100) {
+            showAlert(title: "진행률 입력 오류", message: "0부터 100 사이의 값만 입력할 수 있습니다.")
+            return
+        }
 
-        
+
         // 진행률 계산
         var progressValue: Float = 0.0
         var progressText: String = ""
@@ -733,13 +745,14 @@ class BookInfoViewController: UIViewController {
         
         // 코어 데이터 저장 및 수정 분기 -----------------------------------------
         var savedBook: Book?
+        let isPageMode = toggleButton.isPageMode
         
         if let existingUUID = self.bookUUID {
-            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
+            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
             )
         } else {
             let newUUID = UUID().uuidString
-            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
+            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
             )
         }
         
@@ -750,8 +763,6 @@ class BookInfoViewController: UIViewController {
                 if let detailVC = self.navigationController?.viewControllers.dropLast().last as? BookDetailViewController {
                     detailVC.book = saveBook
                     detailVC.hidesBottomBarWhenPushed = false
-                    detailVC.progressValue = progressValue
-                    detailVC.progressText = progressText
                     
                     detailVC.reloadBookDataAndDisplay()
                     
@@ -767,7 +778,7 @@ class BookInfoViewController: UIViewController {
             print("저장 실패. 알럿 처리필요")
         }
     }
-    
+    // MARK: 수정 모드 데이터 불러오기
     private func loadBookDataForEdit() {
         guard let uuid = self.bookUUID else {
             return
@@ -807,13 +818,7 @@ class BookInfoViewController: UIViewController {
         totalPageTextField.text = (book.totalPage > 0) ? String(book.totalPage) : nil
         percentTextField.text = (book.percent > 0) ? String(book.percent) : nil
         
-        if book.totalPage > 0 && book.currentPage > 0 {
-            toggleButton.isPageMode = true
-        } else if book.percent > 0 {
-            toggleButton.isPageMode = false
-        } else {
-            toggleButton.isPageMode = true
-        }
+        toggleButton.isPageMode = book.isPageMode
         
         handleToggleTap()
         

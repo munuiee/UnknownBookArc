@@ -124,19 +124,22 @@ class CoreDataManager {
     
     // 책 정보 저장 함수
     func bookCreate(
-        uuid: String,
-        title: String,
-        author: String?,
-        publisher: String?,
-        readingState: String?,
-        bookFormat: String?,
-        selectedTags: String?,
-        coverImage: Data?,
-        currentPage: Int32?,
-        totalPage: Int32?,
-        percent: Int32?,
-        startDate: Date?,
-        endDate: Date?
+
+            uuid: String,
+            title: String,
+            author: String?,
+            publisher: String?,
+            readingState: String?,
+            bookFormat: String?,
+            selectedTags: String?,
+            coverImage: Data?,
+            isPageMode: Bool,
+            currentPage: Int32,
+            totalPage: Int32,
+            percent: Int32,
+            startDate: Date?,
+            endDate: Date?
+
     ) -> Book? {
         guard let entity = NSEntityDescription.entity(forEntityName: "Book", in: context) else {
             print("Book엔티티를 찾을 수 없습니다.")
@@ -150,7 +153,8 @@ class CoreDataManager {
         newBook.setValue(readingState, forKey: "readingState")
         newBook.setValue(bookFormat, forKey: "bookFormat")
         newBook.setValue(selectedTags, forKey: "selectedTags")
-         newBook.setValue(coverImage, forKey: "coverImage")
+        newBook.setValue(coverImage, forKey: "coverImage")
+        newBook.setValue(isPageMode, forKey: "isPageMode")
         newBook.setValue(currentPage, forKey: "currentPage")
         newBook.setValue(totalPage, forKey: "totalPage")
         newBook.setValue(percent, forKey: "percent")
@@ -179,6 +183,7 @@ class CoreDataManager {
             bookFormat: String?,
             selectedTags: String?,
             coverImage: Data?,
+            isPageMode: Bool,
             currentPage: Int32?,
             totalPage: Int32?,
             percent: Int32?,
@@ -204,6 +209,7 @@ class CoreDataManager {
             bookToUpdate.setValue(bookFormat, forKey: "bookFormat")
             bookToUpdate.setValue(selectedTags, forKey: "selectedTags")
             bookToUpdate.setValue(coverImage, forKey: "coverImage")
+            bookToUpdate.setValue(isPageMode, forKey: "isPageMode")
             bookToUpdate.setValue(currentPage, forKey: "currentPage")
             bookToUpdate.setValue(totalPage, forKey: "totalPage")
             bookToUpdate.setValue(percent, forKey: "percent")
@@ -245,7 +251,7 @@ class CoreDataManager {
     // 책 정보 삭제
     func deleteBook(uuid: String, completion: @escaping (Bool) -> Void) {
         DispatchQueue.global().async { [weak self] in
-            guard let self = self else {
+            guard self != nil else {
                 completion(false)
                 return
             }
@@ -272,11 +278,8 @@ class CoreDataManager {
             completion(false)
             return
         }
-        
     }
     
-
-
     func fetchAllBooks() -> [Book] {
             let request: NSFetchRequest<Book> = Book.fetchRequest()
   
