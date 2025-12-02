@@ -166,20 +166,20 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         buttonView.backgroundColor = .white
         buttonView.layer.cornerRadius = 21
         buttonView.layer.masksToBounds = false
-
+        
         buttonView.layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
         buttonView.layer.shadowOpacity = 1
         buttonView.layer.shadowOffset = CGSize(width: 0, height: 8)
         buttonView.layer.shadowRadius = 32
-
+        
         buttonView.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(20)
             $0.top.equalToSuperview().offset(42)
             $0.width.height.equalTo(42)
         }
-
- 
-
+        
+        
+        
         
         let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         let image = UIImage(systemName: "arrow.up", withConfiguration: config)
@@ -204,12 +204,12 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             $0.trailing.equalTo(buttonView.snp.leading).offset(-8)
             $0.bottom.equalToSuperview().inset(42)
         }
-
+        
         
         let blurBackgroundView = UIView()
         blurBackgroundView.layer.cornerRadius = 10
         blurBackgroundView.clipsToBounds = true
-
+        
         inputContainer.addSubview(blurBackgroundView)
         blurBackgroundView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -219,7 +219,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         blurView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         // 블랙 10% 오버레이
         let dimView = UIView()
         dimView.backgroundColor = UIColor.black.withAlphaComponent(0.1)
@@ -227,23 +227,23 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         dimView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         let whiteContentView = UIView()
         whiteContentView.backgroundColor = .white
         whiteContentView.layer.cornerRadius = 10
         whiteContentView.layer.masksToBounds = true
-
+        
         inputContainer.addSubview(whiteContentView)
         whiteContentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         // 블러보다 위에 오게
         inputContainer.bringSubviewToFront(whiteContentView)
-
-
         
-     
+        
+        
+        
         [inputPage, separatorView, inputText].forEach { whiteContentView.addSubview($0) }
         
         inputPage.placeholder = "책의 페이지를 기록해 주세요"
@@ -282,7 +282,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             $0.bottom.equalToSuperview().inset(6)
         }
         
-
+        
         
         textPlaceholderLabel.text = "내용을 입력하세요."
         textPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
@@ -341,6 +341,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         inputText.text = ""
         textPlaceholderLabel.isHidden = false
         inputText.resignFirstResponder()
+        
+        textViewDidChange(inputText)
     }
     
     // 단일섹션의 경우
@@ -374,7 +376,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         return true
     }
     
- 
+    
 }
 
 extension MomentViewController: UICollectionViewDelegate, UICollectionViewDataSource {
@@ -455,17 +457,16 @@ extension MomentViewController: UITextViewDelegate {
         textPlaceholderLabel.isHidden = !textView.text.isEmpty
         
         let isEmpty = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-             
-             if isEmpty {
-                 // 입력 없음
-                 buttonView.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
-                 sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
-
-             } else {
-                 // 입력 있음
-                 buttonView.backgroundColor = .primaryColor
-                 sendButton.tintColor = .white
-
-             }
+        
+        if isEmpty {
+            // 입력 없음
+            buttonView.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
+            sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
+            
+        } else {
+            // 입력 있음
+            buttonView.backgroundColor = .primaryColor
+            sendButton.tintColor = .white
+        }
     }
 }

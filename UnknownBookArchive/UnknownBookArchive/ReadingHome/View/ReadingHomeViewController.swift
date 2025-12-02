@@ -563,6 +563,7 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
             
             cell.onJournalButtonTapped = { [weak self] in
                 let vc = JournalViewController(book: book)
+                vc.hidesBottomBarWhenPushed = true
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
             return cell
