@@ -125,7 +125,7 @@ class BookSearchViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        // 상태에 따라 UI 업데이트
+        // MARK: 상태에 따라 UI 업데이트
         Observable.combineLatest(viewModel.viewState, viewModel.bookList) { state, items in
             return (state, items)
         }
@@ -187,11 +187,18 @@ class BookSearchViewController: UIViewController {
                 }
             })
                 .disposed(by: disposeBag)
+        // 테이블 뷰 선택 애니메이션
+        tableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                self?.tableView.deselectRow(at: indexPath, animated: true)
+            })
+            .disposed(by: disposeBag)
         
         // 테이블 뷰 셀 선택
         tableView.rx.modelSelected(BookItem.self)
             .bind(to: viewModel.selectedBookItem)
             .disposed(by: disposeBag)
+        
         // 책 선택 후 화면 이동 및 데이터 전달
         viewModel.selectedBookItem
             .subscribe(onNext: { [weak self] bookItem in
@@ -205,6 +212,40 @@ class BookSearchViewController: UIViewController {
                 self.navigationController?.pushViewController(bookInfoVC, animated: true)
             })
             .disposed(by: disposeBag)
+        
+        // MARK: 페이지네이션
+        // 스크롤 위치 감지
+        tableView.rx.contentOffset
+            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
+            .map { [weak self] _ -> Bool in
+                guard let self = self else { return false }
+                let offsetY = self.tableView.contentOffset.y
+                let contentHeight = self.tableView.contentSize.height
+                let frameHeight = self.tableView.frame.height
+                let isNearBottom = offsetY > contentHeight - frameHeight - 100
+                return isNearBottom
+            }
+            // 스크롤 조건 검사
+            .withLatestFrom(viewModel.isLoading.asObservable()) { isNearBottom, isLoading in
+                return isNearBottom && !isLoading
+            }
+            .withLatestFrom(viewModel.canLoadMore.asObservable()) { shouldLoad, canLoadMore in
+                return shouldLoad && canLoadMore
+            }
+            // 페이지네이션 검색 요청
+            .filter { $0 }
+            .map { [weak self] _ -> (query: String, page: Int) in
+                let nextPageIndex = (self?.viewModel.currentPage.value ?? 0) + 1
+                self?.viewModel.currentPage.accept(nextPageIndex)
+                return (query: self?.currentQuery ?? "", page: nextPageIndex)
+            }
+            .subscribe(onNext: { [weak self] request in
+                guard let self = self else { return }
+                print("다음 페이지 로드 요청: \(request.page)페이지")
+                self.viewModel.search(query: request.query, page: request.page)
+            })
+            .disposed(by: disposeBag)
+
         }
     
     // MARK: 검색 전, 검색 실패 시 화면

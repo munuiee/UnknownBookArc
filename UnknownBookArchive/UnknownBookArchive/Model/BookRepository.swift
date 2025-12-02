@@ -17,7 +17,7 @@ class BookRepository {
         if self.apiKey.isEmpty {
         }
     }
-    func searchBooks(query: String) -> Single<[BookItem]> {
+    func searchBooks(query: String, page: Int) -> Single<[BookItem]> {
         guard let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed),
               let url = URL(string: "https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=\(apiKey)&Query=\(encodedQuery)&QueryType=Title&MaxResults=10&start=1&SearchTarget=Book&output=js&Version=20131101")
         else {
