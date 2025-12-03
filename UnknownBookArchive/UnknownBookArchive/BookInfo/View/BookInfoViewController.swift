@@ -700,7 +700,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         let currentPage = Int32(pageTextField.text ?? "0") ?? 0
         let totalPage = Int32(totalPageTextField.text ?? "0") ?? 0
         
-        let maxPageValue: Int32 = 999
+        let maxPageValue: Int32 = 9999
         
         if totalPage > maxPageValue || currentPage > maxPageValue {
             showAlert(title: "페이지 입력 오류", message: "페이지 수는 9,999페이지를 초과할 수 없습니다.")

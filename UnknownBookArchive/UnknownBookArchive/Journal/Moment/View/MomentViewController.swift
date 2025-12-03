@@ -15,7 +15,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
     private let inputContainer = UIView()
     private let separatorView = UIView()
     private let textPlaceholderLabel = UILabel()
-    
+    private let maxTextViewHeight: CGFloat = 132
     private lazy var collectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: makeLayout()
@@ -69,18 +69,25 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             if let text = moments.momentText {
                 textPlaceholderLabel.isHidden = !text.isEmpty
             }
+        } else {
+            inputText.text = ""
+            textViewDidChange(inputText)
         }
-
+        
         
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
- 
-
-    // MARK: - CollectionView 세팅
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        textViewDidChange(inputText)
+    }
+    
+    
+    // MARK: - CollectionView 세팅
     private func collectionSet() {
         view.addSubview(collectionView)
         collectionView.delegate = self
@@ -160,8 +167,10 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         chatView.backgroundColor = .white
         chatView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.snp.bottom).constraint
             chatViewBottomConstraint = $0.bottom.equalTo(view.snp.bottom).constraint
-            $0.height.equalTo(126)
+            // $0.height.equalTo(126)
+            
         }
         
         buttonView.backgroundColor = .white
@@ -199,7 +208,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         inputContainer.layer.shadowRadius = 32
         inputContainer.snp.makeConstraints {
             $0.width.equalTo(285)
-            $0.height.equalTo(76)
+            $0.height.greaterThanOrEqualTo(76)
+            $0.height.lessThanOrEqualTo(172) // 132 + 40 (대략)
             $0.top.equalToSuperview().inset(8)
             $0.leading.equalToSuperview().inset(20)
             $0.trailing.equalTo(buttonView.snp.leading).offset(-8)
@@ -275,12 +285,14 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         inputText.delegate = self
         inputText.backgroundColor = .white
         inputText.font = UIFont.regularFont(ofSize: 14)
-        inputText.isScrollEnabled = false
+        inputText.isScrollEnabled = true
         inputText.textContainerInset = UIEdgeInsets(top: 4, left: 4, bottom: 6, right: 4)
+        
         inputText.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview().inset(8)
             $0.bottom.equalToSuperview().inset(6)
+            $0.height.lessThanOrEqualTo(150)
         }
         
         
@@ -463,11 +475,21 @@ extension MomentViewController: UITextViewDelegate {
             // 입력 없음
             buttonView.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
             sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
-            
         } else {
             // 입력 있음
             buttonView.backgroundColor = .primaryColor
             sendButton.tintColor = .white
+        }
+        
+        let contentHeight = textView.contentSize.height
+        if contentHeight > maxTextViewHeight {
+            textView.isScrollEnabled = true
+        } else {
+            textView.isScrollEnabled = false
+        }
+        
+        UIView.animate(withDuration: 0.1) {
+            self.view.layoutIfNeeded()
         }
     }
 }

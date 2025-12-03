@@ -73,13 +73,26 @@ final class JournalEditViewController: UIViewController {
             object: nil
         )
         navigationController?.interactivePopGestureRecognizer?.delegate = nil
-
+        
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-
+    
+    private var didSetInitialHeight = false
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        guard !didSetInitialHeight else { return }
+        didSetInitialHeight = true
+        
+        let safeHeight = view.safeAreaLayoutGuide.layoutFrame.height
+        let expandedHeight = min(512, safeHeight - 40)
+        
+        mainFieldHeightConstraint?.update(offset: expandedHeight)
+    }
     
     
     // MARK: UI 설정
@@ -97,16 +110,16 @@ final class JournalEditViewController: UIViewController {
         let enabledImage = UIImage(named: "saveButton")?.withRenderingMode(.alwaysOriginal)
         let disabledImage = UIImage(named: "unSaveButton")?
             .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-
+        
         // 상태별 이미지 설정
         saveButton.setImage(enabledImage, for: .normal)
         saveButton.setImage(disabledImage, for: .disabled)
         saveButton.backgroundColor = .clear
-
+        
         // 초기 상태 비활성화
         saveButton.isEnabled = false
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
-
+        
         mainLabel.text = "문단 수집"
         mainLabel.font = UIFont.semiBoldFont(ofSize: 18)
         
@@ -186,7 +199,7 @@ final class JournalEditViewController: UIViewController {
         mainField.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(pageField.snp.bottom).offset(24)
-            mainFieldHeightConstraint = $0.height.equalTo(512).constraint
+            mainFieldHeightConstraint = $0.height.equalTo(0).constraint   // ← 512 제거
         }
     }
     
@@ -197,7 +210,7 @@ final class JournalEditViewController: UIViewController {
         }
         return true
     }
-
+    
     
     // 뒤로가기 버튼 예외처리
     @objc private func didTapBackButton() {
@@ -223,23 +236,26 @@ final class JournalEditViewController: UIViewController {
             let duration = userInfo[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval,
             let curveValue = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
-
+        
         let keyboardFrame = frameValue.cgRectValue
         let keyboardInView = view.convert(keyboardFrame, from: nil)
-
+        
         // 키보드가 화면 안에 얼마나 들어와 있는지 계산
         let safeBottom = view.safeAreaInsets.bottom
         let overlap = max(0, view.bounds.height - keyboardInView.origin.y - safeBottom)
-
+        
         let isKeyboardVisible = overlap > 0
-
-        let expandedHeight: CGFloat = 512   // 키보드 없을 때
-        let collapsedHeight: CGFloat = 318  // 키보드 있을 때
-
+        
+        let safeHeight = view.safeAreaLayoutGuide.layoutFrame.height
+        let expandedHeight = safeHeight * 0.45
+        
+        let heightWhenKeyboard = safeHeight - overlap
+        let collapsedHeight = max(heightWhenKeyboard * 0.45, 200)
+        
         mainFieldHeightConstraint?.update(offset: isKeyboardVisible ? collapsedHeight : expandedHeight)
-
+        
         let options = UIView.AnimationOptions(rawValue: curveValue << 16)
-
+        
         UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.view.layoutIfNeeded()
         }
@@ -316,6 +332,6 @@ extension JournalEditViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-          textField.layer.borderWidth = 0
-      }
+        textField.layer.borderWidth = 0
+    }
 }
