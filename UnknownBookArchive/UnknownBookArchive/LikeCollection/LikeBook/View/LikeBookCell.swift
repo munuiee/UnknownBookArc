@@ -31,9 +31,10 @@ final class LikeBookCell: UICollectionViewCell {
         
         contentView.addSubview(imageView)
         
-        imageView.image = UIImage(systemName: "book")
+        // imageView.image = UIImage(systemName: "book")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
+        imageView.backgroundColor = UIColor.colorFAFAFA
         imageView.layer.cornerRadius = 8
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -41,13 +42,18 @@ final class LikeBookCell: UICollectionViewCell {
     }
     
     func configure(with book: Book) {
-        imageView.image = UIImage(systemName: "book")
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        imageView.preferredSymbolConfiguration = config
+        imageView.tintColor = UIColor.colorE6E6E6
+        imageView.contentMode = .center    // 아이콘 중앙 배치
 
-           // 그 다음 커버 이미지가 있으면 덮어쓰기
-           if let data = book.coverImage,
-              let image = UIImage(data: data) {
-               imageView.image = image
-           }
+        imageView.image = UIImage(systemName: "book.closed.fill")
+
+        if let data = book.coverImage,
+           let image = UIImage(data: data) {
+            imageView.image = image
+            imageView.contentMode = .scaleAspectFill   // 실제 커버 이미지 들어오면 다시 fill
+        }
     }
     
     
