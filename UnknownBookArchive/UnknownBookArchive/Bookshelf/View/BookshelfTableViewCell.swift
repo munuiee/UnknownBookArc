@@ -1,9 +1,4 @@
-//
-//  BookshelfTableViewCell.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/25/25.
-//
+// MARK: 책장 테이블뷰셀
 
 import UIKit
 import SnapKit
@@ -33,9 +28,9 @@ final class BookshelfTableViewCell: UITableViewCell {
     private let cardView: UIView = {
             let view = UIView()
             view.backgroundColor = .white
-            view.layer.cornerRadius = 12
+            view.layer.cornerRadius = 8
             view.layer.borderWidth = 1
-            view.layer.borderColor = UIColor.systemGray5.cgColor
+            view.layer.borderColor = UIColor.colorF7F8FD.cgColor
             return view
         }()
 
@@ -44,6 +39,8 @@ final class BookshelfTableViewCell: UITableViewCell {
         let iv = UIImageView()
         iv.backgroundColor = UIColor(white: 0.9, alpha: 1)
         iv.layer.cornerRadius = 8
+        iv.layer.borderWidth = 1
+        iv.layer.borderColor = UIColor.colorF7F8FD.cgColor
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFill
         return iv
@@ -52,8 +49,8 @@ final class BookshelfTableViewCell: UITableViewCell {
     // 제목
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 15)
-        label.textColor = .black
+        label.font = .semiBoldFont(ofSize: 18)
+        label.textColor = .color0B142D
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -62,8 +59,8 @@ final class BookshelfTableViewCell: UITableViewCell {
     // 저자
     private let authorLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 13)
-        label.textColor = .darkGray
+        label.font = .mediumFont(ofSize: 14)
+        label.textColor = .color817E7E
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -72,10 +69,10 @@ final class BookshelfTableViewCell: UITableViewCell {
     // 독서 상태 라벨
     private let stateLabel: PaddingLabel = {
         let label = PaddingLabel()
-        label.inset = UIEdgeInsets(top: 4, left: 10, bottom: 4, right: 10)
-        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.inset = UIEdgeInsets(top: 4, left: 11.5, bottom: 4, right: 11.5)
+        label.font = .mediumFont(ofSize: 12)
         label.textAlignment = .center
-        label.layer.cornerRadius = 6
+        label.layer.cornerRadius = 8
         label.clipsToBounds = true
         label.textColor = .stateSeletedTextColor
         return label
@@ -108,17 +105,17 @@ final class BookshelfTableViewCell: UITableViewCell {
         }
 
         thumbnailImageView.snp.makeConstraints {
-            $0.top.equalTo(cardView).offset(12)
-            $0.leading.equalTo(cardView).offset(12)
-            $0.width.equalTo(70)
-            $0.height.equalTo(104)
-            $0.bottom.lessThanOrEqualTo(cardView).inset(12)
+            $0.top.equalTo(cardView).offset(8)
+            $0.leading.equalTo(cardView).offset(8)
+            $0.width.equalTo(73)
+            $0.height.equalTo(108)
+            $0.bottom.lessThanOrEqualTo(cardView).inset(8)
         }
 
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(thumbnailImageView.snp.top)
-            $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
-            $0.trailing.equalTo(cardView).inset(12)
+            $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(8)
+            $0.trailing.equalTo(cardView).inset(8)
         }
 
         authorLabel.snp.makeConstraints {
@@ -127,8 +124,11 @@ final class BookshelfTableViewCell: UITableViewCell {
         }
 
         stateLabel.snp.makeConstraints {
-            $0.top.equalTo(authorLabel.snp.bottom).offset(42)
+            $0.top.equalTo(authorLabel.snp.bottom).offset(32)
             $0.leading.equalTo(authorLabel)
+            $0.width.equalTo(58)
+            $0.height.equalTo(24)
+            $0.bottom.equalToSuperview().offset(-8)
         }
     }
 
@@ -150,13 +150,17 @@ final class BookshelfTableViewCell: UITableViewCell {
             
             switch state {
             case "읽는 중":
-                stateLabel.backgroundColor = .readingSelected
+                stateLabel.backgroundColor = .colorD9E8E0
+                stateLabel.textColor = .color375846
             case "중단":
-                stateLabel.backgroundColor = .pausedSelected
+                stateLabel.backgroundColor = .colorFEDCDD
+                stateLabel.textColor = .colorA40509
             case "완독":
-                stateLabel.backgroundColor = .finishedSelected
+                stateLabel.backgroundColor = .colorDAE1F6
+                stateLabel.textColor = .color1F387F
             case "읽을 예정":
-                stateLabel.backgroundColor = .scheduledSelected
+                stateLabel.backgroundColor = .colorFBF0CB
+                stateLabel.textColor = .colorB9920E
             default:
                 stateLabel.backgroundColor = UIColor.systemGray4
             }

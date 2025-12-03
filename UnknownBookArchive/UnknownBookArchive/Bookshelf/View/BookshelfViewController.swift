@@ -1,10 +1,4 @@
-//
-//  BookshelfView.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/21/25.
-//
-
+// MARK: 책장 뷰컨트롤러
 
 import UIKit
 import SnapKit
@@ -43,16 +37,16 @@ final class BookshelfViewController: UIViewController {
     // 검색창
     private lazy var searchTextField: UITextField = {
         let tf = UITextField()
-        tf.backgroundColor = UIColor(white: 0.95, alpha: 1)
+        tf.backgroundColor = UIColor.colorFAFAFA
         tf.layer.cornerRadius = 12
-        tf.font = .systemFont(ofSize: 14)
+        tf.font = .regularFont(ofSize: 16)
         tf.borderStyle = .none
 
         tf.attributedPlaceholder = NSAttributedString(
             string: "책 제목 검색",
             attributes: [
-                .foregroundColor: UIColor.darkGray,
-                .font: UIFont.systemFont(ofSize: 14)
+                .foregroundColor: UIColor.colorB4B2B2,
+                .font: UIFont.regularFont(ofSize: 16)
             ]
         )
 
@@ -60,7 +54,7 @@ final class BookshelfViewController: UIViewController {
         let left = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 34))
         let icon = UIImageView(image: UIImage(systemName: "magnifyingglass"))
         icon.frame = CGRect(x: 10, y: 8, width: 18, height: 18)
-        icon.tintColor = .darkGray
+        icon.tintColor = .color676565
         left.addSubview(icon)
         tf.leftView = left
         tf.leftViewMode = .always
@@ -103,13 +97,18 @@ final class BookshelfViewController: UIViewController {
 
         let sv = UIStackView()
         sv.axis = .horizontal
-        sv.spacing = 10
+        sv.spacing = 8
 
         // 카테고리 버튼 디자인
         categories.enumerated().forEach { index, title in
             var config = UIButton.Configuration.bordered()
             config.title = title
-            config.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)
+            var attributed = AttributedString(title)
+            attributed.font = UIFont.mediumFont(ofSize: 14)
+
+            config.attributedTitle = attributed
+            
+            config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8)
             config.baseForegroundColor = .black
             config.cornerStyle = .medium
             
@@ -118,8 +117,13 @@ final class BookshelfViewController: UIViewController {
             
             btn.layer.cornerRadius = 8
             btn.layer.borderWidth = 1
-            btn.layer.borderColor = UIColor.systemGray5.cgColor
+            btn.layer.borderColor = UIColor.colorE6E6E6.cgColor
             btn.clipsToBounds = true
+            btn.translatesAutoresizingMaskIntoConstraints = false
+            btn.heightAnchor.constraint(equalToConstant: 32).isActive = true
+            btn.widthAnchor.constraint(greaterThanOrEqualToConstant: 61).isActive = true
+
+            
             
             btn.configurationUpdateHandler = { [weak self] button in
                 guard let self = self else { return }
@@ -127,14 +131,14 @@ final class BookshelfViewController: UIViewController {
 
                 if isSelected {
                     // 선택됨
-                    button.configuration?.baseBackgroundColor = UIColor(red: 0.90, green: 0.95, blue: 1.0, alpha: 1)
-                    button.configuration?.baseForegroundColor = UIColor.systemBlue
-                    button.layer.borderColor = UIColor.systemBlue.cgColor
+                    button.configuration?.baseBackgroundColor = UIColor.colorF7F8FD
+                    button.configuration?.baseForegroundColor = UIColor.color365DCE
+                    button.layer.borderColor = UIColor.color889FE2.cgColor
                 } else {
                     // 비선택
                     button.configuration?.baseBackgroundColor = .white
-                    button.configuration?.baseForegroundColor = .systemGray
-                    button.layer.borderColor = UIColor.systemGray5.cgColor
+                    button.configuration?.baseForegroundColor = .colorB4B2B2
+                    button.layer.borderColor = UIColor.colorE6E6E6.cgColor
                 }
             }
 
@@ -224,6 +228,8 @@ final class BookshelfViewController: UIViewController {
 //            $0.trailing.equalToSuperview().inset(20)
 //            $0.width.height.equalTo(24)
 //        }
+        
+        
 
         searchTextField.snp.makeConstraints {
             $0.top.equalTo(topBarView.snp.bottom).offset(10)
@@ -242,7 +248,7 @@ final class BookshelfViewController: UIViewController {
         }
 
         tableView.snp.makeConstraints {
-            $0.top.equalTo(categoryScrollView.snp.bottom).offset(12)
+            $0.top.equalTo(categoryScrollView.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }

@@ -87,9 +87,13 @@ extension UIColor {
     static let colorFBF0CB = UIColor(red: 0.984, green: 0.941, blue: 0.796, alpha: 1.0)
     static let colorB9920E = UIColor(red: 0.725, green: 0.573, blue: 0.055, alpha: 1.0)
 
-    // 기본 글자색
+    // 글자색
     static let color1A1919 = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 1.0)
+    static let color365DCE = UIColor(red: 54/255, green: 93/255, blue: 206/255, alpha: 1)
 
+    static let color889FE2 = UIColor(red: 136/255, green: 159/255, blue: 226/255, alpha: 1.0)
+    
+    static let color817E7E = UIColor(red: 129/255, green: 126/255, blue: 126/255, alpha: 1)
 
 
 }

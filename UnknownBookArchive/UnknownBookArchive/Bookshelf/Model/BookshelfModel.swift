@@ -1,9 +1,4 @@
-//
-//  BookshelfModel.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/24/25.
-//
+// MARK: 책장 Model
 
 import Foundation
 import UIKit
