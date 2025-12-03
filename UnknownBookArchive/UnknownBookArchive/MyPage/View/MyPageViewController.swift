@@ -1,16 +1,37 @@
-//
-//  MyPageViewController.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/21/25.
-//
+// MARK: 마이페이지
 
 import UIKit
+import SnapKit
 
 class MyPageViewController: UIViewController {
+    
+    private let myPageTitle = UILabel()
+    private let topView = UIView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        title = "마이페이지"
+        setupUI()
     }
+    
+    private func setupUI() {
+        myPageTitle.text = "마이페이지"
+        myPageTitle.font = UIFont.semiBoldFont(ofSize: 18)
+        
+        view.addSubview(topView)
+        topView.addSubview(myPageTitle)
+        
+        topView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(60)
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        myPageTitle.snp.makeConstraints {
+            $0.center.equalToSuperview()
+            $0.height.equalTo(32)
+        }
+        
+
+    }
+    
 }

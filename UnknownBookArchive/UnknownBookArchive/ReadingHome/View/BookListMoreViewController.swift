@@ -1,9 +1,4 @@
-//
-//  BookListMoreViewController.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 12/2/25.
-//
+// MARK: 메인화면 더보기 페이지
 
 import UIKit
 import SnapKit
@@ -93,7 +88,7 @@ final class BookListMoreViewController: UIViewController {
         
         // 타이틀
         titleLabel.text = listTitle
-        titleLabel.font = .boldSystemFont(ofSize: 22)
+        titleLabel.font = UIFont.semiBoldFont(ofSize: 18)
         titleLabel.textAlignment = .center
         titleLabel.textColor = .black
         

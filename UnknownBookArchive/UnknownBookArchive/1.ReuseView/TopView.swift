@@ -17,8 +17,8 @@ class TopView: UIView {
     
     private let mainLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
-        label.font = .systemFont(ofSize: 18, weight: .semibold)
+        label.textColor = .color1A1919
+        label.font = UIFont.semiBoldFont(ofSize: 18)
         return label
     }()
     lazy var rightButton: UIButton = {

@@ -1,7 +1,9 @@
+// MARK: 좋아요 한 책 임시 모델
+
 import Foundation
 
 struct LikeBooks {
-    let id = UUID() 
+    let id = UUID()
     let thumbnailURL: String
 }
 

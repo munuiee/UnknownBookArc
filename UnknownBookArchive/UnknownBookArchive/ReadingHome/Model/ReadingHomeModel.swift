@@ -1,9 +1,4 @@
-//
-//  ReadingHomeModel.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/20/25.
-//
+// MARK: 메인화면 데이터 담는 코드
 
 import Foundation
 

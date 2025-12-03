@@ -1,9 +1,4 @@
-//
-//  CurrentReadingCell.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 12/1/25.
-//
+// MARK: 현재 읽는 책 컬렉션뷰셀
 
 import UIKit
 import SnapKit
@@ -60,25 +55,25 @@ final class CurrentReadingCell: UICollectionViewCell {
         thumbnailImageView.layer.borderColor = UIColor.systemGray4.cgColor
         
         // 제목
-        titleLabel.font = .boldSystemFont(ofSize: 16)
+        titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .black
+        titleLabel.textColor = UIColor.color0B142D
         
         // 지은이
-        authorLabel.font = .systemFont(ofSize: 14)
-        authorLabel.textColor = .gray
+        authorLabel.font = UIFont.mediumFont(ofSize: 12)
+        authorLabel.textColor = UIColor.colorCDCBCB
         
         // 날짜
-        dateLabel.font = .systemFont(ofSize: 13)
-        dateLabel.textColor = .lightGray
+        dateLabel.font = UIFont.mediumFont(ofSize: 12)
+        dateLabel.textColor = UIColor.colorB4B2B2
         
         // 퍼센트
-        percentLabel.font = .boldSystemFont(ofSize: 14)
-        percentLabel.textColor = .addBookButtonColor
+        percentLabel.font = UIFont.boldFont(ofSize: 12)
+        percentLabel.textColor = UIColor.color1F387F
         
         // 진행률 바
-        progressBar.trackTintColor = .systemGray5
-        progressBar.progressTintColor = .addBookButtonColor
+        progressBar.trackTintColor = UIColor.colorE6E6E6
+        progressBar.progressTintColor = UIColor.color152555
         progressBar.layer.cornerRadius = 2
         progressBar.clipsToBounds = true
         
@@ -86,8 +81,8 @@ final class CurrentReadingCell: UICollectionViewCell {
         journalButton.setTitle("저널 보기", for: .normal)
         journalButton.backgroundColor = .readinHomeBannerColor
         journalButton.setTitleColor(.black, for: .normal)
-        journalButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        journalButton.layer.cornerRadius = 8
+        journalButton.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
+        journalButton.layer.cornerRadius = 4
         journalButton.addTarget(self, action: #selector(didTapJournal), for: .touchUpInside)
     }
     
@@ -116,28 +111,28 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         // 제목
         titleLabel.snp.makeConstraints {
-            $0.top.equalTo(thumbnailImageView)
+            $0.top.equalToSuperview().offset(23)
             $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
             $0.trailing.equalToSuperview().inset(16)
         }
         
         // 작가
         authorLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(6)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel)
             $0.trailing.equalToSuperview().inset(16)
         }
         
         // 날짜 + 진행률
         dateInfoStack.snp.makeConstraints {
-            $0.top.equalTo(authorLabel.snp.bottom).offset(10)
+            $0.top.equalTo(authorLabel.snp.bottom).offset(16)
             $0.leading.equalTo(titleLabel)
             $0.trailing.equalToSuperview().inset(16)
         }
         
         // 진행률 바
         progressBar.snp.makeConstraints {
-            $0.top.equalTo(dateInfoStack.snp.bottom).offset(10)
+            $0.top.equalTo(dateInfoStack.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel)
             $0.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(6)

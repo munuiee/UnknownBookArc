@@ -1,9 +1,4 @@
-//
-//  Thumbnail.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 12/1/25.
-//
+// MARK: 메인화면 컬렉션뷰셀
 
 import UIKit
 import SnapKit

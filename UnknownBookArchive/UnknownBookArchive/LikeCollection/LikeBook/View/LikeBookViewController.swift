@@ -1,3 +1,5 @@
+// MARK: 좋아요 한 책 페이지
+
 import Foundation
 import SnapKit
 import UIKit
@@ -23,7 +25,13 @@ final class LikeBookViewController: UIViewController {
         viewModel.fetchLikeBooks()
         collectionView.reloadData()
     }
-    
+    func scrollToTop() {
+        collectionView.setContentOffset(
+            CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
+            animated: true
+        )
+    }
+
     
     private func makeLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/3.0), heightDimension: .fractionalHeight(1))
@@ -54,7 +62,7 @@ final class LikeBookViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
-        collectionView.backgroundColor = UIColor(named: "backgroundColor")
+        collectionView.backgroundColor = .white
         collectionView.register(LikeBookCell.self, forCellWithReuseIdentifier: LikeBookCell.id)
         collectionView.delegate = self
         collectionView.dataSource = self

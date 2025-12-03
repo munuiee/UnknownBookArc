@@ -1,19 +1,16 @@
-//
-//  TabBarController.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/21/25.
-//
+// MARK: 하단 탭바
 
 import UIKit
 
-class TabBarController: UITabBarController {
+class TabBarController: UITabBarController, UITabBarControllerDelegate {
+    private var lastSelectedIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setValue(CustomTabBar(), forKey: "tabBar")
         setupTabs()
         setupTabBarAppearance()
+        delegate = self
     }
     
     private func setupTabBarAppearance() {
@@ -23,10 +20,10 @@ class TabBarController: UITabBarController {
         appearance.shadowColor = .clear
         tabBar.standardAppearance = appearance
         
-
+        
         // 색상 설정
         let normal = appearance.stackedLayoutAppearance.normal
-        normal.titleTextAttributes = [.foregroundColor: UIColor.normalColor]
+        normal.titleTextAttributes = [.foregroundColor: UIColor.colorCDCBCB]
         
         let selected = appearance.stackedLayoutAppearance.selected
         selected.titleTextAttributes = [.foregroundColor: UIColor.primaryColor]
@@ -35,7 +32,7 @@ class TabBarController: UITabBarController {
         tabBar.scrollEdgeAppearance = appearance
         
         tabBar.tintColor = .primaryColor
-        tabBar.unselectedItemTintColor = .normalColor
+        tabBar.unselectedItemTintColor = .colorCDCBCB
         
         if #available(iOS 15.0, *) {
             tabBar.scrollEdgeAppearance = appearance
@@ -65,5 +62,23 @@ class TabBarController: UITabBarController {
         self.viewControllers = [home, bookshelf, like, mypage]
     }
     
-    
+    // 홈 화면 한 번 더 클릭해서 스크롤 올리기
+    func tabBarController(_ tabBarController: UITabBarController,
+                          didSelect viewController: UIViewController) {
+        
+        if selectedIndex == lastSelectedIndex {
+            if let nav = viewController as? UINavigationController,
+               let homeVC = nav.viewControllers.first as? ReadingHomeViewController {
+                homeVC.scrollToTop()
+            }
+            
+            if let nav = viewController as? UINavigationController,
+               let vc = nav.viewControllers.first as? BookshelfViewController {
+                vc.scrollToTop()
+            }
+            
+        }
+        
+        lastSelectedIndex = selectedIndex
+    }
 }

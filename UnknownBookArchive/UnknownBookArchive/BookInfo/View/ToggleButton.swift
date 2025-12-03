@@ -1,3 +1,5 @@
+// MARK: 퍼센트/페이지 토글 버튼
+
 import UIKit
 import SnapKit
 
@@ -13,13 +15,13 @@ class ToggleButton: UIControl {
     private let pLable: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 15)
+        label.font = UIFont.regularFont(ofSize: 15)
         return label
     }()
     private let percentLable: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 15)
+        label.font = UIFont.regularFont(ofSize: 15)
         return label
     }()
     var isPageMode: Bool = true {

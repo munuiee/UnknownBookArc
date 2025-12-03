@@ -1,4 +1,4 @@
-// MARK: - 찰나의 기록 리스트 화면 ViewModel
+// MARK: 찰나의 기록 리스트 화면 ViewModel
 
 import Foundation
 import CoreData

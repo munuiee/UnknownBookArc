@@ -1,4 +1,4 @@
-// MARK: - 좋아요 한 문단 수집 섹션
+// MARK: 좋아요 한 문단 수집 섹션
 
 import Foundation
 import SnapKit
@@ -52,13 +52,13 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         [infoStack, authorLabel].forEach { topStack.addArrangedSubview($0)}
         
         
-        titleLabel.font = .systemFont(ofSize: 14, weight: .semibold)
-        titleLabel.textColor = UIColor.bookTitleColor
+        titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
+        titleLabel.textColor = UIColor.color676565
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
         }
         
-        authorLabel.font = .systemFont(ofSize: 12, weight: .medium)
+        authorLabel.font = UIFont.mediumFont(ofSize: 12)
         authorLabel.textColor = UIColor.colorB4B2B2
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
@@ -114,7 +114,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         bottomStack.axis = .horizontal
         bottomStack.distribution = .equalSpacing
         
-        dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        dateLabel.font = UIFont.regularFont(ofSize: 12)
         dateLabel.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
         
         
@@ -154,14 +154,13 @@ final class LikeParagraphCardCell: UICollectionViewCell {
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(1)
         }
-        pageLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        pageLabel.font = UIFont.mediumFont(ofSize: 14)
         pageLabel.textColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
         pageLabel.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(16)
         }
         sententceLabel.textColor = UIColor(red: 0.101, green: 0.099, blue: 0.099, alpha: 1)
-        // sententceLabel.font = .systemFont(ofSize: 14, weight: .regular)
         sententceLabel.numberOfLines = 0
         sententceLabel.lineBreakMode = .byWordWrapping
         sententceLabel.textColor = UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1.0)
@@ -211,7 +210,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         }
         
         
-        let font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        let font = UIFont.regularFont(ofSize: 14)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.minimumLineHeight = 21.7

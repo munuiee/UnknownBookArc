@@ -1,3 +1,5 @@
+// MARK: 책 검색화면
+
 import UIKit
 import SnapKit
 import RxSwift
@@ -24,8 +26,8 @@ class BookSearchViewController: UIViewController {
         sb.searchTextField.leftView?.tintColor = .gray
         sb.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "책 제목, 저자를 검색하세요",
-            attributes: [NSAttributedString.Key.foregroundColor : UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)])
-        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1), renderingMode: .alwaysOriginal) {
+            attributes: [NSAttributedString.Key.foregroundColor : UIColor.colorB4B2B2])
+        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(UIColor.colorB4B2B2, renderingMode: .alwaysOriginal) {
             sb.setImage(clearImage, for: .clear, state: .normal)
         }
             return sb
@@ -46,6 +48,8 @@ class BookSearchViewController: UIViewController {
         setConstraints()
         bind()
         keyboardDismiss()
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -255,7 +259,8 @@ class BookSearchViewController: UIViewController {
 
         let label = UILabel()
         label.text = message
-        label.textColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1)
+        label.textColor = UIColor.color676565
+        label.font = UIFont.mediumFont(ofSize: 16)
         label.textAlignment = .center
         label.textAlignment = isLeadingAlignment ? .left : .center
         containerView.addSubview(label)
@@ -276,7 +281,7 @@ class BookSearchViewController: UIViewController {
             button.backgroundColor = .primaryColor
             button.setTitle("직접 책 추가하기", for: .normal)
             button.setTitleColor(.white, for: .normal)
-            button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+            button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
             button.layer.cornerRadius = 8
             
             containerView.addSubview(button)

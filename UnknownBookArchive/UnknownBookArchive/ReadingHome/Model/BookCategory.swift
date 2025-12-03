@@ -1,9 +1,4 @@
-//
-//  BookCategory.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/27/25.
-//
+// MARK: 메인화면 섹션 분기
 
 import Foundation
 

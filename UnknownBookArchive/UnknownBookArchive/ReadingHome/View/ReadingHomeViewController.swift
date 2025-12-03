@@ -1,9 +1,4 @@
-//
-//  ReadingHomeViewController.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 11/20/25.
-//
+// MARK: 메인화면
 
 import UIKit
 import SnapKit
@@ -76,6 +71,18 @@ final class ReadingHomeViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
+        // 스크롤시 네비게이션바 뜨는 현상 제거
+        if let navBar = navigationController?.navigationBar {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithOpaqueBackground()
+            appearance.backgroundColor = .systemBackground
+            appearance.shadowColor = .clear
+            
+            navBar.standardAppearance = appearance
+            navBar.scrollEdgeAppearance = appearance
+            navBar.compactAppearance = appearance
+        }
+
         scrollView.contentInset.bottom = 20
         
         setupUI()
@@ -126,7 +133,11 @@ final class ReadingHomeViewController: UIViewController {
             self?.updateUI()
         }
     }
-    
+    func scrollToTop() {
+        // contentInset 고려해서 맨 위로
+        let topOffset = CGPoint(x: 0, y: -scrollView.adjustedContentInset.top)
+        scrollView.setContentOffset(topOffset, animated: true)
+    }
     
     // MARK: - UI 업데이트
     private func updateUI() {
@@ -207,6 +218,21 @@ final class ReadingHomeViewController: UIViewController {
         navigationController?.pushViewController(searchVC, animated: true)
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        let layer = greetingSectionView.layer
+        
+        layer.cornerRadius = 12
+        layer.masksToBounds = false
+
+        layer.shadowColor = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 0.12).cgColor
+        layer.shadowOpacity = 1
+        layer.shadowRadius = 6
+        layer.shadowOffset = CGSize(width: 0, height: 0)
+        
+
+    }
     
     // MARK: - 기본 UI 설정
     private func setupUI() {
@@ -218,14 +244,14 @@ final class ReadingHomeViewController: UIViewController {
         greetingLabel.attributedText = NSAttributedString(
             string: text,
             attributes: [
-                .font: UIFont.systemFont(ofSize: 20, weight: .semibold),
+                .font: UIFont.semiBoldFont(ofSize: 20),
                 .paragraphStyle: paragraph
             ]
         )
         
         greetingMoreButton.setTitle("더보기", for: .normal)
-        greetingMoreButton.setTitleColor(.addBookButtonColor, for: .normal)
-        greetingMoreButton.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
+        greetingMoreButton.setTitleColor(UIColor(red: 0.161, green: 0.290, blue: 0.659, alpha: 1.0), for: .normal)
+        greetingMoreButton.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         greetingMoreButton.addTarget(self, action: #selector(didTapCurrentMore), for: .touchUpInside)
         
         
@@ -233,7 +259,7 @@ final class ReadingHomeViewController: UIViewController {
         greetingLabel.textColor = .black
         
         greetingSectionView.backgroundColor = .readinHomeBannerColor
-        greetingSectionView.layer.cornerRadius = 8
+        greetingSectionView.layer.cornerRadius = 12
         greetingSectionView.clipsToBounds = true
         
         
@@ -241,11 +267,11 @@ final class ReadingHomeViewController: UIViewController {
         currentReadingCardView.layer.cornerRadius = 8
         
         currentReadingCardTitleLabel.text = "읽고 있는 책을 추가해보세요"
-        currentReadingCardTitleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+        currentReadingCardTitleLabel.font = UIFont.semiBoldFont(ofSize: 16)
         currentReadingCardTitleLabel.textAlignment = .center
         
         currentReadingCardSubtitleLabel.text = "현재 읽고 있는 책이 여기에 표시돼요"
-        currentReadingCardSubtitleLabel.font = .systemFont(ofSize: 14)
+        currentReadingCardSubtitleLabel.font = UIFont.regularFont(ofSize: 14)
         currentReadingCardSubtitleLabel.textAlignment = .center
         currentReadingCardSubtitleLabel.textColor = .lightGray
         
@@ -262,7 +288,7 @@ final class ReadingHomeViewController: UIViewController {
         func styleMore(_ button: UIButton) {
             button.setTitle("더보기", for: .normal)
             button.setTitleColor(.lightGray, for: .normal)
-            button.titleLabel?.font = .systemFont(ofSize: 14)
+            button.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         }
         styleMore(plannedMoreButton)
         styleMore(pausedMoreButton)
@@ -273,15 +299,15 @@ final class ReadingHomeViewController: UIViewController {
         addBookButton.layer.cornerRadius = 8
         addBookButton.backgroundColor = .addBookButtonColor
         addBookButton.setTitleColor(.white, for: .normal)
-        addBookButton.titleLabel?.font = .systemFont(ofSize: 16, weight: .semibold)
-        
+        addBookButton.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
+
         
         func styleCard(_ card: UIView, _ label: UILabel, _ text: String) {
             card.backgroundColor = .readingHomeGrayColor
             card.layer.cornerRadius = 8
             card.layer.borderWidth = 1
-            card.layer.borderColor = UIColor.systemGray5.cgColor
-            
+            card.layer.borderColor = UIColor(red: 0.902, green: 0.902, blue: 0.902, alpha: 1.0).cgColor
+
             label.text = text
             label.textAlignment = .center
             label.textColor = .lightGray

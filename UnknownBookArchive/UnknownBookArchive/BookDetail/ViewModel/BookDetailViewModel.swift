@@ -1,3 +1,5 @@
+// MARK: 책 상세화면 ViewModel
+
 import Foundation
 import CoreData
 import UIKit

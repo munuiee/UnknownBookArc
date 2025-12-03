@@ -72,6 +72,8 @@ final class JournalEditViewController: UIViewController {
             name: UIResponder.keyboardWillChangeFrameNotification,
             object: nil
         )
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+
     }
     
     deinit {
@@ -106,7 +108,7 @@ final class JournalEditViewController: UIViewController {
         saveButton.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
 
         mainLabel.text = "문단 수집"
-        mainLabel.font = .systemFont(ofSize: 18, weight: .semibold)
+        mainLabel.font = UIFont.semiBoldFont(ofSize: 18)
         
         topView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -143,7 +145,7 @@ final class JournalEditViewController: UIViewController {
         pageField.placeholder = " 책의 페이지를 기록해주세요."
         pageField.layer.cornerRadius = 10
         pageField.backgroundColor = UIColor.colorFAFAFA
-        pageField.font = .systemFont(ofSize: 15)
+        pageField.font = UIFont.regularFont(ofSize: 15)
         pageField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 0))
         pageField.leftViewMode = .always
         pageField.keyboardType = .numberPad
@@ -152,7 +154,7 @@ final class JournalEditViewController: UIViewController {
         
         mainField.layer.cornerRadius = 10
         mainField.backgroundColor = UIColor.colorFAFAFA
-        mainField.font = .systemFont(ofSize: 15)
+        mainField.font = UIFont.regularFont(ofSize: 15)
         mainField.textColor = .black
         mainField.isScrollEnabled = true
         mainField.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
@@ -160,7 +162,7 @@ final class JournalEditViewController: UIViewController {
         
         mainPlaceholderLabel.text = "문단을 작성해보세요."
         mainPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
-        mainPlaceholderLabel.font = .systemFont(ofSize: 15)
+        mainPlaceholderLabel.font = UIFont.regularFont(ofSize: 15)
         mainField.addSubview(mainPlaceholderLabel)
         
         

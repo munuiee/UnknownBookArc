@@ -1,4 +1,3 @@
-
 // MARK: 장르 태그 버튼 베이스
 
 import UIKit
@@ -25,8 +24,8 @@ class TagButton: UIButton {
         layer.cornerRadius = 8
         layer.borderWidth = 1
         layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
-        titleLabel?.font = .systemFont(ofSize: 15)
-        
+        titleLabel?.font = UIFont.regularFont(ofSize: 15)
+
         self.setContentHuggingPriority(.required, for: .horizontal)
         self.snp.makeConstraints {
             $0.width.equalTo(61).priority(.required)
@@ -41,6 +40,7 @@ class TagButton: UIButton {
     ) {
         setTitle(title, for: .normal)
         setTitleColor(.stateDefaultTextColor, for: .normal)
+        titleLabel?.font = UIFont.mediumFont(ofSize: 14)
         self.backgroundColor = defaultBgColor
         self.layer.borderColor = borderColor.cgColor
         self.selectTitleColor = selectedTitleColor

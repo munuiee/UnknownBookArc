@@ -1,4 +1,4 @@
-// MARK: - 저널 '찰나의 기록' 날짜 헤더뷰
+// MARK: 저널 '찰나의 기록' 날짜 헤더뷰
 
 import UIKit
 import SnapKit
@@ -20,7 +20,7 @@ final class DateHeaderView: UICollectionReusableView {
         layer.cornerRadius = 8
         clipsToBounds = true
         
-        label.font = .systemFont(ofSize: 12, weight: .medium)
+        label.font = UIFont.mediumFont(ofSize: 12)
         label.textAlignment = .center
         label.textColor = UIColor(red: 205/255, green: 203/255, blue: 203/255, alpha: 1.0)
     }

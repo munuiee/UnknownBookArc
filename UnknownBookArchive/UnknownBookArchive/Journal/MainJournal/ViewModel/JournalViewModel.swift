@@ -1,4 +1,4 @@
-// MARK: - 저널 탭바 ViewModel
+// MARK: 저널 탭바 ViewModel
 import UIKit
 import Foundation
 

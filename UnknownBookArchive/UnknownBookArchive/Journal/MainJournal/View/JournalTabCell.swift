@@ -1,4 +1,4 @@
-// MARK: - 저널 상단탭 컬렉션뷰셀
+// MARK: 저널 상단탭 컬렉션뷰셀
 
 import Foundation
 import UIKit
@@ -11,7 +11,7 @@ final class JournalTabCell: UICollectionViewCell {
     
     // 라벨이 선택되면 폰트 스타일 변경
     override var isSelected: Bool {
-        didSet {            
+        didSet {
             titleLabel.textColor = isSelected
             ? UIColor.primaryColor
             : UIColor.colorB4B2B2
@@ -30,7 +30,7 @@ final class JournalTabCell: UICollectionViewCell {
     private func setupUI() {
         contentView.addSubview(titleLabel)
         titleLabel.textAlignment = .center
-        titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+        titleLabel.font = UIFont.semiBoldFont(ofSize: 16)
         titleLabel.textColor = UIColor.colorB4B2B2
         titleLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
