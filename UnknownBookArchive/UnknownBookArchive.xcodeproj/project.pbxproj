@@ -172,7 +172,6 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2XC69D3R8Y;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UnknownBookArchive/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "낯선책방";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -211,7 +210,6 @@
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 2XC69D3R8Y;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = UnknownBookArchive/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "낯선책방";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
