@@ -6,6 +6,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        let customFont = UIFont.mediumFont(ofSize: 12)
+        
+        let normalAttributes: [NSAttributedString.Key: Any] = [
+            .font: customFont,
+            .foregroundColor: UIColor.colorCDCBCB
+        ]
+        
+        // 선택된 상태의 텍스트 속성
+        let selectedAttributes: [NSAttributedString.Key: Any] = [
+            .font: customFont,
+            .foregroundColor: UIColor.primaryColor
+        ]
+        
+        // UITabBarItem의 외형(Appearance)에 설정 적용
+        UITabBarItem.appearance().setTitleTextAttributes(normalAttributes, for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes(selectedAttributes, for: .selected)
+        
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowScene)
         let splashVC = SplashViewController()
