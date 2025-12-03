@@ -1,9 +1,4 @@
-//
-//  Notification.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 12/2/25.
-//
+// MARK: 책 삭제 시 메인 화면 UI 업데이트를 위한 코드
 
 import Foundation
 

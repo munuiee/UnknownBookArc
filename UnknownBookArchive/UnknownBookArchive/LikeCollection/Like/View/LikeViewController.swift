@@ -1,4 +1,4 @@
-// MARK: - 좋아요: 메인 컬렉션뷰
+// MARK: 좋아요 - 메인 컬렉션뷰
 
 import Foundation
 import SnapKit
@@ -87,7 +87,7 @@ final class LikeViewController: UIViewController {
     
     private func setupUI() {
         likeTitle.text = "좋아요"
-        likeTitle.font = .systemFont(ofSize: 18, weight: .semibold)
+        likeTitle.font = UIFont.semiBoldFont(ofSize: 18)
         
         view.addSubview(topView)
         topView.addSubview(likeTitle)

@@ -1,5 +1,4 @@
-
-// MARK: - 찰나의 기록 페이지
+// MARK: 찰나의 기록 페이지
 
 import Foundation
 import UIKit
@@ -71,13 +70,15 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
                 textPlaceholderLabel.isHidden = !text.isEmpty
             }
         }
+
         
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
-    
+ 
+
     // MARK: - CollectionView 세팅
     
     private func collectionSet() {
@@ -247,7 +248,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         [inputPage, separatorView, inputText].forEach { whiteContentView.addSubview($0) }
         
         inputPage.placeholder = "책의 페이지를 기록해 주세요"
-        inputPage.font = .systemFont(ofSize: 14, weight: .regular)
+        inputPage.font = UIFont.regularFont(ofSize: 14)
         inputPage.textColor = UIColor.colorB4B2B2
         inputPage.keyboardType = .numberPad
         inputPage.snp.makeConstraints {
@@ -273,7 +274,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         // 아래 본문 입력
         inputText.delegate = self
         inputText.backgroundColor = .white
-        inputText.font = .systemFont(ofSize: 14, weight: .regular)
+        inputText.font = UIFont.regularFont(ofSize: 14)
         inputText.isScrollEnabled = false
         inputText.textContainerInset = UIEdgeInsets(top: 4, left: 4, bottom: 6, right: 4)
         inputText.snp.makeConstraints {
@@ -286,7 +287,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         
         textPlaceholderLabel.text = "내용을 입력하세요."
         textPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
-        textPlaceholderLabel.font = .systemFont(ofSize: 13.8, weight: .regular)
+        textPlaceholderLabel.font = UIFont.regularFont(ofSize: 13.8)
         inputText.addSubview(textPlaceholderLabel)
         textPlaceholderLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(8)

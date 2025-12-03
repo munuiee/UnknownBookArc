@@ -1,9 +1,4 @@
-//
-//  MoreBookCell.swift
-//  UnknownBookArchive
-//
-//  Created by 김리하 on 12/2/25.
-//
+// MARK: 메인화면 더보기 테이블뷰셀
 
 import UIKit
 import SnapKit
@@ -44,13 +39,13 @@ final class MoreBookCell: UITableViewCell {
         thumbnailImageView.backgroundColor = .systemGray5
         
         // 제목
-        titleLabel.font = .boldSystemFont(ofSize: 16)
-        titleLabel.numberOfLines = 2
+        titleLabel.font = UIFont.semiBoldFont(ofSize: 18)
+        titleLabel.textColor = UIColor(red: 0.043, green: 0.078, blue: 0.176, alpha: 1.0)
         
         // 작가
-        authorLabel.font = .systemFont(ofSize: 14)
-        authorLabel.textColor = .gray
-        
+        authorLabel.font = UIFont.mediumFont(ofSize: 14)
+        authorLabel.textColor = UIColor(red: 0.506, green: 0.494, blue: 0.494, alpha: 1.0)
+
     }
     
     

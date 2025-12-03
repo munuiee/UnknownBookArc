@@ -1,4 +1,4 @@
-// MARK: - 좋아요 한 문단 수집 리스트 화면 ViewModel
+// MARK: 좋아요 한 문단 수집 리스트 화면 ViewModel
 
 import Foundation
 import CoreData

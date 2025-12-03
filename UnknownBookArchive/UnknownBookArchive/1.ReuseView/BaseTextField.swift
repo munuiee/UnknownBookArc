@@ -1,4 +1,3 @@
-
 // MARK: 책 상세페이지 텍스트 필드 베이스
 
 import UIKit
@@ -28,10 +27,10 @@ class BaseTextField: UITextField {
         layer.borderWidth = 1
         layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
         backgroundColor = .white
-        font = .systemFont(ofSize: 15)
+        font = UIFont.mediumFont(ofSize: 14)
         let defaultAttributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.black,
-            .font: UIFont.systemFont(ofSize: 15)
+            .font: UIFont.mediumFont(ofSize: 14)
         ]
         self.defaultTextAttributes = defaultAttributes
         self.snp.makeConstraints {
@@ -39,10 +38,10 @@ class BaseTextField: UITextField {
         }
     }
     func configure(placeholder: String) {
-        let placeholderColor: UIColor = .systemGray
+        let placeholderColor: UIColor = .colorB4B2B2
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: placeholderColor,
-            .font: UIFont.systemFont(ofSize: 15)
+            .font: UIFont.regularFont(ofSize: 15)
         ]
         
         self.attributedPlaceholder = NSAttributedString(

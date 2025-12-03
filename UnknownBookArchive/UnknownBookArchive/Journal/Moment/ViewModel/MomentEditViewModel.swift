@@ -1,4 +1,4 @@
-// MARK: - 찰나의 기록 페이지 편집 ViewModel
+// MARK: 찰나의 기록 페이지 편집 ViewModel
 
 import Foundation
 import CoreData

@@ -1,4 +1,4 @@
-// MARK: - 좋아요 상단탭 컬렉션뷰셀
+// MARK: 좋아요 상단탭 컬렉션뷰셀
 
 import Foundation
 import UIKit
@@ -12,9 +12,9 @@ final class LikeTabCell: UICollectionViewCell {
     // 라벨이 선택되면 폰트 스타일 변경
     override var isSelected: Bool {
         didSet {
-            titleLabel.font = isSelected
-            ? .boldSystemFont(ofSize: 16)
-            : .systemFont(ofSize: 16)
+            titleLabel.textColor = isSelected
+            ? UIColor.primaryColor
+            : UIColor.colorB4B2B2
         }
     }
 
@@ -30,7 +30,8 @@ final class LikeTabCell: UICollectionViewCell {
     private func setupUI() {
         contentView.addSubview(titleLabel)
         titleLabel.textAlignment = .center
-
+        titleLabel.font = UIFont.semiBoldFont(ofSize: 16)
+        titleLabel.textColor = UIColor.colorB4B2B2
         titleLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

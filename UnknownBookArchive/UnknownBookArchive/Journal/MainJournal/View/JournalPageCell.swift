@@ -1,4 +1,4 @@
-// MARK: - 저널 상단탭에 따른 페이지 컬렉션뷰셀
+// MARK: 저널 상단탭에 따른 페이지 컬렉션뷰셀
 
 import Foundation
 import UIKit
@@ -22,7 +22,7 @@ class JournalPageCell: UICollectionViewCell {
         placeholderLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-        placeholderLabel.font = .systemFont(ofSize: 15)
+        placeholderLabel.font = UIFont.regularFont(ofSize: 15)
         placeholderLabel.textColor = .darkGray
     }
 

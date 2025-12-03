@@ -1,4 +1,4 @@
-// MARK: - 저널 '찰나의 기록' 페이지 컬렉션뷰셀
+// MARK: 저널 '찰나의 기록' 페이지 컬렉션뷰셀
 
 import Foundation
 import SnapKit
@@ -102,9 +102,9 @@ final class MomentCell: UICollectionViewCell {
         bottomStack.axis = .horizontal
         bottomStack.distribution = .equalSpacing
         
-        timeLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        timeLabel.font = UIFont.regularFont(ofSize: 12)
         timeLabel.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
-        pageLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        pageLabel.font = UIFont.regularFont(ofSize: 12)
         pageLabel.textColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0)
 
         bottomStack.snp.makeConstraints {
@@ -123,7 +123,7 @@ final class MomentCell: UICollectionViewCell {
         pageLabel.text = "\(mPage)p"
         timeLabel.text = mTime
         
-        let font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        let font = UIFont.regularFont(ofSize: 14)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.minimumLineHeight = 21.7

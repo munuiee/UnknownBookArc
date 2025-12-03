@@ -1,3 +1,5 @@
+// MARK: 책 상세화면
+
 import UIKit
 import SnapKit
 import CoreData
@@ -66,21 +68,24 @@ class BookDetailViewController: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 18, weight: .bold)
+        label.font = UIFont.semiBoldFont(ofSize: 18)
         return label
     }()
+    
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = UIFont.mediumFont(ofSize: 14)
         return label
     }()
+    
     private let publisherLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.font = UIFont.mediumFont(ofSize: 14)
         return label
     }()
+    
     // 진행률 스택뷰
     private let progressStackView: UIStackView = {
         let stView = UIStackView()
@@ -93,10 +98,11 @@ class BookDetailViewController: UIViewController {
     private let progressLable: UILabel = {
         let label = UILabel()
         label.textColor = .gray
-        label.font = .systemFont(ofSize: 12, weight: .regular)
+        label.font = UIFont.mediumFont(ofSize: 12)
         label.textAlignment = .right
         return label
     }()
+    
     private let progressBar: UIProgressView = {
         let progressView = UIProgressView()
         progressView.trackTintColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
@@ -113,7 +119,9 @@ class BookDetailViewController: UIViewController {
         stView.alignment = .fill
         return stView
     }()
+    
     private let dateSpacer = UIView()
+    
     // 시작일, 종료일
     private let startDateLabel: UILabel = {
         let label = UILabel()
@@ -122,9 +130,10 @@ class BookDetailViewController: UIViewController {
         label.textColor = UIColor(red: 0.481, green: 0.679, blue: 0.572, alpha: 1)
         label.layer.borderColor = UIColor(red: 0.852, green: 0.908, blue: 0.878, alpha: 1).cgColor
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        label.font = UIFont.mediumFont(ofSize: 12)
         return label
     }()
+    
     private let endDateLabel: UILabel = {
         let label = UILabel()
         label.layer.cornerRadius = 8
@@ -132,9 +141,10 @@ class BookDetailViewController: UIViewController {
         label.layer.borderColor = UIColor(red: 0.855, green: 0.883, blue: 0.965, alpha: 1).cgColor
         label.textColor = UIColor(red: 0.372, green: 0.495, blue: 0.848, alpha: 1)
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        label.font = UIFont.mediumFont(ofSize: 12)
         return label
     }()
+    
     private let leadingDatePusher = UIView()
     
     private let tagsStackView: UIStackView = {
@@ -152,6 +162,7 @@ class BookDetailViewController: UIViewController {
         stackView.spacing = 10
         return stackView
     }()
+    
     private let likeButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 8
@@ -163,12 +174,13 @@ class BookDetailViewController: UIViewController {
         button.tintColor = .primaryColor
         return button
     }()
+    
     private let journalButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .primaryColor
         button.setTitle("저널 보기", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
         button.layer.cornerRadius = 8
         return button
     }()
@@ -192,7 +204,7 @@ class BookDetailViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .white
-        contentView.backgroundColor = .basicBackground
+        contentView.backgroundColor = .white
         
         [topView, contentView].forEach { view.addSubview($0) }
         
@@ -234,7 +246,7 @@ class BookDetailViewController: UIViewController {
             $0.top.equalToSuperview().offset(16)
             $0.centerX.equalToSuperview()
             $0.width.equalTo(120)
-            $0.height.equalTo(170)
+            $0.height.equalTo(178)
         }
         
         infoStackView.snp.makeConstraints {
@@ -420,17 +432,17 @@ class BookDetailViewController: UIViewController {
             
             switch state {
             case "읽는 중":
-                selectedBgColor = .readingSelected
-                selectedBoarderColor = .readingSelected
+                selectedBgColor = .colorD9E8E0
+                selectedBoarderColor = .colorD9E8E0
             case "중단":
-                selectedBgColor = .pausedSelected
-                selectedBoarderColor = .pausedSelected
+                selectedBgColor = .colorFEDCDD
+                selectedBoarderColor = .colorFEDCDD
             case "완독":
-                selectedBgColor = .finishedSelected
-                selectedBoarderColor = .finishedSelected
+                selectedBgColor = .colorDAE1F6
+                selectedBoarderColor = .colorDAE1F6
             case "읽을 예정":
-                selectedBgColor = .scheduledSelected
-                selectedBoarderColor = .scheduledSelected
+                selectedBgColor = .colorFBF0CB
+                selectedBoarderColor = .colorFBF0CB
             default:
                 stateButton.isHidden = true
                 return
@@ -452,11 +464,11 @@ class BookDetailViewController: UIViewController {
             
             switch format {
             case "종이책":
-                selectedBgColor = .paperBGColor
-                selectedTitleColor = .paperTextColor
+                selectedBgColor = .colorD9E6ED
+                selectedTitleColor = .color3F7088
             case "전자책":
-                selectedBgColor = .ebookBGColor
-                selectedTitleColor = .ebookTextColor
+                selectedBgColor = .colorD9E6ED
+                selectedTitleColor = .color3F7088
             default:
                 formatButton.isHidden = true
                 return

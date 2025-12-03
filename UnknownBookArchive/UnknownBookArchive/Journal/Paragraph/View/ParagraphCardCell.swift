@@ -40,7 +40,7 @@ final class ParagraphCardCell: UICollectionViewCell {
         
         topStack.axis = .horizontal
         topStack.distribution = .equalSpacing
-        pageLabel.font = .systemFont(ofSize: 14, weight: .medium)
+        pageLabel.font = UIFont.mediumFont(ofSize: 14)
         pageLabel.textColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
         
         let menuEdit = UIAction(
@@ -82,7 +82,7 @@ final class ParagraphCardCell: UICollectionViewCell {
         bottomStack.axis = .horizontal
         bottomStack.distribution = .equalSpacing
         
-        dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
+        dateLabel.font = UIFont.regularFont(ofSize: 12)
         dateLabel.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
         
         
@@ -154,7 +154,7 @@ final class ParagraphCardCell: UICollectionViewCell {
         pageLabel.text = "\(page)p"
         dateLabel.text = dateText
         
-        let font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        let font = UIFont.regularFont(ofSize: 14)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.minimumLineHeight = 21.7

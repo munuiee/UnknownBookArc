@@ -1,11 +1,3 @@
-//
-//  Journal+CoreDataProperties.swift
-//  UnknownBookArchive
-//
-//  Created by jyeee on 11/21/25.
-//
-//
-
 import Foundation
 import CoreData
 
@@ -24,6 +16,7 @@ extension Journal {
     @NSManaged public var bookAuthor: String?
     @NSManaged public var parentBook: Book?
     @NSManaged public var type: String?
+    @NSManaged public var likedDate: Date?
 }
 
 extension Journal : Identifiable {

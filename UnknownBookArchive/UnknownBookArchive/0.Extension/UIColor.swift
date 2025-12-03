@@ -1,3 +1,5 @@
+// MARK: UIColor 코드 모음집
+
 import UIKit
 
 extension UIColor {
@@ -42,13 +44,52 @@ extension UIColor {
     static let readingHomeGrayColor = UIColor(red: 249/255, green: 250/255, blue: 251/255, alpha: 1)
 
 
-    // 탭바
-    static let normalColor = UIColor(red: 0.8039, green: 0.7961, blue: 0.7961, alpha: 1.0) // CDCBCB
+
+    static let colorCDCBCB = UIColor(red: 0.8039, green: 0.7961, blue: 0.7961, alpha: 1.0)
+    static let color676565 = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0)
+    static let colorB4B2B2 = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0)
+    static let colorFCFCFC = UIColor(red: 0.988235, green: 0.988235, blue: 0.988235, alpha: 1.0)
+    static let colorFAFAFA = UIColor(red: 0.980392, green: 0.980392, blue: 0.980392, alpha: 1.0)
+    static let color0B142D = UIColor(red: 0.043, green: 0.078, blue: 0.176, alpha: 1.0)
+
+    static let color152555 = UIColor(red: 0.082, green: 0.145, blue: 0.333, alpha: 1.0)
+    static let colorE6E6E6 = UIColor(red: 0.902, green: 0.902, blue: 0.902, alpha: 1.0)
     
-    // 좋아요
-    static let bookTitleColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0) // 676565
-    static let colorB4B2B2 = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0) // B4B2B2
-    static let likeBookBorderColor = UIColor(red: 0.988235, green: 0.988235, blue: 0.988235, alpha: 1.0) // FCFCFC
-    static let colorFAFAFA = UIColor(red: 0.980392, green: 0.980392, blue: 0.980392, alpha: 1.0) // FAFAFA
+    // 시작일
+    static let colorF9FBFA = UIColor(red: 0.976, green: 0.984, blue: 0.980, alpha: 1.0) // 배경
+    static let color7BAD92 = UIColor(red: 0.482, green: 0.678, blue: 0.573, alpha: 1.0)
+
+    // 종료일
+    static let colorF7F8FD = UIColor(red: 0.969, green: 0.973, blue: 0.992, alpha: 1.0)
+    static let color5F7ED8 = UIColor(red: 0.373, green: 0.494, blue: 0.847, alpha: 1.0)
+
+
+
+    // 책 선택 (종이책/전자책)
+    static let colorD9E6ED = UIColor(red: 0.851, green: 0.902, blue: 0.929, alpha: 1.0) // 배경
+    static let color3F7088 = UIColor(red: 0.247, green: 0.439, blue: 0.533, alpha: 1.0) // 글자
+
+    /* 읽음 상태 버튼 (배경/글자 순)*/
+    // 완독
+    static let colorDAE1F6 = UIColor(red: 0.855, green: 0.882, blue: 0.965, alpha: 1.0)
+    static let color1F387F = UIColor(red: 0.122, green: 0.220, blue: 0.498, alpha: 1.0) // + 현재 읽는 중 진행률 텍스트
+
+
+    // 읽는 중
+    static let colorD9E8E0 = UIColor(red: 0.851, green: 0.910, blue: 0.878, alpha: 1.0)
+    static let color375846 = UIColor(red: 0.216, green: 0.345, blue: 0.275, alpha: 1.0)
+
+    // 중단
+    static let colorFEDCDD = UIColor(red: 0.996, green: 0.863, blue: 0.867, alpha: 1.0)
+    static let colorA40509 = UIColor(red: 0.643, green: 0.020, blue: 0.035, alpha: 1.0)
+    
+    // 읽을 예정
+    static let colorFBF0CB = UIColor(red: 0.984, green: 0.941, blue: 0.796, alpha: 1.0)
+    static let colorB9920E = UIColor(red: 0.725, green: 0.573, blue: 0.055, alpha: 1.0)
+
+    // 기본 글자색
+    static let color1A1919 = UIColor(red: 0.102, green: 0.098, blue: 0.098, alpha: 1.0)
+
+
 
 }

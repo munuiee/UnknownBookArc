@@ -266,6 +266,11 @@ final class BookshelfViewController: UIViewController {
 //        // 갤러리 모드에서 테이블뷰 숨김. 갤러리 모드 생성 예정.
 //        tableView.isHidden = isGalleryMode
 //    }
+    
+    func scrollToTop() {
+        tableView.setContentOffset(.zero, animated: true)
+    }
+
 }
 
 // MARK: TableView DataSource

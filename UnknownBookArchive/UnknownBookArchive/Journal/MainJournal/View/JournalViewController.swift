@@ -1,4 +1,4 @@
-// MARK: - 저널: 메인 컬렉션뷰
+// MARK: 저널 - 메인 컬렉션뷰
 
 import Foundation
 import SnapKit
@@ -90,7 +90,8 @@ final class JournalViewController: UIViewController {
         bindViewModel()
         setupInitialSelection()
         viewModel.fetchJournalRecords()
-        
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -121,7 +122,7 @@ final class JournalViewController: UIViewController {
     private func setupUI() {
         
         bookTitle.text = book.title ?? ""
-        bookTitle.font = .systemFont(ofSize: 18, weight: .semibold)
+        bookTitle.font = UIFont.semiBoldFont(ofSize: 18)
         
         let addConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let addImage = UIImage(systemName: "plus", withConfiguration: addConfig)

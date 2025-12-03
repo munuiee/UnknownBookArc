@@ -1,4 +1,4 @@
-// MARK: - 좋아요 한 문단 수집
+// MARK: 좋아요 한 문단 수집
 
 import Foundation
 import UIKit
@@ -15,7 +15,7 @@ final class LikeParagraphViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "backgroundColor")
+        view.backgroundColor = .white
         collectionSet()
         viewModel.onUpdate = { [weak self] in
             self?.collectionView.reloadData()
@@ -36,12 +36,13 @@ final class LikeParagraphViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(LikeParagraphCardCell.self, forCellWithReuseIdentifier: LikeParagraphCardCell.id)
+        collectionView.layer.borderColor = UIColor.colorE6E6E6.cgColor
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.top.equalToSuperview().offset(36)
         }
-        collectionView.backgroundColor = UIColor(named: "backgroundColor")
+        collectionView.backgroundColor = .white
     }
     
     private func makeLayout() -> UICollectionViewLayout {

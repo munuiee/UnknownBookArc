@@ -1,4 +1,4 @@
-// MARK: - 좋아요 탭바 ViewModel
+// MARK: 좋아요 탭바 ViewModel
 
 import Foundation
 

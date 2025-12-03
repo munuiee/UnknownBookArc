@@ -26,6 +26,7 @@
         <attribute name="createDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="journalText" optional="YES" attributeType="String"/>
         <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="likedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="savedPage" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="parentBook" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Book" inverseName="journals" inverseEntity="Book"/>

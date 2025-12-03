@@ -1,3 +1,5 @@
+// MARK: 검색화면 테이블뷰셀
+
 import UIKit
 import SnapKit
 
@@ -17,19 +19,19 @@ class BookSearchCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textColor = .black
-        label.font = .boldSystemFont(ofSize: 18)
+        label.font = UIFont.boldFont(ofSize: 18)
         return label
     }()
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 0.505, green: 0.495, blue: 0.495, alpha: 1)
-        label.font = .systemFont(ofSize: 14)
+        label.font = UIFont.regularFont(ofSize: 14)
         return label
     }()
     private let publisherLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
-        label.font = .systemFont(ofSize: 14)
+        label.font = UIFont.regularFont(ofSize: 14)
         return label
     }()
     
