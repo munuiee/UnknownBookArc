@@ -147,7 +147,7 @@ final class CurrentReadingCell: UICollectionViewCell {
         journalButton.snp.makeConstraints {
             $0.top.equalTo(progressBar.snp.bottom).offset(16)
             $0.trailing.equalToSuperview().inset(16)
-            $0.width.equalTo(210)
+            $0.leading.equalTo(titleLabel)
             $0.height.equalTo(32)
             $0.bottom.equalToSuperview().inset(16)
         }
