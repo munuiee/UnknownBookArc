@@ -191,6 +191,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        loadBookDataForEdit()
     }
     
     private func configureUI() {
@@ -749,17 +750,24 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
             .compactMap { tags[$0.tag].rawValue }
             .joined(separator: ",")
         
+        let isbn = viewModel.isbn.value
+        let isbn13 = viewModel.isbn13.value
+        
+        let duplicateBook = CoreDataManager.shared.fetchBookByIsbn(isbn: isbn, isbn13: isbn13, excludeUUID: self.bookUUID)
+        if duplicateBook != nil {
+            showAlert(title: "중복된 책", message: "이미 서재에 저장된 책입니다.")
+        }
         
         // 코어 데이터 저장 및 수정 분기 -----------------------------------------
         var savedBook: Book?
         let isPageMode = toggleButton.isPageMode
         
         if let existingUUID = self.bookUUID {
-            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
+            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate, isbn: isbn, isbn13: isbn13
             )
         } else {
             let newUUID = UUID().uuidString
-            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate
+            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate, isbn: isbn, isbn13: isbn13
             )
         }
         
@@ -848,6 +856,8 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
                 }
             }
         }
+        viewModel.isbn.accept(book.isbn)
+        viewModel.isbn13.accept(book.isbn13)
     }
     
     // MARK: 앨범에서 사진 추가 기능

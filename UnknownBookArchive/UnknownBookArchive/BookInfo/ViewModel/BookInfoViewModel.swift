@@ -13,6 +13,8 @@ class BookInfoViewModel {
     let title = BehaviorRelay<String>(value: "")
     let author = BehaviorRelay<String>(value: "")
     let publisher = BehaviorRelay<String>(value: "")
+    let isbn = BehaviorRelay<String?>(value: nil)
+    let isbn13 = BehaviorRelay<String?>(value: nil)
     
     let disposeBag = DisposeBag()
     
@@ -23,6 +25,8 @@ class BookInfoViewModel {
                 self?.title.accept(item.title)
                 self?.author.accept(item.author)
                 self?.publisher.accept(item.publisher)
+                self?.isbn.accept(item.isbn)
+                self?.isbn13.accept(item.isbn13)
             })
             .disposed(by: disposeBag)
     }

@@ -138,7 +138,9 @@ class CoreDataManager {
             totalPage: Int32,
             percent: Int32,
             startDate: Date?,
-            endDate: Date?
+            endDate: Date?,
+            isbn: String?,
+            isbn13: String?
 
     ) -> Book? {
         guard let entity = NSEntityDescription.entity(forEntityName: "Book", in: context) else {
@@ -160,6 +162,9 @@ class CoreDataManager {
         newBook.setValue(percent, forKey: "percent")
         newBook.setValue(startDate, forKey: "startDate")
         newBook.setValue(endDate, forKey: "endDate")
+        newBook.setValue(isbn, forKey: "isbn")
+        newBook.setValue(isbn13, forKey: "isbn13")
+        
         
         do {
             try context.save()
@@ -188,7 +193,9 @@ class CoreDataManager {
             totalPage: Int32?,
             percent: Int32?,
             startDate: Date?,
-            endDate: Date?
+            endDate: Date?,
+            isbn: String?,
+            isbn13: String?
     ) -> Book? {
         
         let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
@@ -201,7 +208,6 @@ class CoreDataManager {
                 return nil
             }
             
-            bookToUpdate.setValue(uuid, forKey: "uuid")
             bookToUpdate.setValue(title, forKey: "title")
             bookToUpdate.setValue(author, forKey: "author")
             bookToUpdate.setValue(publisher, forKey: "publisher")
@@ -215,6 +221,8 @@ class CoreDataManager {
             bookToUpdate.setValue(percent, forKey: "percent")
             bookToUpdate.setValue(startDate, forKey: "startDate")
             bookToUpdate.setValue(endDate, forKey: "endDate")
+            bookToUpdate.setValue(isbn, forKey: "isbn")
+            bookToUpdate.setValue(isbn13, forKey: "isbn13")
             
             try context.save()
             print("책 수정 성공")
@@ -281,19 +289,61 @@ class CoreDataManager {
     }
     
     func fetchAllBooks() -> [Book] {
-            let request: NSFetchRequest<Book> = Book.fetchRequest()
-  
-            request.sortDescriptors = [
-                NSSortDescriptor(key: "startDate", ascending: true)
-            ]
-            
-            do {
-                let result = try context.fetch(request)
-                return result
-            } catch {
-                print("책 목록 불러오기 실패: \(error)")
-                return []
-            }
-        }
+        let request: NSFetchRequest<Book> = Book.fetchRequest()
 
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "startDate", ascending: true)
+        ]
+        
+        do {
+            let result = try context.fetch(request)
+            return result
+        } catch {
+            print("책 목록 불러오기 실패: \(error)")
+            return []
+        }
+    }
+    
+    // MARK: isbn으로 책 중복 체크
+    func fetchBookByIsbn(isbn: String?, isbn13: String?, excludeUUID: String? = nil) -> Book? {
+        let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
+        var predicates: [NSPredicate] = []
+        
+        var isbnPredicates: [NSPredicate] = []
+        
+        if let isbn = isbn, !isbn.isEmpty {
+            isbnPredicates.append(NSPredicate(format: "isbn == %@", isbn))
+        }
+        if let isbn13 = isbn13, !isbn13.isEmpty {
+            isbnPredicates.append(NSPredicate(format: "isbn13 == %@", isbn13))
+        }
+        
+        if isbnPredicates.isEmpty {
+            return nil
+        }
+        
+        let isbnCompound = NSCompoundPredicate(type: .or, subpredicates: isbnPredicates)
+        predicates.append(isbnCompound)
+        
+        if let excludeUUID = excludeUUID {
+            predicates.append(NSPredicate(format: "uuid != %@", excludeUUID))
+        }
+        fetchRequest.predicate = NSCompoundPredicate(type: .and, subpredicates: predicates)
+              
+        do {
+            let fetchedBooks = try context.fetch(fetchRequest)
+            
+            if let book = fetchedBooks.first {
+                print("중복된 책 발견: \(book.title ?? "")")
+                return book
+            } else {
+                return nil
+            }
+        } catch {
+            let nsError = error as NSError
+            print("중복 체크 에러 (에러: \(nsError))")
+            return nil
+        }
+    }
+        
 }

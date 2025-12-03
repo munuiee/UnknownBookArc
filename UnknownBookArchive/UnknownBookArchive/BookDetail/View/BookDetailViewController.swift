@@ -6,7 +6,6 @@ import RxCocoa
 
 class BookDetailViewController: UIViewController {
     
-    
     let disposeBag = DisposeBag()
     var book: Book?
     var bookUUID: String?
@@ -19,6 +18,7 @@ class BookDetailViewController: UIViewController {
     
     init(book: Book) {
         self.book = book
+        self.bookUUID = book.uuid
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -186,7 +186,10 @@ class BookDetailViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        loadBookData()
+        if self.book == nil && self.bookUUID != nil {
+            loadBookData()
+        }
+        
         displayBookInfo()
     }
     
@@ -336,6 +339,7 @@ class BookDetailViewController: UIViewController {
     
     // MARK: 데이터 새로고침 (외부 호출 용)
     func reloadBookDataAndDisplay() {
+        self.book = nil
         loadBookData()
     }
     
@@ -388,6 +392,11 @@ class BookDetailViewController: UIViewController {
         }
     }
     private func loadBookData() {
+        if self.book != nil {
+            print("이미 메모리에 존재하므로 로드 스킵")
+            return
+        }
+        
         guard let uuid = self.bookUUID else {
             print("책 정보를 불러올 수 없습니다.")
             return
