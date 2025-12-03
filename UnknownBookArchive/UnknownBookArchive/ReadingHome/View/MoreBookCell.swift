@@ -11,7 +11,7 @@ final class MoreBookCell: UITableViewCell {
     let thumbnailImageView = UIImageView()
     let titleLabel = UILabel()
     let authorLabel = UILabel()
-    let menuButton = UIButton(type: .system)
+
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -51,13 +51,10 @@ final class MoreBookCell: UITableViewCell {
     
     // MARK: 레이아웃
     private func setupLayout() {
-        
         contentView.addSubview(thumbnailImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(authorLabel)
-        contentView.addSubview(menuButton)
         
-        // 썸네일
         thumbnailImageView.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(20)
             $0.centerY.equalToSuperview()
@@ -65,27 +62,19 @@ final class MoreBookCell: UITableViewCell {
             $0.height.equalTo(108)
         }
         
-        // 메뉴 버튼
-        menuButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(20)
-            $0.top.equalTo(thumbnailImageView.snp.top)
-            $0.width.height.equalTo(24)
-        }
-        
-        // 제목
         titleLabel.snp.makeConstraints {
             $0.top.equalTo(thumbnailImageView.snp.top)
             $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
-            $0.trailing.equalTo(menuButton.snp.leading).offset(-12)
+            $0.trailing.equalToSuperview().inset(20)   
         }
         
-        // 작가
         authorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(6)
             $0.leading.equalTo(titleLabel)
             $0.trailing.equalTo(titleLabel)
         }
     }
+
     
     
     // MARK: 데이터 적용

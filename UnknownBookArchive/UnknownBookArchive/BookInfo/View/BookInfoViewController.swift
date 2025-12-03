@@ -778,6 +778,8 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         // 화면 전환 및 데이터 전달-----------------------------------------
         if let saveBook = savedBook {
             
+            NotificationCenter.default.post(name: .bookUpdated, object: nil)
+            
             if self.bookUUID != nil {
                 if let detailVC = self.navigationController?.viewControllers.dropLast().last as? BookDetailViewController {
                     detailVC.book = saveBook

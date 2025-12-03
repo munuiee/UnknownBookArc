@@ -84,8 +84,13 @@ final class BookshelfViewController: UIViewController {
     private let categoryScrollView: UIScrollView = {
         let scroll = UIScrollView()
         scroll.showsHorizontalScrollIndicator = false
+        scroll.showsVerticalScrollIndicator = false // 세로 스크롤바 제거
+        scroll.alwaysBounceVertical = false         // 세로 바운스 제거
+        scroll.bounces = false                      // 튐 방지
+        scroll.isScrollEnabled = true               // 가로 스크롤만 허용
         return scroll
     }()
+
 
     private var categoryButtons: [UIButton] = []
 
@@ -116,14 +121,23 @@ final class BookshelfViewController: UIViewController {
             btn.layer.borderColor = UIColor.systemGray5.cgColor
             btn.clipsToBounds = true
             
-            btn.configurationUpdateHandler = {[weak self] button in
+            btn.configurationUpdateHandler = { [weak self] button in
                 guard let self = self else { return }
                 let isSelected = button.tag == self.selectedCategoryIndex
-                
-                button.configuration?.baseBackgroundColor = isSelected ? .black : .white
-                button.configuration?.baseForegroundColor = isSelected ? .white : .black
-                
+
+                if isSelected {
+                    // 선택됨
+                    button.configuration?.baseBackgroundColor = UIColor(red: 0.90, green: 0.95, blue: 1.0, alpha: 1)
+                    button.configuration?.baseForegroundColor = UIColor.systemBlue
+                    button.layer.borderColor = UIColor.systemBlue.cgColor
+                } else {
+                    // 비선택
+                    button.configuration?.baseBackgroundColor = .white
+                    button.configuration?.baseForegroundColor = .systemGray
+                    button.layer.borderColor = UIColor.systemGray5.cgColor
+                }
             }
+
             
             btn.addTarget(self, action: #selector(categoryTapped(_:)), for: .touchUpInside)
             
@@ -155,6 +169,25 @@ final class BookshelfViewController: UIViewController {
         setupTableView()
         bindViewModel()
         updateCategoryUI(selectedIndex: 0)
+        
+        NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(reloadBooks),
+                name: .bookUpdated,
+                object: nil
+            )
+
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(reloadBooks),
+                name: .bookDeleted,
+                object: nil
+            )
+        }
+
+        @objc private func reloadBooks() {
+            viewModel.loadInitialData()
+        
 
 //        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
     }
@@ -217,6 +250,7 @@ final class BookshelfViewController: UIViewController {
     // 테이블뷰 설정
     private func setupTableView() {
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(
             BookshelfTableViewCell.self,
             forCellReuseIdentifier: BookshelfTableViewCell.identifier
@@ -250,7 +284,6 @@ final class BookshelfViewController: UIViewController {
     }
 
     
-    // 선택된 버튼 검정색으로 표시. 추후 변경 예정.
     private func updateCategoryUI(selectedIndex: Int) {
         selectedCategoryIndex = selectedIndex
         categoryButtons.forEach { $0.setNeedsUpdateConfiguration()}
@@ -293,10 +326,26 @@ extension BookshelfViewController: UITableViewDataSource {
         }
 
         let book = displayedBooks[indexPath.row]
-        cell.configure(
-            title: book.title,
-            author: book.author ?? "저자 없음"
-        )
+        cell.configure(model: book)
         return cell
+    }
+}
+
+
+// MARK: TableView Delegate -> 상세 화면 이동
+extension BookshelfViewController: UITableViewDelegate {
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selected = displayedBooks[indexPath.row]
+
+        guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: selected.uuid) else {
+            print("책 정보를 찾지 못했습니다.")
+            return
+        }
+
+        let detailVC = BookDetailViewController(book: coreDataBook)
+        detailVC.hidesBottomBarWhenPushed = true
+
+        navigationController?.pushViewController(detailVC, animated: true)
     }
 }
