@@ -10,6 +10,7 @@ class BookSearchViewModel {
     let disposeBag = DisposeBag()
     
     private let apiService = BookRepository()
+    private let coreDataManager = CoreDataManager.shared
     
     // MARK: Output (View로 데이터 내보냄)
     let bookList = BehaviorRelay<[BookItems]>(value: [])
@@ -19,6 +20,8 @@ class BookSearchViewModel {
     let currentPage = BehaviorRelay<Int>(value: 1)
     let isLoading = BehaviorRelay<Bool>(value: false)
     let canLoadMore = BehaviorRelay<Bool>(value: true)
+    
+    let bookDuplicationCheck = PublishRelay<(item: BookItem, isDuplicated: Bool)>()
     
     // MARK: 처음 검색 시
     func search(query: String) {
@@ -78,6 +81,21 @@ class BookSearchViewModel {
     func resetSearchState() {
         self.viewState.accept(.initial)
         self.bookList.accept([])
+    }
+    
+    // MARK: 검색 한 책 중복 체크
+    func selectBook(item: BookItem) {
+        let hasIsbn = !(item.isbn?.isEmpty ?? true)
+        let hasIsbn13 = !(item.isbn13?.isEmpty ?? true)
+        
+        if hasIsbn || hasIsbn13 {
+            let existingBook = coreDataManager.fetchBookByIsbn(isbn: item.isbn, isbn13: item.isbn13)
+            let isDuplicated = existingBook != nil
+            
+            bookDuplicationCheck.accept((item: item, isDuplicated: isDuplicated))
+        } else {
+            bookDuplicationCheck.accept((item: item, isDuplicated: false))
+        }
     }
 }
 

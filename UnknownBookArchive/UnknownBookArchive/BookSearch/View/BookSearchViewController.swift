@@ -200,7 +200,22 @@ class BookSearchViewController: UIViewController {
         
         // 테이블 뷰 셀 선택
         tableView.rx.modelSelected(BookItem.self)
-            .bind(to: viewModel.selectedBookItem)
+            .subscribe(onNext: { [weak self] bookItem in
+                self?.tableView.deselectRow(at: self?.tableView.indexPathForSelectedRow ?? IndexPath(), animated: true)
+                self?.viewModel.selectBook(item: bookItem)
+            })
+            .disposed(by: disposeBag)
+        // 중복 체크
+        viewModel.bookDuplicationCheck
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] item, isDuplicated in
+                guard let self = self else { return }
+                if isDuplicated {
+                    self.showAlert(title: "알림", message: "이미 저장된 책입니다.")
+                } else {
+                    self.moveToBookInfo(with: item)
+                }
+            })
             .disposed(by: disposeBag)
         
         // 책 선택 후 화면 이동 및 데이터 전달
@@ -300,13 +315,20 @@ class BookSearchViewController: UIViewController {
         topView.configure(title: "책 추가하기", rightButtonImage: nil)
     }
     
-    private func moveToBookInfo() {
-        let emptyBookItem = BookItem.empty()
+    // MARK: 상세화면으로 이동
+    // 셀 클릭 후 이동
+    private func moveToBookInfo(with bookItem: BookItem) {
         let bookInfoVC = BookInfoViewController()
         let bookInfoVM = BookInfoViewModel()
         bookInfoVC.viewModel = bookInfoVM
-        bookInfoVM.initialBookItem.onNext(emptyBookItem)
+        bookInfoVM.initialBookItem.onNext(bookItem)
         bookInfoVC.hidesBottomBarWhenPushed = true
         self.navigationController?.pushViewController(bookInfoVC, animated: true)
     }
+    // 직접추가 버튼 클릭 후 이동
+    private func moveToBookInfo() {
+        let emptyBookItem = BookItem.empty()
+        moveToBookInfo(with: emptyBookItem)
+    }
+    
 }
