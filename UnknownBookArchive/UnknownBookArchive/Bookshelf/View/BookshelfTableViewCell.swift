@@ -126,8 +126,8 @@ final class BookshelfTableViewCell: UITableViewCell {
         stateLabel.snp.makeConstraints {
             $0.top.equalTo(authorLabel.snp.bottom).offset(32)
             $0.leading.equalTo(authorLabel)
-            $0.width.equalTo(58)
-            $0.height.equalTo(24)
+            $0.width.equalTo(70)
+            $0.height.equalTo(27)
             $0.bottom.equalToSuperview().offset(-8)
         }
     }
