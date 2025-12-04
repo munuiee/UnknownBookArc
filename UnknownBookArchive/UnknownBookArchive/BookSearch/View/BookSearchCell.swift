@@ -6,6 +6,8 @@ import SnapKit
 class BookSearchCell: UITableViewCell {
     static let id = "BookSearchCell"
     
+    private var dataTask: URLSessionDataTask?
+    
     private let thumnailImage: UIImageView = {
         let imageView = UIImageView()
         imageView.backgroundColor = .white
@@ -94,18 +96,28 @@ class BookSearchCell: UITableViewCell {
         self.authorLabel.text = item.author
         self.publisherLabel.text = item.publisher
         
-        if let imageURL = URL(string: item.cover) {
-            self.thumnailImage.image = nil
-            
-            URLSession.shared.dataTask(with: imageURL) { [weak self] data, _, error in
+        self.dataTask?.cancel()
+        self.thumnailImage.image = nil
+        
+        if let imageURL = URL(string: item.highQualityCover) {
+            let newTask = URLSession.shared.dataTask(with: imageURL) { [weak self] data, _, error in
+                if let error = error as? URLError, error.code == .cancelled {
+                    return
+                }
                 guard let data = data, error == nil else {
-                    print("이미지 불러오기 실패")
+                    print("이미지 불러오기 실패: \(error?.localizedDescription ?? "알 수 없는 에러")")
                     return
                 }
                 DispatchQueue.main.async {
                     self?.thumnailImage.image = UIImage(data: data)
                 }
-            }.resume()
+                self?.dataTask = nil
+                
+            }
+            self.dataTask = newTask
+            newTask.resume()
+        } else {
+            self.dataTask = nil
         }
     }
 }

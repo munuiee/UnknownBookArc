@@ -331,24 +331,35 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         viewModel.coverImageUrl
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] urlString in
-                if let urlString = urlString, let url = URL(string: urlString) {
-                    self?.plusIconImage.isHidden = true
-                    URLSession.shared.dataTask(with: url) { data, response, error in
-                        guard let data = data, let image = UIImage(data: data), error == nil else {
-                            DispatchQueue.main.async {
-                                self?.coverImageView.image = nil
-                                self?.plusIconImage.isHidden = false
-                            }
-                            return
-                        }
-                        DispatchQueue.main.async {
-                            self?.coverImageView.image = image
-                        }
-                    }.resume()
-                } else {
-                    self?.coverImageView.image = nil
-                    self?.plusIconImage.isHidden = false
+                guard let self = self else { return }
+                
+                if let urlString = urlString, !urlString.hasPrefix("http") {
+                    self.plusIconImage.isHidden = (self.coverImageView.image != nil)
+                    return
                 }
+                if let urlString = urlString {
+                    
+                    let highQualityURLString = urlString.replacingOccurrences(of: "/coversum/", with: "/cover200/")
+                    if let url = URL(string: highQualityURLString) {
+                        self.plusIconImage.isHidden = true
+                        self.coverImageView.image = nil
+                        URLSession.shared.dataTask(with: url) { data, response, error in
+                            guard let data = data, let image = UIImage(data: data), error == nil else {
+                                DispatchQueue.main.async {
+                                    self.coverImageView.image = nil
+                                    self.plusIconImage.isHidden = false
+                                }
+                                return
+                            }
+                            DispatchQueue.main.async {
+                                self.coverImageView.image = image
+                            }
+                        }.resume()
+                        return
+                    }
+                }
+                self.coverImageView.image = nil
+                self.plusIconImage.isHidden = false
             })
             .disposed(by: disposeBag)
         
@@ -678,13 +689,12 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         }
     }
     
-    
     // MARK: 코어데이터 관련 함수
     // 저장 버튼에 들어갈 함수
     private func saveBookInfo() {
         
         // 데이터 추출-----------------------------------------
-        let coverImageData = coverImageView.image?.jpegData(compressionQuality: 0.8)
+        let coverImageData = coverImageView.image?.jpegData(compressionQuality: 1.0)
         
         let readingState = selectedStateButton?.title(for: .normal) ?? ""
         let bookFormat = selectedFormatButton?.title(for: .normal) ?? ""
@@ -819,9 +829,16 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         
         if let imageData = book.coverImage, let image = UIImage(data: imageData) {
             coverImageView.image = image
+            if let isbn = book.isbn {
+                viewModel.coverImageUrl.accept(isbn)
+            } else {
+                viewModel.coverImageUrl.accept("CoreDataImageExists")
+            }
         } else {
             coverImageView.image = nil
+            viewModel.coverImageUrl.accept(nil)
         }
+        self.plusIconImage.isHidden = false
         
         if let state = book.readingState {
             let stateButtons: [BaseButton] = [readingButton, pausedButton, finishedButton, scheduledButton]
