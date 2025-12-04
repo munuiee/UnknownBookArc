@@ -1,4 +1,3 @@
-
 <img width="1000" alt="표지" src="https://github.com/user-attachments/assets/ccbeef01-60aa-45ab-9618-474fc9ada787" />
 
 ## 기획 의도
@@ -10,6 +9,14 @@
 | <div align="center">[@strongtoothbrush](https://github.com/strongtoothbrush)</div> | <div align="center">[@meowbyterh](https://github.com/meowbyterh)</div>  | <div align="center">[@munuiee](https://github.com/munuiee)</div> | <div align="center">[@104hyeon](https://github.com/104hyeon)</div> |
 
 ## 주요 기능
+| 메인화면 | 문단 수집 | 찰나의 순간 | 좋아요 | 
+|------|------|-----|-----|
+| <img width="1125" height="2436" alt="Frame 1707483340" src="https://github.com/user-attachments/assets/badd017f-6fe1-453f-8485-fef74fee6930" /> | <img width="1125" height="2436" alt="Frame 1707483342" src="https://github.com/user-attachments/assets/661e85cc-fa27-49ef-81ff-a779638f76e0" /> | <img width="1125" height="2436" alt="Frame 1707483344" src="https://github.com/user-attachments/assets/7e045959-a26c-4688-9b79-5474d7afde89" /> | <img width="1125" height="2436" alt="Frame 1707483346" src="https://github.com/user-attachments/assets/761e686c-d796-401c-b322-a9f8f71d1d71" />
+
+
+
+
+
 
 ## 사용도구 및 아키텍처
 ### Environment
