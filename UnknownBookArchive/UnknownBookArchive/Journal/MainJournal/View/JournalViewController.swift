@@ -154,11 +154,13 @@ final class JournalViewController: UIViewController {
         backButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(25)
+            
         }
         
         bookTitle.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.height.equalTo(32)
+            $0.width.equalTo(290)
         }
         
         addButton.snp.makeConstraints {
