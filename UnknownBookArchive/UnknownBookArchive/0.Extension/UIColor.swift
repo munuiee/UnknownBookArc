@@ -46,14 +46,14 @@ extension UIColor {
 
 
     static let colorCDCBCB = UIColor(red: 0.8039, green: 0.7961, blue: 0.7961, alpha: 1.0)
-    static let color676565 = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0)
+    static let color676565 = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0) //gray600
     static let colorB4B2B2 = UIColor(red: 0.706, green: 0.698, blue: 0.698, alpha: 1.0)
     static let colorFCFCFC = UIColor(red: 0.988235, green: 0.988235, blue: 0.988235, alpha: 1.0)
     static let colorFAFAFA = UIColor(red: 0.980392, green: 0.980392, blue: 0.980392, alpha: 1.0)
     static let color0B142D = UIColor(red: 0.043, green: 0.078, blue: 0.176, alpha: 1.0)
 
     static let color152555 = UIColor(red: 0.082, green: 0.145, blue: 0.333, alpha: 1.0)
-    static let colorE6E6E6 = UIColor(red: 0.902, green: 0.902, blue: 0.902, alpha: 1.0)
+    static let colorE6E6E6 = UIColor(red: 0.902, green: 0.902, blue: 0.902, alpha: 1.0) //gray100
     
     // 시작일
     static let colorF9FBFA = UIColor(red: 0.976, green: 0.984, blue: 0.980, alpha: 1.0) // 배경
