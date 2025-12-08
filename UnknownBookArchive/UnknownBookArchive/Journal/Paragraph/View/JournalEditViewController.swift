@@ -157,7 +157,7 @@ final class JournalEditViewController: UIViewController {
         
         pageField.placeholder = " 책의 페이지를 기록해주세요."
         pageField.layer.cornerRadius = 10
-        pageField.backgroundColor = UIColor.colorFAFAFA
+        pageField.backgroundColor = .gray50
         pageField.font = UIFont.regularFont(ofSize: 15)
         pageField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 0))
         pageField.leftViewMode = .always
@@ -166,7 +166,7 @@ final class JournalEditViewController: UIViewController {
         
         
         mainField.layer.cornerRadius = 10
-        mainField.backgroundColor = UIColor.colorFAFAFA
+        mainField.backgroundColor = .gray50
         mainField.font = UIFont.regularFont(ofSize: 15)
         mainField.textColor = .black
         mainField.isScrollEnabled = true

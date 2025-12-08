@@ -7,7 +7,7 @@ class ToggleButton: UIControl {
     
     private let thumbView: UIView = {
         let view = UIView()
-        view.backgroundColor = .primaryColor
+        view.backgroundColor = .primaryBlue800
         view.clipsToBounds = true
         view.layer.cornerRadius = (30 - 6) / 2
         return view
@@ -43,7 +43,7 @@ class ToggleButton: UIControl {
     }
     
     private func configureUI() {
-        backgroundColor = .paperBGColor
+        backgroundColor = .secondaryTurquoise100
         layer.cornerRadius = 15
         clipsToBounds = true
         

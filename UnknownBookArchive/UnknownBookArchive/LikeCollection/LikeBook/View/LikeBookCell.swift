@@ -34,7 +34,7 @@ final class LikeBookCell: UICollectionViewCell {
         // imageView.image = UIImage(systemName: "book")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.backgroundColor = UIColor.colorFAFAFA
+        imageView.backgroundColor = .gray50
         imageView.layer.cornerRadius = 8
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -44,7 +44,7 @@ final class LikeBookCell: UICollectionViewCell {
     func configure(with book: Book) {
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
         imageView.preferredSymbolConfiguration = config
-        imageView.tintColor = UIColor.colorE6E6E6
+        imageView.tintColor = .gray100
         imageView.contentMode = .center    // 아이콘 중앙 배치
 
         imageView.image = UIImage(systemName: "book.closed.fill")

@@ -36,7 +36,7 @@ final class LikeParagraphViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(LikeParagraphCardCell.self, forCellWithReuseIdentifier: LikeParagraphCardCell.id)
-        collectionView.layer.borderColor = UIColor.colorE6E6E6.cgColor
+        collectionView.layer.borderColor = UIColor.gray100.cgColor
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)

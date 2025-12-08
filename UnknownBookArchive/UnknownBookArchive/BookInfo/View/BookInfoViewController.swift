@@ -30,12 +30,12 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
     // 책 표지
     private let coverImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = UIColor.colorFAFAFA
+        imageView.backgroundColor = .gray50
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
         imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.colorE6E6E6.cgColor
+        imageView.layer.borderColor = UIColor.gray100.cgColor
         imageView.isUserInteractionEnabled = true
         return imageView
     }()
@@ -46,7 +46,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         let plusConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
         let plusImage = UIImage(systemName: "book.closed.fill", withConfiguration: plusConfig)
         imageView.image = plusImage
-        imageView.tintColor = UIColor.colorE6E6E6
+        imageView.tintColor = .gray100
         return imageView
     }()
     
@@ -496,19 +496,19 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         // 1. 읽는 중 버튼
         readingButton.configure(
             title: "읽는 중",
-            backgroundColor: .stateDefaultBGColor,
-            titleColor: .stateDefaultTextColor,
-            borderColor: .stateDefaultBorderColor,
-            selectedBgColor: .colorD9E8E0,
-            selectedTitleColor: .color375846
+            backgroundColor: .white,
+            titleColor: .gray300,
+            borderColor: .gray100,
+            selectedBgColor: .tertiaryGreen100,
+            selectedTitleColor: .tertialryGreen700
         )
         
         // 2. 중단 버튼
         pausedButton.configure(
             title: "중단",
-            backgroundColor: .stateDefaultBGColor,
-            titleColor: .stateDefaultTextColor,
-            borderColor: .stateDefaultBorderColor,
+            backgroundColor: .white,
+            titleColor: .gray300,
+            borderColor: .gray100,
             selectedBgColor: .colorFEDCDD,
             selectedTitleColor: .colorA40509
         )
@@ -516,19 +516,19 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         // 3. 완독 버튼
         finishedButton.configure(
             title: "완독",
-            backgroundColor: .stateDefaultBGColor,
-            titleColor: .stateDefaultTextColor,
-            borderColor: .stateDefaultBorderColor,
-            selectedBgColor: .colorDAE1F6,
-            selectedTitleColor: .color1F387F
+            backgroundColor: .white,
+            titleColor: .gray300,
+            borderColor: .gray100,
+            selectedBgColor: .primaryBlue100,
+            selectedTitleColor: .primaryBlue700
         )
         
         // 4. 읽을 예정 버튼
         scheduledButton.configure(
             title: "읽을 예정",
-            backgroundColor: .stateDefaultBGColor,
-            titleColor: .stateDefaultTextColor,
-            borderColor: .stateDefaultBorderColor,
+            backgroundColor: .white,
+            titleColor: .gray300,
+            borderColor: .gray100,
             selectedBgColor: .colorFBF0CB,
             selectedTitleColor: .colorB9920E
         )
@@ -537,21 +537,21 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         // 1. 종이책 버튼
         paperButton.configure(
             title: "종이책",
-            backgroundColor: .formatDefaultBGColor,
-            titleColor: .formatDefaultTextColor,
-            borderColor: .formatDefaultBorderColor,
-            selectedBgColor: .colorD9E6ED,
-            selectedTitleColor: .color3F7088
+            backgroundColor: .white,
+            titleColor: .gray300,
+            borderColor: .gray100,
+            selectedBgColor: .secondaryTurquoise100,
+            selectedTitleColor: .secondaryTurquoise600
         )
         
         // 2. 전자책 버튼
         ebookButton.configure(
             title: "전자책",
-            backgroundColor: .formatDefaultBGColor,
-            titleColor: .formatDefaultTextColor,
-            borderColor: .formatDefaultBorderColor,
-            selectedBgColor: .colorD9E6ED,
-            selectedTitleColor: .color3F7088
+            backgroundColor: .white,
+            titleColor: .gray300,
+            borderColor: .gray100,
+            selectedBgColor: .secondaryTurquoise100,
+            selectedTitleColor: .secondaryTurquoise600
         )
     }
     
@@ -575,14 +575,14 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
     private func setupDateButtons() {
         // 1. 시작일 버튼 (UIButton 설정)
         startDateButton.setTitle("시작일", for: .normal)
-        startDateButton.setTitleColor(UIColor.color7BAD92, for: .normal)
-        startDateButton.backgroundColor = UIColor.colorF9FBFA
-        startDateButton.layer.borderColor = UIColor.colorD9E8E0.cgColor
+        startDateButton.setTitleColor(.tertialryGreen400, for: .normal)
+        startDateButton.backgroundColor = .tertiaryGreen50
+        startDateButton.layer.borderColor = UIColor(named: "tertiaryGreen100")?.cgColor
         
         endDateButton.setTitle("종료일", for: .normal)
-        endDateButton.setTitleColor(UIColor.color5F7ED8, for: .normal)
-        endDateButton.backgroundColor = UIColor.colorF7F8FD
-        endDateButton.layer.borderColor = UIColor.colorDAE1F6.cgColor
+        endDateButton.setTitleColor(.primaryBlue300, for: .normal)
+        endDateButton.backgroundColor = .primaryBlue50
+        endDateButton.layer.borderColor = UIColor(named: "PrimaryBlue100")?.cgColor
     }
     // 달력 팝업 띄우기
     private func openCalendar(sourceButton: UIButton, completion: @escaping (String) -> Void) {
@@ -660,10 +660,10 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
             
             button.configure(
                 title: title,
-                titleColor: .stateDefaultTextColor,
-                borderColor: .stateDefaultBorderColor,
-                selectedBgColor: .tagSeletedBGColor,
-                selectedTitleColor: .tagSeletedTextColor
+                titleColor: .gray300,
+                borderColor: .gray100,
+                selectedBgColor: .primaryBlue50,
+                selectedTitleColor: .primaryBlue500
             )
             
             button.tag = index

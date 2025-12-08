@@ -26,8 +26,8 @@ class BookSearchViewController: UIViewController {
         sb.searchTextField.leftView?.tintColor = .gray
         sb.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "책 제목, 저자를 검색하세요",
-            attributes: [NSAttributedString.Key.foregroundColor : UIColor.colorB4B2B2])
-        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(UIColor.colorB4B2B2, renderingMode: .alwaysOriginal) {
+            attributes: [NSAttributedString.Key.foregroundColor : UIColor(named: "gray300")!])
+        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(.gray300, renderingMode: .alwaysOriginal) {
             sb.setImage(clearImage, for: .clear, state: .normal)
         }
             return sb
@@ -274,7 +274,7 @@ class BookSearchViewController: UIViewController {
 
         let label = UILabel()
         label.text = message
-        label.textColor = UIColor.color676565
+        label.textColor = UIColor(named: "gray600")
         label.font = UIFont.mediumFont(ofSize: 16)
         label.textAlignment = .center
         label.textAlignment = isLeadingAlignment ? .left : .center
@@ -293,7 +293,7 @@ class BookSearchViewController: UIViewController {
         if showButton {
             let button = UIButton()
             button.tag = 999
-            button.backgroundColor = .primaryColor
+            button.backgroundColor = .primaryBlue800
             button.setTitle("직접 책 추가하기", for: .normal)
             button.setTitleColor(.white, for: .normal)
             button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)

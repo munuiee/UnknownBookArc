@@ -106,7 +106,7 @@ class BookDetailViewController: UIViewController {
     private let progressBar: UIProgressView = {
         let progressView = UIProgressView()
         progressView.trackTintColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
-        progressView.progressTintColor = .primaryColor
+        progressView.progressTintColor = .primaryBlue800
         progressView.progress = 0.1
         return progressView
     }()
@@ -171,13 +171,13 @@ class BookDetailViewController: UIViewController {
         button.setImage(normalImage, for: .normal)
         let selectedImage = UIImage(systemName: "heart.fill")
         button.setImage(selectedImage, for: .selected)
-        button.tintColor = .primaryColor
+        button.tintColor = .primaryBlue800
         return button
     }()
     
     private let journalButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .primaryColor
+        button.backgroundColor = .primaryBlue800
         button.setTitle("저널 보기", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
@@ -336,10 +336,10 @@ class BookDetailViewController: UIViewController {
             
             tagButton.configure(
                 title: tagName,
-                titleColor: .tagSeletedTextColor,
-                borderColor: .tagSeletedBoarderColor,
-                selectedBgColor: .tagSeletedBGColor,
-                selectedTitleColor: .tagSeletedTextColor
+                titleColor: .primaryBlue500,
+                borderColor: .primaryBlue300,
+                selectedBgColor: .primaryBlue50,
+                selectedTitleColor: .primaryBlue500
             )
             tagButton.isSelected = true
             
@@ -441,14 +441,14 @@ class BookDetailViewController: UIViewController {
             
             switch state {
             case "읽는 중":
-                selectedBgColor = .colorD9E8E0
-                selectedBoarderColor = .colorD9E8E0
+                selectedBgColor = .tertiaryGreen100
+                selectedBoarderColor = .tertiaryGreen100
             case "중단":
                 selectedBgColor = .colorFEDCDD
                 selectedBoarderColor = .colorFEDCDD
             case "완독":
-                selectedBgColor = .colorDAE1F6
-                selectedBoarderColor = .colorDAE1F6
+                selectedBgColor = .primaryBlue100
+                selectedBoarderColor = .primaryBlue100
             case "읽을 예정":
                 selectedBgColor = .colorFBF0CB
                 selectedBoarderColor = .colorFBF0CB
@@ -456,7 +456,7 @@ class BookDetailViewController: UIViewController {
                 stateButton.isHidden = true
                 return
             }
-            stateButton.configure(title: state, backgroundColor: .stateDefaultBGColor, titleColor: .stateDefaultTextColor, borderColor: selectedBoarderColor ?? .stateDefaultBorderColor, selectedBgColor: selectedBgColor ?? .clear, selectedTitleColor: .stateSeletedTextColor)
+            stateButton.configure(title: state, backgroundColor: .white, titleColor: .gray300, borderColor: selectedBoarderColor ?? .gray100, selectedBgColor: selectedBgColor ?? .clear, selectedTitleColor: .gray500)
             stateButton.isSelected = true
             stateButton.isUserInteractionEnabled = false
         } else {
@@ -473,11 +473,11 @@ class BookDetailViewController: UIViewController {
             
             switch format {
             case "종이책":
-                selectedBgColor = .colorD9E6ED
-                selectedTitleColor = .color3F7088
+                selectedBgColor = .secondaryTurquoise100
+                selectedTitleColor = .secondaryTurquoise600
             case "전자책":
-                selectedBgColor = .colorD9E6ED
-                selectedTitleColor = .color3F7088
+                selectedBgColor = .secondaryTurquoise100
+                selectedTitleColor = .secondaryTurquoise600
             default:
                 formatButton.isHidden = true
                 return
@@ -485,9 +485,9 @@ class BookDetailViewController: UIViewController {
             
             formatButton.configure(
                 title: format,
-                backgroundColor: .formatDefaultBGColor,
-                titleColor: .formatDefaultTextColor,
-                borderColor: .formatDefaultBorderColor,
+                backgroundColor: .gray100,
+                titleColor: .gray300,
+                borderColor: .gray100,
                 selectedBgColor: selectedBgColor ?? .clear,
                 selectedTitleColor: selectedTitleColor ?? .black
             )

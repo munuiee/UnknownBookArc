@@ -17,13 +17,13 @@ class TopView: UIView {
     
     private let mainLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .color1A1919
+        label.textColor = UIColor.gray900
         label.font = UIFont.semiBoldFont(ofSize: 18)
         return label
     }()
     lazy var rightButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .primaryColor
+        button.tintColor = .primaryBlue800
         return button
     }()
     private lazy var backButton: UIButton = {

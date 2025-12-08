@@ -37,7 +37,7 @@ final class BookshelfViewController: UIViewController {
     // 검색창
     private lazy var searchTextField: UITextField = {
         let tf = UITextField()
-        tf.backgroundColor = UIColor.colorFAFAFA
+        tf.backgroundColor = .gray50
         tf.layer.cornerRadius = 12
         tf.font = .regularFont(ofSize: 16)
         tf.borderStyle = .none
@@ -45,7 +45,7 @@ final class BookshelfViewController: UIViewController {
         tf.attributedPlaceholder = NSAttributedString(
             string: "책 제목 검색",
             attributes: [
-                .foregroundColor: UIColor.colorB4B2B2,
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont.regularFont(ofSize: 16)
             ]
         )
@@ -54,7 +54,7 @@ final class BookshelfViewController: UIViewController {
         let left = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 34))
         let icon = UIImageView(image: UIImage(systemName: "magnifyingglass"))
         icon.frame = CGRect(x: 10, y: 8, width: 18, height: 18)
-        icon.tintColor = .color676565
+        icon.tintColor = .gray600
         left.addSubview(icon)
         tf.leftView = left
         tf.leftViewMode = .always
@@ -117,7 +117,7 @@ final class BookshelfViewController: UIViewController {
             
             btn.layer.cornerRadius = 8
             btn.layer.borderWidth = 1
-            btn.layer.borderColor = UIColor.colorE6E6E6.cgColor
+            btn.layer.borderColor = UIColor.gray100.cgColor
             btn.clipsToBounds = true
             btn.translatesAutoresizingMaskIntoConstraints = false
             btn.heightAnchor.constraint(equalToConstant: 32).isActive = true
@@ -131,14 +131,14 @@ final class BookshelfViewController: UIViewController {
 
                 if isSelected {
                     // 선택됨
-                    button.configuration?.baseBackgroundColor = UIColor.colorF7F8FD
-                    button.configuration?.baseForegroundColor = UIColor.color365DCE
-                    button.layer.borderColor = UIColor.color889FE2.cgColor
+                    button.configuration?.baseBackgroundColor = .primaryBlue50
+                    button.configuration?.baseForegroundColor = .primaryBlue500
+                    button.layer.borderColor = UIColor.primaryBlue500.cgColor
                 } else {
                     // 비선택
                     button.configuration?.baseBackgroundColor = .white
-                    button.configuration?.baseForegroundColor = .colorB4B2B2
-                    button.layer.borderColor = UIColor.colorE6E6E6.cgColor
+                    button.configuration?.baseForegroundColor = .gray300
+                    button.layer.borderColor = UIColor.gray100.cgColor
                 }
             }
 
