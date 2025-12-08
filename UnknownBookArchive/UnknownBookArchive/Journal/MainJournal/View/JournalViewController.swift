@@ -122,6 +122,7 @@ final class JournalViewController: UIViewController {
     private func setupUI() {
         
         bookTitle.text = book.title ?? ""
+        bookTitle.textAlignment = .center
         bookTitle.font = UIFont.semiBoldFont(ofSize: 18)
         
         let addConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
