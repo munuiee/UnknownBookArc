@@ -50,7 +50,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         let home = UINavigationController(rootViewController: ReadingHomeViewController())
         let bookshelf = UINavigationController(rootViewController: BookshelfViewController())
         let like = UINavigationController(rootViewController: LikeViewController())
-        // let mypage = UINavigationController(rootViewController: MyPageViewController())
+        let mypage = UINavigationController(rootViewController: MyPageViewController())
         
         home.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         
@@ -58,9 +58,9 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         like.tabBarItem = UITabBarItem(title: "좋아요", image: UIImage(systemName: "heart"), selectedImage: UIImage(systemName: "heart.fill"))
         
-//        mypage.tabBarItem = UITabBarItem(title: "마이페이지", image: UIImage(systemName: "person"), selectedImage: UIImage(systemName: "person.fill"))
+        mypage.tabBarItem = UITabBarItem(title: "마이페이지", image: UIImage(systemName: "person"), selectedImage: UIImage(systemName: "person.fill"))
         
-        self.viewControllers = [home, bookshelf, like]
+        self.viewControllers = [home, bookshelf, like, mypage]
     }
     
     // 홈 화면 한 번 더 클릭해서 스크롤 올리기
