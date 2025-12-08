@@ -21,6 +21,8 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         collectionViewLayout: makeLayout()
     )
     
+    // 높이 제약
+    private var inputTextHeightConstraint: Constraint?
     private var chatViewBottomConstraint: Constraint?
     
     private let viewModel: MomentListViewModel
@@ -81,10 +83,6 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         NotificationCenter.default.removeObserver(self)
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        textViewDidChange(inputText)
-    }
     
     
     // MARK: - CollectionView 세팅
@@ -292,7 +290,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
             $0.top.equalTo(separatorView.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview().inset(8)
             $0.bottom.equalToSuperview().inset(6)
-            $0.height.lessThanOrEqualTo(150)
+            inputTextHeightConstraint = $0.height.equalTo(36).constraint
         }
         
         
@@ -481,12 +479,19 @@ extension MomentViewController: UITextViewDelegate {
             sendButton.tintColor = .white
         }
         
-        let contentHeight = textView.contentSize.height
-        if contentHeight > maxTextViewHeight {
-            textView.isScrollEnabled = true
-        } else {
-            textView.isScrollEnabled = false
-        }
+        let fittingWidth = textView.bounds.width > 0
+        ? textView.bounds.width
+        : inputContainer.bounds.width - 16  // 좌우 inset 고려해서 대략 값
+        
+        let targetSize = textView.sizeThatFits(
+            CGSize(width: fittingWidth, height: .greatestFiniteMagnitude)
+        )
+        
+        let newHeight = min(targetSize.height, maxTextViewHeight)
+        
+        inputTextHeightConstraint?.update(offset: newHeight)
+        
+        textView.isScrollEnabled = targetSize.height > maxTextViewHeight
         
         UIView.animate(withDuration: 0.1) {
             self.view.layoutIfNeeded()

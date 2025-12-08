@@ -240,10 +240,9 @@ class MyPageViewController: UIViewController {
             $0.height.equalTo(44)
         }
         statsSubLabel.snp.makeConstraints {
-            $0.top.equalTo(statsLabel.snp.bottom).offset(24)
+            $0.top.equalTo(statsLabel.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(32)
-            
         }
         monthYearSV.snp.makeConstraints {
             $0.top.equalTo(statsSubLabel.snp.bottom).offset(16)
