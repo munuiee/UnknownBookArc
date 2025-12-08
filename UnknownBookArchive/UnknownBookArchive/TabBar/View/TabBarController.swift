@@ -47,10 +47,13 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     
     private func setupTabs() {
         
+        let coreDataManager = CoreDataManager()
+        let myPageViewModel = MyPageViewModel(coreDataManager: coreDataManager)
+        
         let home = UINavigationController(rootViewController: ReadingHomeViewController())
         let bookshelf = UINavigationController(rootViewController: BookshelfViewController())
         let like = UINavigationController(rootViewController: LikeViewController())
-        let mypage = UINavigationController(rootViewController: MyPageViewController())
+        let mypage = UINavigationController(rootViewController: MyPageViewController(viewModel: myPageViewModel))
         
         home.tabBarItem = UITabBarItem(title: "홈", image: UIImage(systemName: "house"), selectedImage: UIImage(systemName: "house.fill"))
         

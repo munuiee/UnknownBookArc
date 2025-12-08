@@ -13,6 +13,8 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
     var viewModel = BookInfoViewModel()
     var book: Book?
     var bookUUID: String?
+    // 완료된 책 카운터용
+    var myPageViewModel: MyPageViewModel?
     
     let disposeBag = DisposeBag()
     var selectedStateButton: BaseButton?
@@ -767,26 +769,30 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         let isbn = viewModel.isbn.value
         let isbn13 = viewModel.isbn13.value
         
+        
         let duplicateBook = CoreDataManager.shared.fetchBookByIsbn(isbn: isbn, isbn13: isbn13, excludeUUID: self.bookUUID)
         if duplicateBook != nil {
             showAlert(title: "중복된 책", message: "이미 서재에 저장된 책입니다.")
         }
+        let saveDate = Date()
         
         // 코어 데이터 저장 및 수정 분기 -----------------------------------------
         var savedBook: Book?
         let isPageMode = toggleButton.isPageMode
         
         if let existingUUID = self.bookUUID {
-            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate, isbn: isbn, isbn13: isbn13
+            savedBook = CoreDataManager.shared.bookUpdate(uuid: existingUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate, isbn: isbn, isbn13: isbn13, lastModifiedDate: saveDate
             )
         } else {
             let newUUID = UUID().uuidString
-            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate, isbn: isbn, isbn13: isbn13
+            savedBook = CoreDataManager.shared.bookCreate(uuid: newUUID, title: title, author: author, publisher: publisher, readingState: readingState, bookFormat: bookFormat, selectedTags: selectedTagsString, coverImage: coverImageData, isPageMode: isPageMode, currentPage: currentPage, totalPage: totalPage, percent: percent, startDate: startDate, endDate: endDate, isbn: isbn, isbn13: isbn13, lastModifiedDate: saveDate
             )
         }
         
         // 화면 전환 및 데이터 전달-----------------------------------------
         if let saveBook = savedBook {
+            
+            self.myPageViewModel?.fetchMonthCompletedCount()
             
             NotificationCenter.default.post(name: .bookUpdated, object: nil)
             
