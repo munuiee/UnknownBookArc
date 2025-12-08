@@ -218,6 +218,17 @@ class MyPageViewController: UIViewController {
         viewModel.fetchYearCompletedCount()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        let currentTrait = self.traitCollection
+        monthView.layer.borderColor = UIColor.gray100.resolvedColor(with: currentTrait).cgColor
+        yearView.layer.borderColor = UIColor.gray100.resolvedColor(with: currentTrait).cgColor
+        recommendationButton.layer.borderColor = UIColor.primaryBlue50.resolvedColor(with: currentTrait).cgColor
+        reviewButton.layer.borderColor = UIColor.primaryBlue50.resolvedColor(with: currentTrait).cgColor
+        communicationButton.layer.borderColor = UIColor.primaryBlue50.resolvedColor(with: currentTrait).cgColor
+    }
+    
     private func configureUI() {
         view.backgroundColor = .white
         
