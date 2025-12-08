@@ -11,6 +11,22 @@ class CoreDataManager {
     
     lazy var persistentContainer: NSPersistentCloudKitContainer = {
         let container = NSPersistentCloudKitContainer(name: "UnknownBookArchive")
+        
+           guard let description = container.persistentStoreDescriptions.first else {
+               fatalError("No persistent store description found")
+           }
+        let options = NSPersistentCloudKitContainerOptions(containerIdentifier: "iCloud.UBACloudKit")
+        description.cloudKitContainerOptions = options
+
+
+        
+        if let description = container.persistentStoreDescriptions.first {
+            // CloudKit 동기화에 거의 필수 옵션 두 개
+            description.setOption(true as NSNumber,
+                                  forKey: NSPersistentHistoryTrackingKey)
+            description.setOption(true as NSNumber,
+                                  forKey: NSPersistentStoreRemoteChangeNotificationPostOptionKey)
+        }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
