@@ -138,7 +138,7 @@ class BookDetailViewController: UIViewController {
         let label = UILabel()
         label.layer.cornerRadius = 8
         label.layer.borderWidth = 1
-        label.layer.borderColor = UIColor(red: 0.855, green: 0.883, blue: 0.965, alpha: 1).cgColor
+        label.layer.borderColor = UIColor.primaryBlue100.cgColor
         label.textColor = UIColor(red: 0.372, green: 0.495, blue: 0.848, alpha: 1)
         label.textAlignment = .center
         label.font = UIFont.mediumFont(ofSize: 12)
@@ -204,6 +204,7 @@ class BookDetailViewController: UIViewController {
         
         displayBookInfo()
     }
+    
     
     private func configureUI() {
         view.backgroundColor = .white
