@@ -4,7 +4,7 @@ import UIKit
 
 class CoreDataManager {
     static let shared = CoreDataManager()
-    private init() {}
+    init() {}
     
     
     // MARK: - Core Data stack
@@ -156,7 +156,8 @@ class CoreDataManager {
             startDate: Date?,
             endDate: Date?,
             isbn: String?,
-            isbn13: String?
+            isbn13: String?,
+            lastModifiedDate: Date
 
     ) -> Book? {
         guard let entity = NSEntityDescription.entity(forEntityName: "Book", in: context) else {
@@ -180,6 +181,7 @@ class CoreDataManager {
         newBook.setValue(endDate, forKey: "endDate")
         newBook.setValue(isbn, forKey: "isbn")
         newBook.setValue(isbn13, forKey: "isbn13")
+        newBook.setValue(lastModifiedDate, forKey: "lastModifiedDate")
         
         
         do {
@@ -211,7 +213,8 @@ class CoreDataManager {
             startDate: Date?,
             endDate: Date?,
             isbn: String?,
-            isbn13: String?
+            isbn13: String?,
+            lastModifiedDate: Date
     ) -> Book? {
         
         let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
@@ -239,6 +242,7 @@ class CoreDataManager {
             bookToUpdate.setValue(endDate, forKey: "endDate")
             bookToUpdate.setValue(isbn, forKey: "isbn")
             bookToUpdate.setValue(isbn13, forKey: "isbn13")
+            bookToUpdate.setValue(lastModifiedDate, forKey: "lastModifiedDate")
             
             try context.save()
             print("책 수정 성공")
@@ -361,5 +365,63 @@ class CoreDataManager {
             return nil
         }
     }
+    
+    // MARK: 완독한 책 카운트
+    // 이번달
+    func countCompletedBooksInMonth() -> Int {
+        let calender = Calendar.current
+        let now = Date()
+        guard let startOfMonth = calender.date(from: calender.dateComponents([.year, .month], from: now)) else {
+            return 0
+        }
+        guard let startOfNextMonth = calender.date(byAdding: .month, value: 1, to: startOfMonth) else {
+            print("다음 달 시작일 계산 실패")
+            return 0
+        }
         
+        let fetchReauest: NSFetchRequest<Book> = Book.fetchRequest()
+        let predicateFormat = "readingState == %@ AND lastModifiedDate >= %@ AND lastModifiedDate < %@"
+        
+        let predicate = NSPredicate(format: predicateFormat, "완독", startOfMonth as CVarArg, startOfNextMonth as CVarArg)
+        
+        fetchReauest.predicate = predicate
+        
+        do {
+            let count = try persistentContainer.viewContext.count(for: fetchReauest)
+            print("이번 달 완독 책 개수: \(count)권")
+            return count
+        } catch {
+            print("이번 달 완독 책 개수 세기 실패: \(error)")
+            return 0
+        }
+    }
+    // 이번 년도
+    func countCompletedBooksInYear() -> Int {
+        let calender = Calendar.current
+        let components = calender.dateComponents([.year], from: Date())
+        
+        
+        guard let startOfYear = calender.date(from: components) else { return 0 }
+        
+        guard let startOfNextYear = calender.date(byAdding: .year, value: 1, to: startOfYear) else {
+            print("다음 달 시작일 계산 실패")
+            return 0
+        }
+        
+        let fetchReauest: NSFetchRequest<Book> = Book.fetchRequest()
+        let predicateFormat = "readingState == %@ AND lastModifiedDate >= %@ AND lastModifiedDate < %@"
+        
+        let predicate = NSPredicate(format: predicateFormat, "완독", startOfYear as CVarArg, startOfNextYear as CVarArg)
+        
+        fetchReauest.predicate = predicate
+        
+        do {
+            let count = try persistentContainer.viewContext.count(for: fetchReauest)
+            print("이번 년도 완독 책 개수: \(count)권")
+            return count
+        } catch {
+            print("이번 년도 완독 책 개수 세기 실패: \(error)")
+            return 0
+        }
+    }
 }

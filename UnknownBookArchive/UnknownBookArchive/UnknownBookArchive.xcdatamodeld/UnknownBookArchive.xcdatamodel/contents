@@ -9,6 +9,7 @@
         <attribute name="isbn" optional="YES" attributeType="String"/>
         <attribute name="isbn13" optional="YES" attributeType="String"/>
         <attribute name="isPageMode" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="lastModifiedDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="liked" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="likedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="percent" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>

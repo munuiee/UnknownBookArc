@@ -2,8 +2,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 class MyPageViewController: UIViewController {
+    
+    private let viewModel: MyPageViewModel
+    private let disposeBag = DisposeBag()
+    
     
     private let myPageTitle: UILabel = {
         let label = UILabel()
@@ -187,15 +193,29 @@ class MyPageViewController: UIViewController {
     }()
     
 
+    init(viewModel: MyPageViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         setupUI()
+        bind()
+        
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        viewModel.fetchMonthCompletedCount()
+        viewModel.fetchYearCompletedCount()
     }
     
     private func configureUI() {
@@ -342,6 +362,18 @@ class MyPageViewController: UIViewController {
             $0.width.height.equalTo(24)
         }
 
+    }
+    
+    // MARK: bind함수
+    private func bind() {
+        viewModel.monthCompletedCount
+            .map { String($0) }
+            .bind(to: monthCountLabel.rx.text)
+            .disposed(by: disposeBag)
+        viewModel.yearCompletedCount
+            .map { String($0) }
+            .bind(to: yearCountLabel.rx.text)
+            .disposed(by: disposeBag)
     }
 
     
