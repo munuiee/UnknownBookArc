@@ -258,7 +258,7 @@ final class ReadingHomeViewController: UIViewController {
         greetingLabel.numberOfLines = 0
         greetingLabel.textColor = .black
         
-        greetingSectionView.backgroundColor = .readinHomeBannerColor
+        greetingSectionView.backgroundColor = .primaryBlue100
         greetingSectionView.layer.cornerRadius = 12
         greetingSectionView.clipsToBounds = true
         
@@ -297,13 +297,13 @@ final class ReadingHomeViewController: UIViewController {
         
         addBookButton.setTitle("책 추가하기", for: .normal)
         addBookButton.layer.cornerRadius = 8
-        addBookButton.backgroundColor = .addBookButtonColor
+        addBookButton.backgroundColor = .primaryBlue800
         addBookButton.setTitleColor(.white, for: .normal)
         addBookButton.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
 
         
         func styleCard(_ card: UIView, _ label: UILabel, _ text: String) {
-            card.backgroundColor = .readingHomeGrayColor
+            card.backgroundColor = UIColor(named: "gray50")
             card.layer.cornerRadius = 8
             card.layer.borderWidth = 1
             card.layer.borderColor = UIColor(red: 0.902, green: 0.902, blue: 0.902, alpha: 1.0).cgColor

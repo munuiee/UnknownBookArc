@@ -25,7 +25,7 @@ class BaseTextField: UITextField {
     private func setupTextField() {
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
+        layer.borderColor = UIColor.gray100.cgColor
         backgroundColor = .white
         font = UIFont.mediumFont(ofSize: 14)
         let defaultAttributes: [NSAttributedString.Key: Any] = [
@@ -38,7 +38,7 @@ class BaseTextField: UITextField {
         }
     }
     func configure(placeholder: String) {
-        let placeholderColor: UIColor = .colorB4B2B2
+        let placeholderColor: UIColor = UIColor.gray300
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: placeholderColor,
             .font: UIFont.regularFont(ofSize: 15)

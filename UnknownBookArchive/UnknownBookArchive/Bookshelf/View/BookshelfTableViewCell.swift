@@ -30,7 +30,7 @@ final class BookshelfTableViewCell: UITableViewCell {
             view.backgroundColor = .white
             view.layer.cornerRadius = 8
             view.layer.borderWidth = 1
-            view.layer.borderColor = UIColor.colorF7F8FD.cgColor
+        view.layer.borderColor = UIColor.primaryBlue50.cgColor
             return view
         }()
 
@@ -40,7 +40,7 @@ final class BookshelfTableViewCell: UITableViewCell {
         iv.backgroundColor = UIColor(white: 0.9, alpha: 1)
         iv.layer.cornerRadius = 8
         iv.layer.borderWidth = 1
-        iv.layer.borderColor = UIColor.colorF7F8FD.cgColor
+        iv.layer.borderColor = UIColor.primaryBlue50.cgColor
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFill
         return iv
@@ -50,7 +50,7 @@ final class BookshelfTableViewCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .semiBoldFont(ofSize: 18)
-        label.textColor = .color0B142D
+        label.textColor = .primaryBlue900
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -60,7 +60,7 @@ final class BookshelfTableViewCell: UITableViewCell {
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.font = .mediumFont(ofSize: 14)
-        label.textColor = .color817E7E
+        label.textColor = .gray500
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -74,7 +74,7 @@ final class BookshelfTableViewCell: UITableViewCell {
         label.textAlignment = .center
         label.layer.cornerRadius = 8
         label.clipsToBounds = true
-        label.textColor = .stateSeletedTextColor
+        label.textColor = .gray500
         return label
     }()
 
@@ -150,14 +150,14 @@ final class BookshelfTableViewCell: UITableViewCell {
             
             switch state {
             case "읽는 중":
-                stateLabel.backgroundColor = .colorD9E8E0
-                stateLabel.textColor = .color375846
+                stateLabel.backgroundColor = .tertiaryGreen100
+                stateLabel.textColor = .tertialryGreen700
             case "중단":
                 stateLabel.backgroundColor = .colorFEDCDD
                 stateLabel.textColor = .colorA40509
             case "완독":
-                stateLabel.backgroundColor = .colorDAE1F6
-                stateLabel.textColor = .color1F387F
+                stateLabel.backgroundColor = .primaryBlue100
+                stateLabel.textColor = .primaryBlue700
             case "읽을 예정":
                 stateLabel.backgroundColor = .colorFBF0CB
                 stateLabel.textColor = .colorB9920E
