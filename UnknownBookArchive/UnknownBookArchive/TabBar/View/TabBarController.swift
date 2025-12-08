@@ -23,16 +23,16 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         // 색상 설정
         let normal = appearance.stackedLayoutAppearance.normal
-        normal.titleTextAttributes = [.foregroundColor: UIColor.colorCDCBCB]
+        normal.titleTextAttributes = [.foregroundColor: UIColor.gray200]
         
         let selected = appearance.stackedLayoutAppearance.selected
-        selected.titleTextAttributes = [.foregroundColor: UIColor.primaryColor]
+        selected.titleTextAttributes = [.foregroundColor: UIColor.primaryBlue800]
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
         
-        tabBar.tintColor = .primaryColor
-        tabBar.unselectedItemTintColor = .colorCDCBCB
+        tabBar.tintColor = .primaryBlue800
+        tabBar.unselectedItemTintColor = UIColor.gray200
         
         if #available(iOS 15.0, *) {
             tabBar.scrollEdgeAppearance = appearance

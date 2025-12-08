@@ -5,9 +5,9 @@ import SnapKit
 
 class BaseButton: UIButton {
     
-    var defaultBgColor: UIColor = .stateDefaultBGColor
+    var defaultBgColor: UIColor = .white
     var selectBgColor: UIColor = .gray
-    var defautTitleColor: UIColor = .stateDefaultTextColor
+    var defautTitleColor: UIColor = .gray300
     var selectTitleColor: UIColor = .white
     
     override init(frame: CGRect) {
@@ -20,10 +20,10 @@ class BaseButton: UIButton {
     }
     
     private func setupButton() {
-        self.backgroundColor = .stateDefaultBGColor
+        self.backgroundColor = .white
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
+        layer.borderColor = UIColor.gray100.cgColor
         titleLabel?.font = .systemFont(ofSize: 15)
         self.snp.makeConstraints {
             $0.width.equalTo(77.75).priority(.required)
@@ -38,7 +38,7 @@ class BaseButton: UIButton {
                    selectedTitleColor: UIColor
     ) {
         setTitle(title, for: .normal)
-        setTitleColor(.stateDefaultTextColor, for: .normal)
+        setTitleColor(.gray300, for: .normal)
         self.backgroundColor = defaultBgColor
         self.layer.borderColor = borderColor.cgColor
         self.selectTitleColor = selectedTitleColor
@@ -60,7 +60,7 @@ class BaseButton: UIButton {
             setTitleColor(selectTitleColor, for: .normal)
         } else {
             backgroundColor = defaultBgColor
-            self.layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
+            self.layer.borderColor = UIColor.gray100.cgColor
             setTitleColor(defautTitleColor, for: .normal)
         }
     }

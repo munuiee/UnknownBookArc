@@ -57,29 +57,29 @@ final class CurrentReadingCell: UICollectionViewCell {
         // 제목
         titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = UIColor.color0B142D
+        titleLabel.textColor = .primaryBlue900
         
         // 지은이
         authorLabel.font = UIFont.mediumFont(ofSize: 12)
-        authorLabel.textColor = UIColor.colorCDCBCB
+        authorLabel.textColor = UIColor.gray200
         
         // 날짜
         dateLabel.font = UIFont.mediumFont(ofSize: 12)
-        dateLabel.textColor = UIColor.colorB4B2B2
+        dateLabel.textColor = .gray300
         
         // 퍼센트
         percentLabel.font = UIFont.boldFont(ofSize: 12)
-        percentLabel.textColor = UIColor.color1F387F
+        percentLabel.textColor = .primaryBlue700
         
         // 진행률 바
-        progressBar.trackTintColor = UIColor.colorE6E6E6
-        progressBar.progressTintColor = UIColor.color152555
+        progressBar.trackTintColor = .gray100
+        progressBar.progressTintColor = .primaryBlue800
         progressBar.layer.cornerRadius = 2
         progressBar.clipsToBounds = true
         
         // 저널 버튼
         journalButton.setTitle("저널 보기", for: .normal)
-        journalButton.backgroundColor = .readinHomeBannerColor
+        journalButton.backgroundColor = .primaryBlue100
         journalButton.setTitleColor(.black, for: .normal)
         journalButton.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         journalButton.layer.cornerRadius = 4

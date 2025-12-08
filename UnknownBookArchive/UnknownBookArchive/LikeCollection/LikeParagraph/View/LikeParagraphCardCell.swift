@@ -53,13 +53,13 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         
         
         titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
-        titleLabel.textColor = UIColor.color676565
+        titleLabel.textColor = .gray600
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
         }
         
         authorLabel.font = UIFont.mediumFont(ofSize: 12)
-        authorLabel.textColor = UIColor.colorB4B2B2
+        authorLabel.textColor = .gray300
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
         }

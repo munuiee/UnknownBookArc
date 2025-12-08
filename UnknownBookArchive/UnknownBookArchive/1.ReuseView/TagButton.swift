@@ -5,9 +5,9 @@ import SnapKit
 
 class TagButton: UIButton {
     
-    var defaultBgColor: UIColor = .stateDefaultBGColor
+    var defaultBgColor: UIColor = .white
     var selectBgColor: UIColor = .gray
-    var defautTitleColor: UIColor = .stateDefaultTextColor
+    var defautTitleColor: UIColor = UIColor.gray300
     var selectTitleColor: UIColor = .white
     
     override init(frame: CGRect) {
@@ -23,7 +23,7 @@ class TagButton: UIButton {
         self.backgroundColor = defaultBgColor
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
+        layer.borderColor = UIColor.gray100.cgColor
         titleLabel?.font = UIFont.regularFont(ofSize: 15)
 
         self.setContentHuggingPriority(.required, for: .horizontal)
@@ -39,7 +39,7 @@ class TagButton: UIButton {
                    selectedTitleColor: UIColor
     ) {
         setTitle(title, for: .normal)
-        setTitleColor(.stateDefaultTextColor, for: .normal)
+        setTitleColor(.gray300, for: .normal)
         titleLabel?.font = UIFont.mediumFont(ofSize: 14)
         self.backgroundColor = defaultBgColor
         self.layer.borderColor = borderColor.cgColor
@@ -58,12 +58,12 @@ class TagButton: UIButton {
     private func updateAppearance() {
         backgroundColor = defaultBgColor
         if isSelected {
-            backgroundColor = .tagSeletedBGColor
-            self.layer.borderColor = UIColor.tagSeletedBoarderColor.cgColor
-            setTitleColor(UIColor.tagSeletedTextColor, for: .normal)
+            backgroundColor = .primaryBlue50
+            self.layer.borderColor = UIColor.primaryBlue300.cgColor
+            setTitleColor(.primaryBlue500, for: .normal)
         } else {
             backgroundColor = defaultBgColor
-            self.layer.borderColor = UIColor.stateDefaultBorderColor.cgColor
+            self.layer.borderColor = UIColor.gray100.cgColor
             setTitleColor(defautTitleColor, for: .normal)
 
         }

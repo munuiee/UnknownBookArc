@@ -259,7 +259,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         
         inputPage.placeholder = "책의 페이지를 기록해 주세요"
         inputPage.font = UIFont.regularFont(ofSize: 14)
-        inputPage.textColor = UIColor.colorB4B2B2
+        inputPage.textColor = .gray300
         inputPage.keyboardType = .numberPad
         inputPage.snp.makeConstraints {
             $0.top.equalToSuperview().inset(6)
@@ -477,7 +477,7 @@ extension MomentViewController: UITextViewDelegate {
             sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
         } else {
             // 입력 있음
-            buttonView.backgroundColor = .primaryColor
+            buttonView.backgroundColor = .primaryBlue800
             sendButton.tintColor = .white
         }
         

@@ -10,13 +10,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let normalAttributes: [NSAttributedString.Key: Any] = [
             .font: customFont,
-            .foregroundColor: UIColor.colorCDCBCB
+            .foregroundColor: UIColor.gray200
         ]
         
         // 선택된 상태의 텍스트 속성
         let selectedAttributes: [NSAttributedString.Key: Any] = [
             .font: customFont,
-            .foregroundColor: UIColor.primaryColor
+            .foregroundColor: UIColor.primaryBlue800
         ]
         
         // UITabBarItem의 외형(Appearance)에 설정 적용
