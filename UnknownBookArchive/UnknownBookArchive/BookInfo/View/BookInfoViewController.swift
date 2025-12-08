@@ -577,12 +577,12 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         startDateButton.setTitle("시작일", for: .normal)
         startDateButton.setTitleColor(.tertialryGreen400, for: .normal)
         startDateButton.backgroundColor = .tertiaryGreen50
-        startDateButton.layer.borderColor = UIColor(named: "tertiaryGreen100")?.cgColor
+        startDateButton.layer.borderColor = UIColor.tertiaryGreen100.cgColor
         
         endDateButton.setTitle("종료일", for: .normal)
         endDateButton.setTitleColor(.primaryBlue300, for: .normal)
         endDateButton.backgroundColor = .primaryBlue50
-        endDateButton.layer.borderColor = UIColor(named: "PrimaryBlue100")?.cgColor
+        endDateButton.layer.borderColor = UIColor.primaryBlue100.cgColor
     }
     // 달력 팝업 띄우기
     private func openCalendar(sourceButton: UIButton, completion: @escaping (String) -> Void) {
