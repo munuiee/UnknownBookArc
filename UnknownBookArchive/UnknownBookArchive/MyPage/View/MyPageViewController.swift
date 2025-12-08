@@ -17,20 +17,20 @@ class MyPageViewController: UIViewController {
     private let statsLabel: UILabel = {
         let label = UILabel()
         label.text = "통계"
-        label.textColor = .color1A1919
-        label.font = .semiBoldFont(ofSize: 16)
+        label.textColor = .primaryBlue900
+        label.font = .semiBoldFont(ofSize: 20)
         label.textAlignment = .left
         return label
     }()
     private let statsSubLabel: UILabel = {
         let label = UILabel()
         label.text = "   2025년 활동 내역이에요"
-        label.textColor = .color375846
+        label.textColor = .primaryBlue800
         label.font = .mediumFont(ofSize: 12)
         label.textAlignment = .left
-        label.layer.borderWidth = 1
         label.layer.cornerRadius = 8
-        label.layer.borderColor = UIColor.tagSeletedBGColor.cgColor
+        label.clipsToBounds = true
+        label.backgroundColor = .primaryBlue50
         return label
     }()
     private let monthYearSV: UIStackView = {
@@ -46,13 +46,13 @@ class MyPageViewController: UIViewController {
         let view = UIView()
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.colorE6E6E6.cgColor
+        view.layer.borderColor = UIColor.gray100.cgColor
         return view
     }()
     private let monthLabel: UILabel = {
         let label = UILabel()
         label.text = "이번 달 완독한 책"
-        label.textColor = .color375846
+        label.textColor = .gray600
         label.font = .mediumFont(ofSize: 16)
         label.textAlignment = .center
         return label
@@ -60,7 +60,7 @@ class MyPageViewController: UIViewController {
     private let monthCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.textColor = .color1A1919
+        label.textColor = .gray900
         label.font = .semiBoldFont(ofSize: 24)
         label.textAlignment = .right
         return label
@@ -69,13 +69,13 @@ class MyPageViewController: UIViewController {
         let view = UIView()
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.colorE6E6E6.cgColor
+        view.layer.borderColor = UIColor.gray100.cgColor
         return view
     }()
     private let yearLabel: UILabel = {
         let label = UILabel()
         label.text = "2025년 완독한 책"
-        label.textColor = .color375846
+        label.textColor = .gray600
         label.font = .mediumFont(ofSize: 16)
         label.textAlignment = .center
         return label
@@ -83,75 +83,110 @@ class MyPageViewController: UIViewController {
     private let yearCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.textColor = .color1A1919
+        label.textColor = .gray900
         label.font = .semiBoldFont(ofSize: 24)
         label.textAlignment = .right
         return label
     }()
-    private let backUpLabel: UILabel = {
+    
+    private let complimentTitle: UILabel = {
         let label = UILabel()
-        label.text = "백업 / 복원"
-        label.textColor = .color1A1919
-        label.font = .semiBoldFont(ofSize: 16)
-        label.textAlignment = .left
+        label.text = "칭찬하기"
+        label.font = .semiBoldFont(ofSize: 20)
+        label.textColor = .primaryBlue900
         return label
     }()
-    private let backUPSubLabel: UILabel = {
-        let label = UILabel()
-        label.text = "   [백업] 버튼을 눌러 백업 파일을 내보내 주세요"
-        label.textColor = .color375846
-        label.font = .mediumFont(ofSize: 12)
-        label.textAlignment = .left
-        label.layer.borderWidth = 1
-        label.layer.cornerRadius = 8
-        label.layer.borderColor = UIColor.tagSeletedBGColor.cgColor
-        return label
+    
+    private let stackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 8
+        return stackView
     }()
-    private let backUPButton: UIButton = {
+    
+    
+    // 추천 버튼
+    private let recommendationButton: UIButton = {
         let button = UIButton()
-        var config = UIButton.Configuration.filled()
-        config.imagePlacement = .leading
-        config.imagePadding = 8
-        config.baseBackgroundColor = .primaryColor
-        config.baseForegroundColor = .white
-        let title = "백업하기"
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.semiBoldFont(ofSize: 18)]
-        config.attributedTitle = AttributedString(title, attributes: AttributeContainer(attributes))
-        button.configuration = config
-        let iconImage = UIImage(systemName: "square.and.arrow.down")
-        button.setImage(iconImage, for: .normal)
-        button.layer.cornerRadius = 8
-        return button
-    }()
-
-    private let restoreSubLabel: UILabel = {
-        let label = UILabel()
-        label.text = "   [복원] 버튼을 눌러 백업 파일을 선택해 주세요"
-        label.textColor = .color375846
-        label.font = .mediumFont(ofSize: 12)
-        label.textAlignment = .left
-        label.layer.borderWidth = 1
-        label.layer.cornerRadius = 8
-        label.layer.borderColor = UIColor.tagSeletedBGColor.cgColor
-        return label
-    }()
-    private let restoreButton: UIButton = {
-        let button = UIButton()
-        var config = UIButton.Configuration.filled()
-        config.imagePlacement = .leading
-        config.imagePadding = 8
-        config.baseBackgroundColor = .primaryColor
-        config.baseForegroundColor = .white
-        let title = "복원하기"
-        let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.semiBoldFont(ofSize: 18)]
-        config.attributedTitle = AttributedString(title, attributes: AttributeContainer(attributes))
-        button.configuration = config
-        let iconImage = UIImage(systemName: "square.and.arrow.up")
-        button.setImage(iconImage, for: .normal)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.primaryBlue50.cgColor
         button.layer.cornerRadius = 8
         return button
     }()
     
+    private let recommendationTitle: UILabel = {
+        let label = UILabel()
+        label.text = "책을 좋아하는 사람에게 추천해 주세요"
+        label.font = .mediumFont(ofSize: 12)
+        label.textColor = .gray600
+        return label
+    }()
+    
+    private let recommendationIconView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "hand.thumbsup"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .gray200
+        return imageView
+    }()
+    
+    // 리뷰 버튼
+    private let reviewButton: UIButton = {
+        let button = UIButton()
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.primaryBlue50.cgColor
+        button.layer.cornerRadius = 8
+        return button
+    }()
+
+    private let reviewTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "평점 리뷰를 남겨주세요"
+        label.font = .mediumFont(ofSize: 12)
+        label.textColor = .gray600
+        return label
+    }()
+
+    private let reviewIconView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "star.fill"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .gray200
+        return imageView
+    }()
+    
+    
+    
+    private let askingTitle: UILabel = {
+        let label = UILabel()
+        label.text = "소통하기"
+        label.font = .semiBoldFont(ofSize: 20)
+        label.textColor = .primaryBlue900
+        return label
+    }()
+
+    private let communicationButton: UIButton = {
+        let button = UIButton()
+        button.layer.cornerRadius = 8
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.primaryBlue50.cgColor
+        return button
+    }()
+
+    private let communicationTitle: UILabel = {
+        let label = UILabel()
+        label.text = "사용 문의 및 건의하기"
+        label.font = .mediumFont(ofSize: 12)
+        label.textColor = .gray600
+        return label
+    }()
+    
+    private let communicationIconView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(systemName: "envelope"))
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .gray200
+        return imageView
+    }()
+    
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -166,12 +201,23 @@ class MyPageViewController: UIViewController {
     private func configureUI() {
         view.backgroundColor = .white
         
-        [topView, statsLabel, statsSubLabel, monthYearSV, backUpLabel, backUPSubLabel, backUPButton, restoreSubLabel, restoreButton].forEach { view.addSubview($0) }
+        
+        [topView, statsLabel, statsSubLabel, monthYearSV, complimentTitle, stackView, askingTitle, communicationButton].forEach { view.addSubview($0) }
 
         topView.addSubview(myPageTitle)
         [monthLabel, monthCountLabel].forEach { monthView.addSubview($0) }
         [yearLabel, yearCountLabel].forEach { yearView.addSubview($0) }
         [monthView, yearView].forEach { monthYearSV.addArrangedSubview($0) }
+        
+        [recommendationButton, reviewButton].forEach { stackView.addArrangedSubview($0) }
+        
+        recommendationButton.addSubview(recommendationTitle)
+        recommendationButton.addSubview(recommendationIconView)
+        reviewButton.addSubview(reviewTitleLabel)
+        reviewButton.addSubview(reviewIconView)
+        
+        communicationButton.addSubview(communicationTitle)
+        communicationButton.addSubview(communicationIconView)
         
     }
     
@@ -191,6 +237,7 @@ class MyPageViewController: UIViewController {
         statsLabel.snp.makeConstraints {
             $0.top.equalTo(topView.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(44)
         }
         statsSubLabel.snp.makeConstraints {
             $0.top.equalTo(statsLabel.snp.bottom).offset(24)
@@ -228,30 +275,73 @@ class MyPageViewController: UIViewController {
             $0.centerY.equalTo(yearView.snp.centerY).offset(15)
             $0.trailing.equalTo(yearLabel.snp.trailing)
         }
-        backUpLabel.snp.makeConstraints {
-            $0.top.equalTo(monthYearSV.snp.bottom).offset(24)
+        
+        complimentTitle.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(20)
+            $0.top.equalTo(monthYearSV.snp.bottom).offset(16)
+            $0.height.equalTo(44)
         }
-        backUPSubLabel.snp.makeConstraints {
-            $0.top.equalTo(backUpLabel.snp.bottom).offset(24)
+        
+        recommendationButton.snp.makeConstraints {
+            $0.height.equalTo(40)
+        }
+        
+        recommendationTitle.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
+        }
+        
+        recommendationIconView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(24)
+        }
+        
+        reviewButton.snp.makeConstraints {
+            $0.height.equalTo(40)
+        }
+        
+        reviewTitleLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
+        }
+
+        reviewIconView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(24)
+        }
+        
+        
+        stackView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(32)
+            $0.top.equalTo(complimentTitle.snp.bottom).offset(8)
         }
-        backUPButton.snp.makeConstraints {
-            $0.top.equalTo(backUPSubLabel.snp.bottom).offset(8)
+        
+        askingTitle.snp.makeConstraints {
+            $0.top.equalTo(stackView.snp.bottom).offset(32)
+            $0.leading.equalToSuperview().inset(20)
+            $0.height.equalTo(44)
+
+        }
+        
+        communicationButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(52)
+            $0.top.equalTo(askingTitle.snp.bottom).offset(8)
+            $0.height.equalTo(40)
         }
-        restoreSubLabel.snp.makeConstraints {
-            $0.top.equalTo(backUPButton.snp.bottom).offset(24)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(32)
+        
+        communicationTitle.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
         }
-        restoreButton.snp.makeConstraints {
-            $0.top.equalTo(restoreSubLabel.snp.bottom).offset(8)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(52)
+
+        communicationIconView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
+            $0.width.height.equalTo(24)
         }
+
     }
 
     
