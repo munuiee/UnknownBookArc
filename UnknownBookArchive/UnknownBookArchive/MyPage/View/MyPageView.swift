@@ -211,44 +211,6 @@ final class MyPageView: UIView {
         return imageView
     }()
     
-
-    init(viewModel: MyPageViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureUI()
-        setupUI()
-        bind()
-        updateYearLabels()
-        
-    }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.setNavigationBarHidden(true, animated: animated)
-        viewModel.fetchMonthCompletedCount()
-        viewModel.fetchYearCompletedCount()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        let currentTrait = self.traitCollection
-        monthView.layer.borderColor = UIColor.gray100.resolvedColor(with: currentTrait).cgColor
-        yearView.layer.borderColor = UIColor.gray100.resolvedColor(with: currentTrait).cgColor
-        recommendationButton.layer.borderColor = UIColor.primaryBlue50.resolvedColor(with: currentTrait).cgColor
-        reviewButton.layer.borderColor = UIColor.primaryBlue50.resolvedColor(with: currentTrait).cgColor
-        communicationButton.layer.borderColor = UIColor.primaryBlue50.resolvedColor(with: currentTrait).cgColor
-    }
-    
     private func configureUI() {
         self.backgroundColor = .white
         
@@ -394,31 +356,7 @@ final class MyPageView: UIView {
 
     }
     
-    // MARK: bind함수
-    private func bind() {
-        viewModel.monthCompletedCount
-            .map { String($0) }
-            .bind(to: monthCountLabel.rx.text)
-            .disposed(by: disposeBag)
-        viewModel.yearCompletedCount
-            .map { String($0) }
-            .bind(to: yearCountLabel.rx.text)
-            .disposed(by: disposeBag)
-    }
-    
-    // MARK: 현재 년도 가져오기
-    private func getCurrentYear() -> Int {
-        let date = Date()
-        let calendar = Calendar.current
-        let currentYear = calendar.component(.year, from: date)
-        return currentYear
-    }
-    // 년도 업데이트
-    private func updateYearLabels() {
-        let currentYear = getCurrentYear()
-        let yearStirng = "\(currentYear)"
-        statsSubLabel.text = "   \(yearStirng)년 활동 내역이에요"
-        yearLabel.text = "\(yearStirng)년 완독한 책"
+
     }
 
 
