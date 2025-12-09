@@ -577,7 +577,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
         startDateButton.setTitle("시작일", for: .normal)
         startDateButton.setTitleColor(.tertialryGreen400, for: .normal)
         startDateButton.backgroundColor = .tertiaryGreen50
-        startDateButton.layer.borderColor = UIColor(named: "tertiaryGreen100")?.cgColor
+        startDateButton.layer.borderColor = UIColor(named: "TertiaryGreen100")?.cgColor
         
         endDateButton.setTitle("종료일", for: .normal)
         endDateButton.setTitleColor(.primaryBlue300, for: .normal)

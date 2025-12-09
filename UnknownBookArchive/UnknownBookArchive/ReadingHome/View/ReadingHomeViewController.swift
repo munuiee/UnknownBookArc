@@ -112,6 +112,36 @@ final class ReadingHomeViewController: UIViewController {
         )
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        iCloudAlert()
+    }
+    
+    // MARK: 아이클라우드 알럿
+    private func iCloudAlert() {
+        let key = "didShowICloudAlert"
+
+        if UserDefaults.standard.bool(forKey: key) {
+            return
+        }
+  
+        let alert = UIAlertController(
+            title: "📢 iCloud 동기화 안내",
+            message: """
+            이 앱은 독서 기록을 iCloud에 저장해
+            기기 간에 자동으로 동기화합니다.
+            같은 계정으로 로그인된 기기에서
+            언제든 이어서 보실 수 있어요.
+            """,
+            preferredStyle: .alert)
+    
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: { _ in
+            UserDefaults.standard.set(true, forKey: key)
+        }))
+        
+        self.present(alert, animated: true)
+        
+    }
     
     // MARK: - Notification 받으면 UI 갱신
     @objc private func bookUpdated() {
@@ -585,6 +615,7 @@ final class ReadingHomeViewController: UIViewController {
         
         return UICollectionViewCompositionalLayout(section: section)
     }
+
 }
 
 //

@@ -111,12 +111,12 @@ final class ParagraphCardCell: UICollectionViewCell {
         [separatorView, sententceLabel].forEach { contentView.addSubview($0) }
         contentView.backgroundColor = .white
         contentView.layer.cornerRadius = 8
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0).cgColor
+        contentView.layer.borderWidth = 0.5
+        contentView.layer.borderColor = UIColor.gray200.cgColor
         contentView.clipsToBounds = true
         
         
-        separatorView.backgroundColor = .systemGray5
+        separatorView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
         separatorView.snp.makeConstraints {
             $0.top.equalTo(topStack.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview().inset(16)
