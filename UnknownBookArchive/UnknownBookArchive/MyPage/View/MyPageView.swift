@@ -24,7 +24,7 @@ final class MyPageView: UIView {
     private func applyAllBorders() {
         monthView.applyBorder(.gray100)
         yearView.applyBorder(.gray100)
-        recommendationButton.applyBorder(.primaryBlue50)
+        shareButton.applyBorder(.primaryBlue50)
         reviewButton.applyBorder(.primaryBlue50)
         communicationButton.applyBorder(.primaryBlue50)
     }
@@ -131,7 +131,7 @@ final class MyPageView: UIView {
     
     
     // 추천 버튼
-    private let recommendationButton: UIButton = {
+    let shareButton: UIButton = {
         let button = UIButton()
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.primaryBlue50.cgColor
@@ -139,7 +139,7 @@ final class MyPageView: UIView {
         return button
     }()
     
-    private let recommendationTitle: UILabel = {
+    private let shareTitle: UILabel = {
         let label = UILabel()
         label.text = "책을 좋아하는 사람에게 추천해 주세요"
         label.font = .mediumFont(ofSize: 12)
@@ -147,7 +147,7 @@ final class MyPageView: UIView {
         return label
     }()
     
-    private let recommendationIconView: UIImageView = {
+    private let shareIconView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "hand.thumbsup"))
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .gray200
@@ -155,7 +155,7 @@ final class MyPageView: UIView {
     }()
     
     // 리뷰 버튼
-    private let reviewButton: UIButton = {
+    let reviewButton: UIButton = {
         let button = UIButton()
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor.primaryBlue50.cgColor
@@ -188,7 +188,7 @@ final class MyPageView: UIView {
         return label
     }()
 
-    private let communicationButton: UIButton = {
+    let communicationButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 1
@@ -222,10 +222,10 @@ final class MyPageView: UIView {
         [yearLabel, yearCountLabel].forEach { yearView.addSubview($0) }
         [monthView, yearView].forEach { monthYearSV.addArrangedSubview($0) }
         
-        [recommendationButton, reviewButton].forEach { stackView.addArrangedSubview($0) }
+        [shareButton, reviewButton].forEach { stackView.addArrangedSubview($0) }
         
-        recommendationButton.addSubview(recommendationTitle)
-        recommendationButton.addSubview(recommendationIconView)
+        shareButton.addSubview(shareTitle)
+        shareButton.addSubview(shareIconView)
         reviewButton.addSubview(reviewTitleLabel)
         reviewButton.addSubview(reviewIconView)
         
@@ -294,16 +294,16 @@ final class MyPageView: UIView {
             $0.height.equalTo(44)
         }
         
-        recommendationButton.snp.makeConstraints {
+        shareButton.snp.makeConstraints {
             $0.height.equalTo(40)
         }
         
-        recommendationTitle.snp.makeConstraints {
+        shareTitle.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(12)
             $0.centerY.equalToSuperview()
         }
         
-        recommendationIconView.snp.makeConstraints {
+        shareIconView.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(12)
             $0.centerY.equalToSuperview()
             $0.width.height.equalTo(24)
