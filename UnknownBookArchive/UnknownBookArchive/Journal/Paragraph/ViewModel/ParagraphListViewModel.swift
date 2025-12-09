@@ -70,11 +70,19 @@ final class ParagraphListViewModel {
     func toggleLike(at index: Int) {
         let journal = journals[index]
         journal.liked.toggle()
+        
+        if journal.liked {
+            journal.likedDate = Date()
+        } else {
+            journal.likedDate = nil
+        }
+ 
         do {
             try context.save()
             onUpdate?()
         } catch {
             journal.liked.toggle()
+            journal.likedDate = nil
         }
     }
     
