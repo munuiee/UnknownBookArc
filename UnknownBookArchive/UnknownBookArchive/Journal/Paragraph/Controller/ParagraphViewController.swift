@@ -5,10 +5,8 @@ import UIKit
 import SnapKit
 
 final class ParagraphViewController: UIViewController {
-    
+    private let paragraphView = ParagraphView()
     private let viewModel: ParagraphListViewModel
-    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
-    
     private let book: Book
     
     init(book: Book) {
@@ -21,47 +19,26 @@ final class ParagraphViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func loadView() {
+        view = paragraphView
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        collectionSet()
+        paragraphView.collectionView.delegate = self
+        paragraphView.collectionView.dataSource = self
         viewModel.onUpdate = { [weak self] in
-            self?.collectionView.reloadData()
+            self?.paragraphView.collectionView.reloadData()
         }
         viewModel.fetchParagraphs()
+        paragraphView.collectionView.register(ParagraphCardCell.self, forCellWithReuseIdentifier: ParagraphCardCell.id)
     }
-    
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         viewModel.fetchParagraphs()
-        collectionView.reloadData()
-    }
-
-
-    
-    private func collectionSet() {
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(ParagraphCardCell.self, forCellWithReuseIdentifier: ParagraphCardCell.id)
-        view.addSubview(collectionView)
-        collectionView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.top.equalToSuperview().offset(36)
-        }
-        collectionView.backgroundColor = .white
-    }
-    
-    
-    private func makeLayout() -> UICollectionViewLayout {
-        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(180))
-        let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(180))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16)
-        section.interGroupSpacing = 16
-        return UICollectionViewCompositionalLayout(section: section)
+        paragraphView.collectionView.reloadData()
     }
 }
 
@@ -81,12 +58,11 @@ extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDat
         
         cell.onEditTapped = { [weak self] in
             guard let self = self else { return }
-                        
+            
             let editVC = JournalEditViewController(journal: journal, book: self.book, type: "문단 수집")
             editVC.journal = journal
             self.navigationController?.pushViewController(editVC, animated: true)
         }
-        
         
         cell.onDeleteTapped = { [weak self] in
             guard let self = self else { return }
@@ -107,7 +83,7 @@ extension ParagraphViewController: UICollectionViewDelegate, UICollectionViewDat
             else { return }
             
             self.viewModel.toggleLike(at: indexPath.item)
-            self.collectionView.reloadItems(at: [indexPath])
+            self.paragraphView.collectionView.reloadItems(at: [indexPath])
         }
         
         cell.configure(
