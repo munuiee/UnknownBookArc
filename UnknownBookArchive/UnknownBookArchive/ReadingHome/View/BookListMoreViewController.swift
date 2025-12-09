@@ -80,30 +80,31 @@ final class BookListMoreViewController: UIViewController {
             $0.height.equalTo(56)
         }
         
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.distribution = .equalCentering
+        
+        customNavBar.addSubview(stack)
+        stack.snp.makeConstraints { $0.edges.equalToSuperview().inset(20) }
+        
         // 뒤로가기 버튼
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
         backButton.tintColor = .black
-        backButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: -4, bottom: 0, right: 0)
         backButton.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
         
         // 타이틀
         titleLabel.text = listTitle
         titleLabel.font = UIFont.semiBoldFont(ofSize: 18)
-        titleLabel.textAlignment = .center
         titleLabel.textColor = .black
+        titleLabel.textAlignment = .center
         
-        customNavBar.addSubview(backButton)
-        customNavBar.addSubview(titleLabel)
+        let rightSpacer = UIView()
+        rightSpacer.snp.makeConstraints { $0.width.equalTo(30) }
         
-        backButton.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(12)
-            $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(30)
-        }
-        
-        titleLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()    // 가운데 정렬
-        }
+        stack.addArrangedSubview(backButton)
+        stack.addArrangedSubview(titleLabel)
+        stack.addArrangedSubview(rightSpacer)
     }
     
     
@@ -115,10 +116,17 @@ final class BookListMoreViewController: UIViewController {
     // MARK: - TableView
     private func setupTableView() {
         tableView.register(MoreBookCell.self, forCellReuseIdentifier: MoreBookCell.identifier)
-        tableView.rowHeight = 124
+
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 140
+        
         tableView.dataSource = self
         tableView.delegate = self
+        
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        tableView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 20, right: 0)
+        
+        tableView.separatorStyle = .none
     }
     
     
@@ -150,9 +158,7 @@ extension BookListMoreViewController: UITableViewDataSource, UITableViewDelegate
             for: indexPath
         ) as! MoreBookCell
         
-        let book = books[indexPath.row]
-        cell.configure(with: book)
-        
+        cell.configure(with: books[indexPath.row])
         return cell
     }
     
@@ -162,7 +168,6 @@ extension BookListMoreViewController: UITableViewDataSource, UITableViewDelegate
         
         let book = books[indexPath.row]
         let detailVC = BookDetailViewController(book: book)
-        detailVC.book = book
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }

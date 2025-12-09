@@ -179,6 +179,12 @@ final class ReadingHomeViewController: UIViewController {
         pausedBooks = Array(model.pausedBooks.prefix(10))
         finishedBooks = Array(model.finishedBooks.prefix(10))
         
+        // 책 개수가 10권을 초과할 때만 더보기 버튼 보이기
+        greetingMoreButton.isHidden = model.currentReadingBooks.count <= 10
+        plannedMoreButton.isHidden = model.plannedBooks.count <= 10
+        pausedMoreButton.isHidden = model.pausedBooks.count <= 10
+        finishedMoreButton.isHidden = model.finishedBooks.count <= 10
+        
         updateCurrentReadingCardUI()
         updateSectionVisibility()
         updateDynamicSpacing()
