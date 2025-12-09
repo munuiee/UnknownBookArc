@@ -30,7 +30,7 @@ final class LikeParagraphViewModel {
     func fetchParagraphs() {
         let request: NSFetchRequest<Journal> = Journal.fetchRequest()
         // 최신순 정렬
-        let sort = NSSortDescriptor(key: "createDate", ascending: false)
+        let sort = NSSortDescriptor(key: "likedDate", ascending: false)
         request.sortDescriptors = [sort]
         do {
             journals = try context.fetch(request)
@@ -43,7 +43,7 @@ final class LikeParagraphViewModel {
         let request: NSFetchRequest<Journal> = Journal.fetchRequest()
         request.predicate = NSPredicate(format: "liked == true")
         
-        let sort = NSSortDescriptor(key: "createDate", ascending: false)
+        let sort = NSSortDescriptor(key: "likedDate", ascending: false)
         request.sortDescriptors = [sort]
         
         do {
@@ -101,6 +101,11 @@ final class LikeParagraphViewModel {
         let journal = likedParagraphs[index]
         journal.liked.toggle()
         
+        if journal.liked {
+            journal.likedDate = Date()
+        } else {
+            journal.likedDate = nil
+        }
      
         
         do {
