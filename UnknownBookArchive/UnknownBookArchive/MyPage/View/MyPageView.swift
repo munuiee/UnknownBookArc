@@ -1,14 +1,33 @@
-// MARK: 마이페이지
-
+import Foundation
 import UIKit
 import SnapKit
-import RxSwift
-import RxCocoa
 
-class MyPageViewController: UIViewController {
+final class MyPageView: UIView {
     
-    private let viewModel: MyPageViewModel
-    private let disposeBag = DisposeBag()
+    public override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .white
+        configureUI()
+        setupUI()
+        applyAllBorders()
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        applyAllBorders()
+    }
+    
+    private func applyAllBorders() {
+        monthView.applyBorder(.gray100)
+        yearView.applyBorder(.gray100)
+        recommendationButton.applyBorder(.primaryBlue50)
+        reviewButton.applyBorder(.primaryBlue50)
+        communicationButton.applyBorder(.primaryBlue50)
+    }
     
     
     private let myPageTitle: UILabel = {
@@ -63,7 +82,7 @@ class MyPageViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-    private let monthCountLabel: UILabel = {
+    let monthCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
         label.textColor = .gray900
@@ -86,7 +105,7 @@ class MyPageViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-    private let yearCountLabel: UILabel = {
+    let yearCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
         label.textColor = .gray900
@@ -231,10 +250,10 @@ class MyPageViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .white
+        self.backgroundColor = .white
         
         
-        [topView, statsLabel, statsSubLabel, monthYearSV, complimentTitle, stackView, askingTitle, communicationButton].forEach { view.addSubview($0) }
+        [topView, statsLabel, statsSubLabel, monthYearSV, complimentTitle, stackView, askingTitle, communicationButton].forEach { self.addSubview($0) }
 
         topView.addSubview(myPageTitle)
         [monthLabel, monthCountLabel].forEach { monthView.addSubview($0) }
@@ -256,7 +275,7 @@ class MyPageViewController: UIViewController {
     private func setupUI() {
         
         topView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(self.safeAreaLayoutGuide)
             $0.height.equalTo(60)
             $0.leading.trailing.equalToSuperview()
         }
@@ -402,5 +421,10 @@ class MyPageViewController: UIViewController {
         yearLabel.text = "\(yearStirng)년 완독한 책"
     }
 
-    
+
+extension UIView {
+    func applyBorder(_ color: UIColor, width: CGFloat = 1) {
+        layer.borderWidth = width
+        layer.borderColor = color.resolvedColor(with: traitCollection).cgColor
+    }
 }

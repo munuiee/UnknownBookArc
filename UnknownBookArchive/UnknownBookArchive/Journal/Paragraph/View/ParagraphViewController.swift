@@ -44,7 +44,6 @@ final class ParagraphViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(ParagraphCardCell.self, forCellWithReuseIdentifier: ParagraphCardCell.id)
-        collectionView.layer.borderColor = UIColor.gray100.cgColor
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
