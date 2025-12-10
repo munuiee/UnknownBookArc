@@ -24,7 +24,7 @@ final class ReadingHomeViewModel {
     }
     
     
-    // MARK: - CoreData에서 다시 불러오기 (UUID 문자열 비교를 사용)
+    // MARK: - CoreData에서 다시 불러오기
     func reloadFromCoreData() {
         
         let allBooks: [Book] = CoreDataManager.shared.fetchAllBooks()
@@ -34,6 +34,7 @@ final class ReadingHomeViewModel {
         var paused: [Book] = []
         var finished: [Book] = []
         
+        // 상태별 분류
         for book in allBooks {
             let state = book.readingState ?? ""
             
@@ -51,22 +52,21 @@ final class ReadingHomeViewModel {
             }
         }
         
-        func sortByUUIDDescending(_ books: [Book]) -> [Book] {
-            return books.sorted(by: { book1, book2 in
-               
-                let uuid1 = book1.uuid ?? ""
-                let uuid2 = book2.uuid ?? ""
-             
-                return uuid1 > uuid2
-            })
+        // MARK: 최근 수정된 순서로 정렬 
+        func sortByModifiedDate(_ books: [Book]) -> [Book] {
+            return books.sorted {
+                ($0.lastModifiedDate ?? .distantPast) >
+                ($1.lastModifiedDate ?? .distantPast)
+            }
         }
         
-        // 정렬 적용
-        current = sortByUUIDDescending(current)
-        planned = sortByUUIDDescending(planned)
-        paused = sortByUUIDDescending(paused)
-        finished = sortByUUIDDescending(finished)
+        current  = sortByModifiedDate(current)
+        planned  = sortByModifiedDate(planned)
+        paused   = sortByModifiedDate(paused)
+        finished = sortByModifiedDate(finished)
         
+        
+        // model 업데이트
         model = ReadingHomeModel(
             currentReadingBooks: current,
             plannedBooks: planned,
@@ -74,7 +74,7 @@ final class ReadingHomeViewModel {
             finishedBooks: finished
         )
         
-        // 데이터 로드 및 정렬 완료 후 View에 업데이트를 알림
+        // UI 업데이트 알림
         onUpdate?()
     }
     
