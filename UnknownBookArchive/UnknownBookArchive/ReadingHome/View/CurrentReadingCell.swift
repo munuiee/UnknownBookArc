@@ -129,28 +129,29 @@ final class CurrentReadingCell: UICollectionViewCell {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(23)
             $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(8)
         }
         
         // 작가
         authorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(8)
+            
         }
         progressEditView.snp.makeConstraints {
-            $0.top.equalTo(authorLabel.snp.bottom).offset(16)
+            $0.top.equalTo(authorLabel.snp.bottom).offset(6)
             $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(8)
+            $0.height.equalTo(40)
         }
         
         
         // 날짜 + 진행률
         dateInfoStack.snp.makeConstraints {
-            $0.top.leading.trailing.equalToSuperview()
-            //            $0.top.equalTo(authorLabel.snp.bottom).offset(16)
-            //            $0.leading.equalTo(titleLabel)
-            //            $0.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(progressEditView.snp.top).offset(10)
+            $0.leading.trailing.equalToSuperview()
+
         }
         
         // 진행률 바
@@ -158,13 +159,12 @@ final class CurrentReadingCell: UICollectionViewCell {
             $0.top.equalTo(dateInfoStack.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(6)
-            $0.bottom.equalToSuperview()
         }
         
         // 저널 버튼
         journalButton.snp.makeConstraints {
-            $0.top.equalTo(progressEditView.snp.bottom).offset(16)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(progressEditView.snp.bottom).offset(6)
+            $0.trailing.equalToSuperview().inset(8)
             $0.leading.equalTo(titleLabel)
             $0.height.equalTo(32)
             $0.bottom.equalToSuperview().inset(16)
