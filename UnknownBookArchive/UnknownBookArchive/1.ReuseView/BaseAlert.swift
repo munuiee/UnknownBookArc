@@ -11,6 +11,7 @@ extension UIViewController {
         confirmTitle: String = "확인",
         completion: (() -> Void)? = nil
     ) {
+        
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let confirmAction = UIAlertAction(title: confirmTitle, style: .default) { _ in
