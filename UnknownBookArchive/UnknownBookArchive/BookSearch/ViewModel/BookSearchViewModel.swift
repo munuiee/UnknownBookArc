@@ -23,29 +23,26 @@ class BookSearchViewModel {
     
     let bookDuplicationCheck = PublishRelay<(item: BookItem, isDuplicated: Bool)>()
     
-    // MARK: 처음 검색 시
-    func search(query: String) {
+    // MARK: 검색 및 페이지네이션
+    func search(query: String, page: Int) {
         guard !query.isEmpty else {
             self.viewState.accept(.initial)
             return
         }
-        self.currentPage.accept(1)
-        self.canLoadMore.accept(true)
-        
-        self.search(query: query, page: 1)
-    }
-    
-    // MARK: 페이지네이션
-    func search(query: String, page: Int) {
-        
-        guard !query.isEmpty else {
-            viewState.accept(.initial)
-            return
+        if page > 1 {
+            guard !isLoading.value, canLoadMore.value else { return }
+            
+        }
+        if page == 1 {
+            self.currentPage.accept(1)
+            self.canLoadMore.accept(true)
         }
         guard !isLoading.value, canLoadMore.value else { return }
         
         self.isLoading.accept(true)
-        self.viewState.accept(.loading)
+        if bookList.value.isEmpty {
+            self.viewState.accept(.loading)
+        }
         
         apiService.searchBooks(query: query, page: page)
             .observe(on: MainScheduler.instance)
@@ -54,13 +51,13 @@ class BookSearchViewModel {
                 self.isLoading.accept(false)
                 let isLastPage = newBookList.isEmpty
                 
-                if page == 1 {
-                    self.bookList.accept(newBookList)
-                } else {
-                    var currentList = self.bookList.value
-                    currentList.append(contentsOf: newBookList)
-                    self.bookList.accept(currentList)
-                }
+                self.currentPage.accept(page)
+                
+            
+                var currentList = self.bookList.value
+                currentList.append(contentsOf: newBookList)
+                self.bookList.accept(currentList)
+                
                 self.canLoadMore.accept(!isLastPage)
                 
                 if self.bookList.value.isEmpty {
@@ -76,6 +73,56 @@ class BookSearchViewModel {
             })
             .disposed(by: disposeBag)
     }
+    
+//    // MARK: 페이지네이션
+//    func searchPage(query: String, page: Int) {
+//        
+//        guard !query.isEmpty else {
+//            viewState.accept(.initial)
+//            return
+//        }
+//        if page == 1 {
+//            self.bookList.accept([])
+//            self.canLoadMore.accept(true)
+//        }
+//        
+//        guard !isLoading.value, canLoadMore.value else { return }
+//        
+//        self.isLoading.accept(true)
+//        if bookList.value.isEmpty {
+//            self.viewState.accept(.loading)
+//        }
+//       
+//        
+//        apiService.searchBooks(query: query, page: page)
+//            .observe(on: MainScheduler.instance)
+//            .subscribe(onSuccess: { [weak self] newBookList in
+//                guard let self = self else { return }
+//                self.isLoading.accept(false)
+//                let isLastPage = newBookList.isEmpty
+//                
+//                self.currentPage.accept(page)
+//                
+//            
+//                var currentList = self.bookList.value
+//                currentList.append(contentsOf: newBookList)
+//                self.bookList.accept(currentList)
+//                
+//                self.canLoadMore.accept(!isLastPage)
+//                
+//                if self.bookList.value.isEmpty {
+//                    self.viewState.accept(.success)
+//                } else {
+//                    self.viewState.accept(.success)
+//                }
+//            }, onFailure: { [weak self] error in
+//                guard let self = self else { return }
+//                self.isLoading.accept(false)
+//                self.viewState.accept(.error(error))
+//  
+//            })
+//            .disposed(by: disposeBag)
+//    }
 
     // 초기 상태로 돌리기 (검색 취소시 사용)
     func resetSearchState() {
