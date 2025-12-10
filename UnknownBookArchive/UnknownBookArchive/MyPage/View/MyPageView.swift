@@ -42,7 +42,7 @@ final class MyPageView: UIView {
     private let statsLabel: UILabel = {
         let label = UILabel()
         label.text = "통계"
-        label.textColor = .primaryBlue900
+        label.textColor = .myPageLabelColor
         label.font = .semiBoldFont(ofSize: 20)
         label.textAlignment = .left
         return label
@@ -50,12 +50,12 @@ final class MyPageView: UIView {
     private let statsSubLabel: UILabel = {
         let label = UILabel()
         label.text = "   2025년 활동 내역이에요"
-        label.textColor = .primaryBlue800
+        label.textColor = .activityLabelTextColor
         label.font = .mediumFont(ofSize: 12)
         label.textAlignment = .left
         label.layer.cornerRadius = 8
         label.clipsToBounds = true
-        label.backgroundColor = .primaryBlue50
+        label.backgroundColor = .activityLabelBackgroundColor
         return label
     }()
     private let monthYearSV: UIStackView = {
@@ -71,13 +71,13 @@ final class MyPageView: UIView {
         let view = UIView()
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.gray100.cgColor
+        view.dynamicBorder = UIColor.statsBorderColor
         return view
     }()
     private let monthLabel: UILabel = {
         let label = UILabel()
         label.text = "이번 달 완독한 책"
-        label.textColor = .gray600
+        label.textColor = .statsDescriptionTextColor
         label.font = .mediumFont(ofSize: 16)
         label.textAlignment = .center
         return label
@@ -85,7 +85,7 @@ final class MyPageView: UIView {
     let monthCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.textColor = .gray900
+        label.textColor = .statsNumberTextColor
         label.font = .semiBoldFont(ofSize: 24)
         label.textAlignment = .right
         return label
@@ -94,13 +94,13 @@ final class MyPageView: UIView {
         let view = UIView()
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 8
-        view.layer.borderColor = UIColor.gray100.cgColor
+        view.dynamicBorder = UIColor.statsBorderColor
         return view
     }()
     private let yearLabel: UILabel = {
         let label = UILabel()
         label.text = "2025년 완독한 책"
-        label.textColor = .gray600
+        label.textColor = .statsDescriptionTextColor
         label.font = .mediumFont(ofSize: 16)
         label.textAlignment = .center
         return label
@@ -108,7 +108,7 @@ final class MyPageView: UIView {
     let yearCountLabel: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.textColor = .gray900
+        label.textColor = .statsNumberTextColor
         label.font = .semiBoldFont(ofSize: 24)
         label.textAlignment = .right
         return label
@@ -118,7 +118,7 @@ final class MyPageView: UIView {
         let label = UILabel()
         label.text = "칭찬하기"
         label.font = .semiBoldFont(ofSize: 20)
-        label.textColor = .primaryBlue900
+        label.textColor = .myPageLabelColor
         return label
     }()
     
@@ -134,7 +134,7 @@ final class MyPageView: UIView {
     let shareButton: UIButton = {
         let button = UIButton()
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.primaryBlue50.cgColor
+        button.dynamicBorder = UIColor.myPageButtonBorderColor
         button.layer.cornerRadius = 8
         return button
     }()
@@ -143,14 +143,14 @@ final class MyPageView: UIView {
         let label = UILabel()
         label.text = "책을 좋아하는 사람에게 추천해 주세요"
         label.font = .mediumFont(ofSize: 12)
-        label.textColor = .gray600
+        label.textColor = .myPageButtonTextColor
         return label
     }()
     
     private let shareIconView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "hand.thumbsup"))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .gray200
+        imageView.tintColor = .myPageButtonIconFillColor
         return imageView
     }()
     
@@ -158,7 +158,7 @@ final class MyPageView: UIView {
     let reviewButton: UIButton = {
         let button = UIButton()
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.primaryBlue50.cgColor
+        button.dynamicBorder = UIColor.myPageButtonBorderColor
         button.layer.cornerRadius = 8
         return button
     }()
@@ -167,14 +167,14 @@ final class MyPageView: UIView {
         let label = UILabel()
         label.text = "평점 리뷰를 남겨주세요"
         label.font = .mediumFont(ofSize: 12)
-        label.textColor = .gray600
+        label.textColor = .myPageButtonTextColor
         return label
     }()
 
     private let reviewIconView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "star.fill"))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .gray200
+        imageView.tintColor = .myPageButtonIconFillColor
         return imageView
     }()
     
@@ -184,7 +184,7 @@ final class MyPageView: UIView {
         let label = UILabel()
         label.text = "소통하기"
         label.font = .semiBoldFont(ofSize: 20)
-        label.textColor = .primaryBlue900
+        label.textColor = .myPageLabelColor
         return label
     }()
 
@@ -192,7 +192,7 @@ final class MyPageView: UIView {
         let button = UIButton()
         button.layer.cornerRadius = 8
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.primaryBlue50.cgColor
+        button.dynamicBorder = UIColor.myPageButtonBorderColor
         return button
     }()
 
@@ -200,19 +200,19 @@ final class MyPageView: UIView {
         let label = UILabel()
         label.text = "사용 문의 및 건의하기"
         label.font = .mediumFont(ofSize: 12)
-        label.textColor = .gray600
+        label.textColor = .myPageButtonTextColor
         return label
     }()
     
     private let communicationIconView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "envelope"))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .gray200
+        imageView.tintColor = .myPageButtonIconFillColor
         return imageView
     }()
     
     private func configureUI() {
-        self.backgroundColor = .white
+        self.backgroundColor = .backgroundModeColor
         
         
         [topView, statsLabel, statsSubLabel, monthYearSV, complimentTitle, stackView, askingTitle, communicationButton].forEach { self.addSubview($0) }
@@ -363,6 +363,6 @@ final class MyPageView: UIView {
 extension UIView {
     func applyBorder(_ color: UIColor, width: CGFloat = 1) {
         layer.borderWidth = width
-        layer.borderColor = color.resolvedColor(with: traitCollection).cgColor
+        layer.borderColor =  color.resolvedColor(with: self.traitCollection).cgColor
     }
 }

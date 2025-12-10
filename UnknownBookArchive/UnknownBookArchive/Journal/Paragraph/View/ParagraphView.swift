@@ -21,7 +21,7 @@ final class ParagraphView: UIView {
             $0.leading.trailing.bottom.equalTo(self.safeAreaLayoutGuide)
             $0.top.equalToSuperview().offset(36)
         }
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .backgroundModeColor
     }
     
     

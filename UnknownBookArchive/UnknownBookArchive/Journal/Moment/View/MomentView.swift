@@ -23,7 +23,7 @@ final class MomentView: UIView {
     var chatViewBottomConstraint: Constraint?
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = .backgroundModeColor
         inputTextUI()
         collectionSet()
     }
@@ -49,7 +49,7 @@ final class MomentView: UIView {
             $0.bottom.equalTo(chatView.snp.top)
         }
         
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .backgroundModeColor
     }
     
     
@@ -105,14 +105,14 @@ final class MomentView: UIView {
         [inputContainer, buttonView].forEach { chatView.addSubview($0) }
         buttonView.addSubview(sendButton)
         
-        chatView.backgroundColor = .white
+        chatView.backgroundColor = .clear
         chatView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(self.snp.bottom).constraint
             chatViewBottomConstraint = $0.bottom.equalTo(self.snp.bottom).constraint
         }
         
-        buttonView.backgroundColor = .white
+        buttonView.backgroundColor = .sendButtonDisabledBackgroundColor
         buttonView.layer.cornerRadius = 21
         buttonView.layer.masksToBounds = false
         
@@ -133,15 +133,18 @@ final class MomentView: UIView {
         let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .regular)
         let image = UIImage(systemName: "arrow.up", withConfiguration: config)
         sendButton.setImage(image, for: .normal)
-        sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
+        sendButton.tintColor = .sendButtonDisabledIconColor
         sendButton.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
         
-        inputContainer.backgroundColor = .clear
+        
+        
+        inputContainer.backgroundColor = .sendInputBackgroundColor
         inputContainer.layer.cornerRadius = 8
         inputContainer.layer.masksToBounds = false
-        inputContainer.layer.shadowColor = UIColor.black.withAlphaComponent(0.1).cgColor
+        // inputContainer.layer.dynamicShadowColor = DynamicCGColor { .sendInputBackgroundColor.withAlphaComponent(0.1) }
+        inputContainer.layer.shadowColor = UIColor.shadowColor.cgColor
         inputContainer.layer.shadowOpacity = 1
         inputContainer.layer.shadowOffset = CGSize(width: 0, height: 8)
         inputContainer.layer.shadowRadius = 32
@@ -179,7 +182,7 @@ final class MomentView: UIView {
         }
         
         let whiteContentView = UIView()
-        whiteContentView.backgroundColor = .white
+        whiteContentView.backgroundColor = .sendInputBackgroundColor
         whiteContentView.layer.cornerRadius = 10
         whiteContentView.layer.masksToBounds = true
         
@@ -198,7 +201,8 @@ final class MomentView: UIView {
         
         inputPage.placeholder = "책의 페이지를 기록해 주세요"
         inputPage.font = UIFont.regularFont(ofSize: 14)
-        inputPage.textColor = .gray300
+        inputPage.textColor = .sendInputPlaceholderTextColor
+        inputPage.backgroundColor = .sendInputBackgroundColor
         inputPage.keyboardType = .numberPad
         inputPage.snp.makeConstraints {
             $0.top.equalToSuperview().inset(6)
@@ -213,7 +217,7 @@ final class MomentView: UIView {
         
         
         // 가운데 선
-        separatorView.backgroundColor = UIColor(white: 0.85, alpha: 1)
+        separatorView.backgroundColor = .sendInputSeparatorColor
         separatorView.snp.makeConstraints {
             $0.top.equalTo(inputPage.snp.bottom).offset(4)
             $0.leading.trailing.equalToSuperview().inset(8)
@@ -221,7 +225,7 @@ final class MomentView: UIView {
         }
         
         // 아래 본문 입력
-        inputText.backgroundColor = .white
+        inputText.backgroundColor = .sendInputBackgroundColor
         inputText.font = UIFont.regularFont(ofSize: 14)
         inputText.isScrollEnabled = true
         inputText.textContainerInset = UIEdgeInsets(top: 4, left: 4, bottom: 6, right: 4)
@@ -236,7 +240,7 @@ final class MomentView: UIView {
         
         
         textPlaceholderLabel.text = "내용을 입력하세요."
-        textPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
+        textPlaceholderLabel.textColor = .sendInputPlaceholderTextColor
         textPlaceholderLabel.font = UIFont.regularFont(ofSize: 13.8)
         inputText.addSubview(textPlaceholderLabel)
         textPlaceholderLabel.snp.makeConstraints {

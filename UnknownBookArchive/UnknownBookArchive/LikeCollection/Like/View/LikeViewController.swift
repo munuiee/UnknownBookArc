@@ -25,7 +25,7 @@ final class LikeViewController: UIViewController {
     private lazy var tabCollectionView: UICollectionView = {
         let layout = makeMenuLayout()
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .white
+        cv.backgroundColor = .backgroundModeColor
         cv.showsHorizontalScrollIndicator = false
         cv.isScrollEnabled = false
         cv.delegate = self
@@ -39,7 +39,7 @@ final class LikeViewController: UIViewController {
     private lazy var contentCollectionView: UICollectionView = {
         let layout = makeContentLayout()
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .white
+        cv.backgroundColor = .backgroundModeColor
         cv.showsHorizontalScrollIndicator = false
         cv.alwaysBounceVertical = false
         cv.delegate = self
@@ -52,14 +52,14 @@ final class LikeViewController: UIViewController {
     // MARK: - 인디케이터
     private let indicatorView: UIView = {
         let indicate = UIView()
-        indicate.backgroundColor = .black
+        indicate.backgroundColor = .recordTabSelectedBarBackgroundColor
         return indicate
     }()
     
     // 배경 인디케이터
     private let bottomLineView: UIView = {
         let bottom = UIView()
-        bottom.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+        bottom.backgroundColor = UIColor.recordTabUnselectedFillColor.withAlphaComponent(0.4)
         return bottom
     }()
     
@@ -70,7 +70,7 @@ final class LikeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         
         setupUI()
         setupInitialSelection()

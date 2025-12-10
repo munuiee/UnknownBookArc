@@ -37,7 +37,7 @@ final class JournalEditView: UIView {
         let backConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
         let backImage = UIImage(systemName: "chevron.backward", withConfiguration: backConfig)
         backButton.setImage(backImage, for: .normal)
-        backButton.tintColor = .black
+        backButton.tintColor = .topColor
         backButton.sizeToFit()
         
         
@@ -90,7 +90,7 @@ final class JournalEditView: UIView {
         
         pageField.placeholder = " 책의 페이지를 기록해주세요."
         pageField.layer.cornerRadius = 10
-        pageField.backgroundColor = .gray50
+        pageField.backgroundColor = .editTextBackgroundColor
         pageField.font = UIFont.regularFont(ofSize: 15)
         pageField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: 0))
         pageField.leftViewMode = .always
@@ -98,14 +98,14 @@ final class JournalEditView: UIView {
         
         
         mainField.layer.cornerRadius = 10
-        mainField.backgroundColor = .gray50
+        mainField.backgroundColor = .editTextBackgroundColor
         mainField.font = UIFont.regularFont(ofSize: 15)
-        mainField.textColor = .black
+        mainField.textColor = .editTextColor
         mainField.isScrollEnabled = true
         mainField.textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
         
         mainPlaceholderLabel.text = "문단을 작성해보세요."
-        mainPlaceholderLabel.textColor = UIColor(named: "placeholderColor")
+        mainPlaceholderLabel.textColor = .editPlaceholderTextColor
         mainPlaceholderLabel.font = UIFont.regularFont(ofSize: 15)
         mainField.addSubview(mainPlaceholderLabel)
         

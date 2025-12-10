@@ -67,21 +67,21 @@ class BookDetailViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .bookTitleTextColor
         label.font = UIFont.semiBoldFont(ofSize: 18)
         return label
     }()
     
     private let authorLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .bookAuthorTextColor
         label.font = UIFont.mediumFont(ofSize: 14)
         return label
     }()
     
     private let publisherLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .bookPublisherTextColor
         label.font = UIFont.mediumFont(ofSize: 14)
         return label
     }()
@@ -97,7 +97,7 @@ class BookDetailViewController: UIViewController {
     // 진행률
     private let progressLable: UILabel = {
         let label = UILabel()
-        label.textColor = .gray
+        label.textColor = .progressCurrentPageTextColor
         label.font = UIFont.mediumFont(ofSize: 12)
         label.textAlignment = .right
         return label
@@ -105,8 +105,8 @@ class BookDetailViewController: UIViewController {
     
     private let progressBar: UIProgressView = {
         let progressView = UIProgressView()
-        progressView.trackTintColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
-        progressView.progressTintColor = .primaryBlue800
+        progressView.trackTintColor = .progressBarBackgroundColor
+        progressView.progressTintColor = .progressBarFillColor
         progressView.progress = 0.1
         return progressView
     }()
@@ -127,8 +127,9 @@ class BookDetailViewController: UIViewController {
         let label = UILabel()
         label.layer.cornerRadius = 8
         label.layer.borderWidth = 1
-        label.textColor = UIColor(red: 0.481, green: 0.679, blue: 0.572, alpha: 1)
-        label.layer.borderColor = UIColor(red: 0.852, green: 0.908, blue: 0.878, alpha: 1).cgColor
+        label.backgroundColor = .startDateSelectedFillColor
+        label.textColor = .startDateSelectedTextColor
+        label.dynamicBorder = UIColor.startDateSelectedBorderColor
         label.textAlignment = .center
         label.font = UIFont.mediumFont(ofSize: 12)
         return label
@@ -138,8 +139,9 @@ class BookDetailViewController: UIViewController {
         let label = UILabel()
         label.layer.cornerRadius = 8
         label.layer.borderWidth = 1
-        label.layer.borderColor = UIColor.primaryBlue100.cgColor
-        label.textColor = UIColor(red: 0.372, green: 0.495, blue: 0.848, alpha: 1)
+        label.backgroundColor = .endDateSelectedFillColor
+        label.dynamicBorder = UIColor.endDateSelectedBorderColor
+        label.textColor = .endDateSelectedTextColor
         label.textAlignment = .center
         label.font = UIFont.mediumFont(ofSize: 12)
         return label
@@ -166,20 +168,20 @@ class BookDetailViewController: UIViewController {
     private let likeButton: UIButton = {
         let button = UIButton()
         button.layer.cornerRadius = 8
-        button.backgroundColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1)
+        button.backgroundColor = .likeButtonBackgroundColor
         let normalImage = UIImage(systemName: "heart")
         button.setImage(normalImage, for: .normal)
         let selectedImage = UIImage(systemName: "heart.fill")
         button.setImage(selectedImage, for: .selected)
-        button.tintColor = .primaryBlue800
+        button.tintColor = .likeButtonIconColor
         return button
     }()
     
     private let journalButton: UIButton = {
         let button = UIButton()
-        button.backgroundColor = .primaryBlue800
+        button.backgroundColor = .journalButtonBackgroundColor
         button.setTitle("저널 보기", for: .normal)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.journalButtonTextColor, for: .normal)
         button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
         button.layer.cornerRadius = 8
         return button
@@ -192,6 +194,9 @@ class BookDetailViewController: UIViewController {
 
         setupRightTopMenu()
         bind()
+        
+        // 스와이프로 창 나가기
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
 
     }
     
@@ -203,12 +208,13 @@ class BookDetailViewController: UIViewController {
         }
         
         displayBookInfo()
+        
     }
     
     
     private func configureUI() {
-        view.backgroundColor = .white
-        contentView.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
+        contentView.backgroundColor = .backgroundModeColor
         
         [topView, contentView].forEach { view.addSubview($0) }
         
@@ -337,10 +343,12 @@ class BookDetailViewController: UIViewController {
             
             tagButton.configure(
                 title: tagName,
-                titleColor: .primaryBlue500,
-                borderColor: .primaryBlue300,
-                selectedBgColor: .primaryBlue50,
-                selectedTitleColor: .primaryBlue500
+                titleColor: .genreTagUnselectedTextColor,
+                backgroundColor: .genreTagUnselectedFillColor,
+                borderColor: .genreTagUnselectedBorderColor,
+                selectedBgColor: .genreTagSelectedFillColor,
+                selectedTitleColor: .genreTagSelectedTextColor,
+                selectedBorderColor: .genreTagSelectedBorderColor
             )
             tagButton.isSelected = true
             
@@ -437,27 +445,40 @@ class BookDetailViewController: UIViewController {
             stateFormatStackView.isHidden = false
             stateButton.isHidden = false
             
+            var selectedTitleColor: UIColor?
             var selectedBgColor: UIColor?
             var selectedBoarderColor: UIColor?
             
             switch state {
             case "읽는 중":
-                selectedBgColor = .tertiaryGreen100
-                selectedBoarderColor = .tertiaryGreen100
+                selectedTitleColor = .readingSelectedTextColor
+                selectedBgColor = .readingSelectedFillColor
+                selectedBoarderColor = .readingSelectedFillColor
             case "중단":
-                selectedBgColor = .colorFEDCDD
-                selectedBoarderColor = .colorFEDCDD
+                selectedTitleColor = .pausedSelectedTextColor
+                selectedBgColor = .pausedSelectedFillColor
+                selectedBoarderColor = .pausedSelectedFillColor
             case "완독":
-                selectedBgColor = .primaryBlue100
-                selectedBoarderColor = .primaryBlue100
+                selectedTitleColor = .finishedSelectedTextColor
+                selectedBgColor = .finishedSelectedFillColor
+                selectedBoarderColor = .finishedSelectedFillColor
             case "읽을 예정":
-                selectedBgColor = .colorFBF0CB
-                selectedBoarderColor = .colorFBF0CB
+                selectedTitleColor = .willReadSelectedTextColor
+                selectedBgColor = .willReadSelectedFillColor
+                selectedBoarderColor = .willReadSelectedFillColor
             default:
                 stateButton.isHidden = true
                 return
             }
-            stateButton.configure(title: state, backgroundColor: .white, titleColor: .gray300, borderColor: selectedBoarderColor ?? .gray100, selectedBgColor: selectedBgColor ?? .clear, selectedTitleColor: .gray500)
+            
+            stateButton.configure(
+                title: state,
+                backgroundColor: .unselectedFillColor,
+                titleColor: .unselectedTextColor,
+                borderColor: selectedBoarderColor ?? .clear,
+                selectedBgColor: selectedBgColor ?? .clear,
+                selectedTitleColor: selectedTitleColor ?? .clear)
+            
             stateButton.isSelected = true
             stateButton.isUserInteractionEnabled = false
         } else {
@@ -474,11 +495,11 @@ class BookDetailViewController: UIViewController {
             
             switch format {
             case "종이책":
-                selectedBgColor = .secondaryTurquoise100
-                selectedTitleColor = .secondaryTurquoise600
+                selectedBgColor = .bookTypeSelectedFillColor
+                selectedTitleColor = .bookTypeSelectedTextColor
             case "전자책":
-                selectedBgColor = .secondaryTurquoise100
-                selectedTitleColor = .secondaryTurquoise600
+                selectedBgColor = .bookTypeSelectedFillColor
+                selectedTitleColor = .bookTypeSelectedTextColor
             default:
                 formatButton.isHidden = true
                 return
@@ -486,9 +507,9 @@ class BookDetailViewController: UIViewController {
             
             formatButton.configure(
                 title: format,
-                backgroundColor: .gray100,
-                titleColor: .gray300,
-                borderColor: .gray100,
+                backgroundColor: .bookTypeSelectedFillColor,
+                titleColor: .bookTypeSelectedTextColor,
+                borderColor: .bookTypeSelectedFillColor,
                 selectedBgColor: selectedBgColor ?? .clear,
                 selectedTitleColor: selectedTitleColor ?? .black
             )

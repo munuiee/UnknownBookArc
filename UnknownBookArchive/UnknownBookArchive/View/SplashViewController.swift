@@ -16,6 +16,7 @@ final class SplashViewController: UIViewController {
         label.textAlignment = .center
         label.text = "책방지기님,\n 반가워요!"
         label.font = .systemFont(ofSize: 24, weight: .semibold)
+        label.textColor = .splashTextColor
         return label
     }()
 
@@ -25,7 +26,7 @@ final class SplashViewController: UIViewController {
     }
     
     private func setUpUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .splashBGColor
         [logoImage, mainLabel].forEach { view.addSubview($0) }
         logoImage.snp.makeConstraints { make in
             make.centerX.equalToSuperview()

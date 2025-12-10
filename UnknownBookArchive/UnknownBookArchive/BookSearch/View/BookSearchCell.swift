@@ -14,25 +14,25 @@ class BookSearchCell: UITableViewCell {
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 5
         imageView.layer.borderWidth = 1.0
-        imageView.layer.borderColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1).cgColor
+        imageView.dynamicBorder = UIColor.bookBorderColor
         imageView.clipsToBounds = true
         return imageView
     }()
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .bookTitleColor
         label.font = UIFont.boldFont(ofSize: 18)
         return label
     }()
     private let authorLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(red: 0.505, green: 0.495, blue: 0.495, alpha: 1)
+        label.textColor = .bookCellAuthorColor
         label.font = UIFont.regularFont(ofSize: 14)
         return label
     }()
     private let publisherLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
+        label.textColor = .bookCellPublisherColor
         label.font = UIFont.regularFont(ofSize: 14)
         return label
     }()
@@ -48,13 +48,14 @@ class BookSearchCell: UITableViewCell {
     }
     
     private func configureUI() {
-        self.backgroundColor = .white
+        self.backgroundColor = .clear
         [
             thumnailImage, titleLabel, authorLabel, publisherLabel
         ].forEach { contentView.addSubview($0) }
         contentView.layer.cornerRadius = 8
+        contentView.backgroundColor = .searchCellBGColor
         contentView.layer.borderWidth = 1.0
-        contentView.layer.borderColor = UIColor(red: 0.968, green: 0.974, blue: 0.992, alpha: 1).cgColor
+        contentView.dynamicBorder = UIColor.searchResultCellBorderColor
     }
     
     private func setConstraints() {

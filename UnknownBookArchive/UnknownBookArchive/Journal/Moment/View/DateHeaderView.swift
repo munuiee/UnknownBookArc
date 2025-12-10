@@ -16,13 +16,13 @@ final class DateHeaderView: UICollectionReusableView {
             $0.edges.equalToSuperview().inset(8)
         }
         
-        backgroundColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        backgroundColor = .momentDateBadgeBackgroundColor
         layer.cornerRadius = 8
         clipsToBounds = true
         
         label.font = UIFont.mediumFont(ofSize: 12)
         label.textAlignment = .center
-        label.textColor = UIColor(red: 205/255, green: 203/255, blue: 203/255, alpha: 1.0)
+        label.textColor = .momentDateBadgeTextColor
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }

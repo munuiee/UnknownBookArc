@@ -33,7 +33,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         hidesBottomBarWhenPushed = true
         
         bindActions()
@@ -47,6 +47,11 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         viewModel.onSaved = { [weak self] in
             self?.navigationController?.popViewController(animated: true)
         }
+        
+        let swipe = UISwipeGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        swipe.direction = [.down]
+        view.addGestureRecognizer(swipe)
+
         
         if let journal = journal {
             journalEditView.pageField.text = journal.savedPage
@@ -214,7 +219,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             .subscribe(onNext: { [weak self] in
                 guard let field = self?.journalEditView.pageField else { return }
                 field.layer.borderWidth = 1
-                field.layer.borderColor = UIColor.gray900.cgColor
+                field.dynamicBorder = UIColor.editSelectedBorderColor
             })
             .disposed(by: disposeBag)
         
@@ -230,7 +235,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             .subscribe(onNext: {[weak self] in
                 guard let self = self else { return }
                 self.journalEditView.mainField.layer.borderWidth = 1
-                self.journalEditView.mainField.layer.borderColor = UIColor.gray900.cgColor
+                self.journalEditView.mainField.dynamicBorder = UIColor.editSelectedBorderColor
             })
             .disposed(by: disposeBag)
         

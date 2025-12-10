@@ -14,7 +14,7 @@ final class LikeBookViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionSetup()
-        view.backgroundColor = UIColor(named: "backgroundColor")
+        view.backgroundColor = .backgroundModeColor
         viewModel.onUpdate = { [weak self] in
             self?.collectionView.reloadData()
         }
@@ -62,7 +62,7 @@ final class LikeBookViewController: UIViewController {
         collectionView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .backgroundModeColor
         collectionView.register(LikeBookCell.self, forCellWithReuseIdentifier: LikeBookCell.id)
         collectionView.delegate = self
         collectionView.dataSource = self

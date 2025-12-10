@@ -7,7 +7,7 @@ class ToggleButton: UIControl {
     
     private let thumbView: UIView = {
         let view = UIView()
-        view.backgroundColor = .primaryBlue800
+        view.backgroundColor = .toggleSelectedBackgroundColor
         view.clipsToBounds = true
         view.layer.cornerRadius = (30 - 6) / 2
         return view
@@ -43,7 +43,7 @@ class ToggleButton: UIControl {
     }
     
     private func configureUI() {
-        backgroundColor = .secondaryTurquoise100
+        backgroundColor = .toggleBackgroundColor
         layer.cornerRadius = 15
         clipsToBounds = true
         
@@ -103,15 +103,16 @@ class ToggleButton: UIControl {
             self.layoutIfNeeded()
         }, completion: nil)
     }
+    
     // label 색상 변경 함수
     private func updateLabelColors() {
         if isPageMode {
-            pLable.textColor = .white
-            percentLable.textColor = UIColor(red: 0.505, green: 0.495, blue: 0.495, alpha: 1)
+            pLable.textColor = .toggleSelectedTextColor
+            percentLable.textColor = .toggleUnselectedTextColor
             
         } else {
-            pLable.textColor = UIColor(red: 0.505, green: 0.495, blue: 0.495, alpha: 1)
-            percentLable.textColor = .white
+            pLable.textColor = .toggleUnselectedTextColor
+            percentLable.textColor = .toggleSelectedTextColor
         }
     }
 }

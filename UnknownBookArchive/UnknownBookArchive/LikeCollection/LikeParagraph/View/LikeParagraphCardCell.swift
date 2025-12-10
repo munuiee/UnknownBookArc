@@ -53,13 +53,13 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         
         
         titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
-        titleLabel.textColor = .gray600
+        titleLabel.textColor = .likedTitleColor
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview()
         }
         
         authorLabel.font = UIFont.mediumFont(ofSize: 12)
-        authorLabel.textColor = .gray300
+        authorLabel.textColor = .likedAuthorColor
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
         }
@@ -83,7 +83,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         multiButton.showsMenuAsPrimaryAction = true
         multiButton.setImage(UIImage(named: "journalMultiB"), for: .normal)
         multiButton.imageView?.contentMode = .scaleAspectFit
-        multiButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        multiButton.tintColor = .paragraphPageAndMultiButtonTextColor
         multiButton.setContentHuggingPriority(.required, for: .horizontal)
         multiButton.setContentCompressionResistancePriority(.required, for: .horizontal)
         
@@ -115,7 +115,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         bottomStack.distribution = .equalSpacing
         
         dateLabel.font = UIFont.regularFont(ofSize: 12)
-        dateLabel.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
+        dateLabel.textColor = .likedDateColor
         
         
         let config = UIImage.SymbolConfiguration(pointSize: 24, weight: .semibold)
@@ -124,7 +124,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         likeButton.imageView?.contentMode = .scaleAspectFit
         likeButton.contentHorizontalAlignment = .fill
         likeButton.contentVerticalAlignment = .fill
-        likeButton.tintColor = UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
+        likeButton.tintColor = .paragraphLikeButtonIconColor
         likeButton.snp.makeConstraints {
             $0.width.height.equalTo(24)
         }
@@ -141,29 +141,29 @@ final class LikeParagraphCardCell: UICollectionViewCell {
     
     private func configureUI() {
         [pageLabel, separatorView, sententceLabel].forEach { contentView.addSubview($0) }
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .likedCellColor
         contentView.layer.cornerRadius = 8
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0).cgColor
+        contentView.layer.borderWidth = 0.5
+        contentView.dynamicBorder = UIColor.likedCellBorderColor
         contentView.clipsToBounds = true
         
         
-        separatorView.backgroundColor = .systemGray5
+        separatorView.backgroundColor = .likedCellBorderColor
         separatorView.snp.makeConstraints {
             $0.top.equalTo(topStack.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(1)
         }
         pageLabel.font = UIFont.mediumFont(ofSize: 14)
-        pageLabel.textColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        pageLabel.textColor = .paragraphPageAndMultiButtonTextColor
         pageLabel.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(16)
         }
-        sententceLabel.textColor = UIColor(red: 0.101, green: 0.099, blue: 0.099, alpha: 1)
+        sententceLabel.textColor = .paragraphTextColor
         sententceLabel.numberOfLines = 0
         sententceLabel.lineBreakMode = .byWordWrapping
-        sententceLabel.textColor = UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1.0)
+
         sententceLabel.snp.makeConstraints {
             $0.top.equalTo(pageLabel.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -181,8 +181,8 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         let image = UIImage(systemName: imageName, withConfiguration: config)
         likeButton.setImage(image, for: .normal)
         likeButton.tintColor = liked
-        ? UIColor(red: 21/255, green: 37/255, blue: 85/255, alpha: 1.0)
-        : UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
+        ? UIColor.paragraphLikeButtonIconColor
+        : UIColor.paragraphUnlikeButtonIconColor
     }
     
     
@@ -220,7 +220,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
             .font: font,
             .kern: 0.20,
             .paragraphStyle: paragraphStyle,
-            .foregroundColor: UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1)
+            .foregroundColor: UIColor.paragraphTextColor
         ]
         
         sententceLabel.attributedText = NSAttributedString(

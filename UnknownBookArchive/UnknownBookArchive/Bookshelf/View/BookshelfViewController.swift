@@ -37,7 +37,7 @@ final class BookshelfViewController: UIViewController {
     // 검색창
     private lazy var searchTextField: UITextField = {
         let tf = UITextField()
-        tf.backgroundColor = .gray50
+        tf.backgroundColor = .searchBarBackgroundColor
         tf.layer.cornerRadius = 12
         tf.font = .regularFont(ofSize: 16)
         tf.borderStyle = .none
@@ -45,7 +45,7 @@ final class BookshelfViewController: UIViewController {
         tf.attributedPlaceholder = NSAttributedString(
             string: "책 제목 검색",
             attributes: [
-                .foregroundColor: UIColor.gray300,
+                .foregroundColor: UIColor.searchBarPlaceholderColor,
                 .font: UIFont.regularFont(ofSize: 16)
             ]
         )
@@ -54,7 +54,7 @@ final class BookshelfViewController: UIViewController {
         let left = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 34))
         let icon = UIImageView(image: UIImage(systemName: "magnifyingglass"))
         icon.frame = CGRect(x: 10, y: 8, width: 18, height: 18)
-        icon.tintColor = .gray600
+        icon.tintColor = .shelfSearchBarIconColor
         left.addSubview(icon)
         tf.leftView = left
         tf.leftViewMode = .always
@@ -64,7 +64,7 @@ final class BookshelfViewController: UIViewController {
         let clearButton = UIButton(type: .system)
         clearButton.frame = CGRect(x: 6, y: 6, width: 22, height: 22)
         clearButton.setImage(UIImage(systemName: "xmark.circle.fill"), for: .normal)
-        clearButton.tintColor = .darkGray
+        clearButton.tintColor = .searchXButtonColor
         clearButton.addTarget(self, action: #selector(clearSearchText), for: .touchUpInside)
         right.addSubview(clearButton)
         tf.rightView = right
@@ -109,7 +109,7 @@ final class BookshelfViewController: UIViewController {
             config.attributedTitle = attributed
             
             config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8)
-            config.baseForegroundColor = .black
+            config.baseForegroundColor = .genreTagUnselectedTextColor
             config.cornerStyle = .medium
             
             let btn = UIButton(configuration: config)
@@ -117,7 +117,7 @@ final class BookshelfViewController: UIViewController {
             
             btn.layer.cornerRadius = 8
             btn.layer.borderWidth = 1
-            btn.layer.borderColor = UIColor.gray100.cgColor
+            btn.dynamicBorder = UIColor.genreTagUnselectedBorderColor
             btn.clipsToBounds = true
             btn.translatesAutoresizingMaskIntoConstraints = false
             btn.heightAnchor.constraint(equalToConstant: 32).isActive = true
@@ -131,14 +131,14 @@ final class BookshelfViewController: UIViewController {
 
                 if isSelected {
                     // 선택됨
-                    button.configuration?.baseBackgroundColor = .primaryBlue50
-                    button.configuration?.baseForegroundColor = .primaryBlue500
-                    button.layer.borderColor = UIColor.primaryBlue500.cgColor
+                    button.configuration?.baseBackgroundColor = .genreTagSelectedFillColor
+                    button.configuration?.baseForegroundColor = .genreTagSelectedTextColor
+                    button.dynamicBorder = UIColor.genreTagSelectedBorderColor
                 } else {
                     // 비선택
-                    button.configuration?.baseBackgroundColor = .white
-                    button.configuration?.baseForegroundColor = .gray300
-                    button.layer.borderColor = UIColor.gray100.cgColor
+                    button.configuration?.baseBackgroundColor = .genreTagUnselectedFillColor
+                    button.configuration?.baseForegroundColor = .genreTagUnselectedTextColor
+                    button.dynamicBorder = UIColor.genreTagUnselectedBorderColor
                 }
             }
 
@@ -173,6 +173,12 @@ final class BookshelfViewController: UIViewController {
         setupTableView()
         bindViewModel()
         updateCategoryUI(selectedIndex: 0)
+        keyboardDismiss()
+        
+        
+        // 스크롤해서 키보드 내리기
+        tableView.keyboardDismissMode = .onDrag
+
         
         NotificationCenter.default.addObserver(
                 self,
@@ -191,10 +197,13 @@ final class BookshelfViewController: UIViewController {
 
         @objc private func reloadBooks() {
             viewModel.loadInitialData()
-        
+            
+            
+    
 
 //        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
     }
+    
 
     // 뷰 계층 구성
     private func setupHierarchy() {
@@ -288,7 +297,6 @@ final class BookshelfViewController: UIViewController {
         updateCategoryUI(selectedIndex: sender.tag)
         viewModel.updateCategory(index: sender.tag)
     }
-
     
     private func updateCategoryUI(selectedIndex: Int) {
         selectedCategoryIndex = selectedIndex

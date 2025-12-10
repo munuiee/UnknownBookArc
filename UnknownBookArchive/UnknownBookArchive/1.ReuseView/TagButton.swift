@@ -5,10 +5,10 @@ import SnapKit
 
 class TagButton: UIButton {
     
-    var defaultBgColor: UIColor = .white
-    var selectBgColor: UIColor = .gray
-    var defautTitleColor: UIColor = UIColor.gray300
-    var selectTitleColor: UIColor = .white
+    var defaultBgColor: UIColor = .genreTagUnselectedFillColor
+    var selectBgColor: UIColor = .genreTagSelectedFillColor
+    var defautTitleColor: UIColor = UIColor.genreTagUnselectedTextColor
+    var selectTitleColor: UIColor = .genreTagSelectedTextColor
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,7 +23,7 @@ class TagButton: UIButton {
         self.backgroundColor = defaultBgColor
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.gray100.cgColor
+        layer.borderColor = UIColor.genreTagUnselectedBorderColor.cgColor
         titleLabel?.font = UIFont.regularFont(ofSize: 15)
 
         self.setContentHuggingPriority(.required, for: .horizontal)
@@ -33,16 +33,18 @@ class TagButton: UIButton {
         }
     }
     func configure(title: String,
-                   titleColor: UIColor,     
+                   titleColor: UIColor,
+                   backgroundColor: UIColor,
                    borderColor: UIColor,
                    selectedBgColor: UIColor,
-                   selectedTitleColor: UIColor
+                   selectedTitleColor: UIColor,
+                   selectedBorderColor: UIColor
     ) {
         setTitle(title, for: .normal)
-        setTitleColor(.gray300, for: .normal)
+        setTitleColor(.genreTagUnselectedTextColor, for: .normal)
         titleLabel?.font = UIFont.mediumFont(ofSize: 14)
         self.backgroundColor = defaultBgColor
-        self.layer.borderColor = borderColor.cgColor
+        self.dynamicBorder = borderColor
         self.selectTitleColor = selectedTitleColor
         self.selectBgColor = selectedBgColor 
     }
@@ -58,12 +60,12 @@ class TagButton: UIButton {
     private func updateAppearance() {
         backgroundColor = defaultBgColor
         if isSelected {
-            backgroundColor = .primaryBlue50
-            self.layer.borderColor = UIColor.primaryBlue300.cgColor
-            setTitleColor(.primaryBlue500, for: .normal)
+            backgroundColor = .genreTagSelectedFillColor
+            self.dynamicBorder = UIColor.genreTagSelectedBorderColor
+            setTitleColor(.genreTagSelectedTextColor, for: .normal)
         } else {
             backgroundColor = defaultBgColor
-            self.layer.borderColor = UIColor.gray100.cgColor
+            self.dynamicBorder = UIColor.genreTagUnselectedBorderColor
             setTitleColor(defautTitleColor, for: .normal)
 
         }
