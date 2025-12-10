@@ -10,8 +10,8 @@ final class BookshelfViewController: UIViewController {
     // 보여줄 책 목록
     private var displayedBooks: [BookshelfBook] = []
 
-//    // 갤러리 모드 on/ off
-//    private var isGalleryMode: Bool = false
+    // 갤러리 모드 on/ off
+    private var isGalleryMode: Bool = false
     
     private var selectedCategoryIndex: Int = 0
 
@@ -27,12 +27,12 @@ final class BookshelfViewController: UIViewController {
     }()
 
 //    // 갤러리모드 전환 버튼
-//    private let galleryButton: UIButton = {
-//        let btn = UIButton(type: .system)
-//        btn.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
-//        btn.tintColor = .label
-//        return btn
-//    }()
+    private let galleryButton: UIButton = {
+        let btn = UIButton(type: .system)
+        btn.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
+        btn.tintColor = .label
+        return btn
+    }()
 
     // 검색창
     private lazy var searchTextField: UITextField = {
@@ -158,6 +158,11 @@ final class BookshelfViewController: UIViewController {
         tv.separatorStyle = .none
         return tv
     }()
+    // 책 목록 컬렉션 뷰
+    private lazy var collectionView: UICollectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
+        return cv
+    }()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -171,8 +176,10 @@ final class BookshelfViewController: UIViewController {
         setupHierarchy()
         setupConstraints()
         setupTableView()
+        setupcollectionView()
         bindViewModel()
         updateCategoryUI(selectedIndex: 0)
+        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
         
         NotificationCenter.default.addObserver(
                 self,
@@ -192,20 +199,18 @@ final class BookshelfViewController: UIViewController {
         @objc private func reloadBooks() {
             viewModel.loadInitialData()
         
-
-//        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
     }
 
     // 뷰 계층 구성
     private func setupHierarchy() {
         view.addSubview(topBarView)
         topBarView.addSubview(titleLabel)
-//        topBarView.addSubview(galleryButton)
+        topBarView.addSubview(galleryButton)
 
         view.addSubview(searchTextField)
         view.addSubview(categoryScrollView)
         categoryScrollView.addSubview(categoryStackView)
-        view.addSubview(tableView)
+        [tableView, collectionView].forEach { view.addSubview($0) }
     }
 
     // MARK: 레이아웃 설정
@@ -223,11 +228,11 @@ final class BookshelfViewController: UIViewController {
             $0.height.equalTo(32)
         }
 
-//        galleryButton.snp.makeConstraints {
-//            $0.centerY.equalToSuperview()
-//            $0.trailing.equalToSuperview().inset(20)
-//            $0.width.height.equalTo(24)
-//        }
+        galleryButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.height.equalTo(24)
+        }
         
         
 
@@ -251,6 +256,10 @@ final class BookshelfViewController: UIViewController {
             $0.top.equalTo(categoryScrollView.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(categoryScrollView.snp.bottom).offset(16)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
     }
 
     // 테이블뷰 설정
@@ -262,11 +271,20 @@ final class BookshelfViewController: UIViewController {
             forCellReuseIdentifier: BookshelfTableViewCell.identifier
         )
     }
+    // 컬렉션 뷰 설정
+    private func setupcollectionView() {
+        collectionView.register(BookshelfCollectionVeiwCell.self, forCellWithReuseIdentifier: BookshelfCollectionVeiwCell.id)
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.backgroundColor = .white
+        collectionView.isHidden = true
+    }
 
     private func bindViewModel() {
         viewModel.onUpdate = { [weak self] books in
             self?.displayedBooks = books
             self?.tableView.reloadData()
+            self?.collectionView.reloadData()
         }
         viewModel.loadInitialData()
     }
@@ -287,27 +305,38 @@ final class BookshelfViewController: UIViewController {
     @objc private func categoryTapped(_ sender: UIButton) {
         updateCategoryUI(selectedIndex: sender.tag)
         viewModel.updateCategory(index: sender.tag)
+        if !isGalleryMode {
+            toggleDisplayMode()
+        }
+        scrollToTop()
     }
-
     
     private func updateCategoryUI(selectedIndex: Int) {
         selectedCategoryIndex = selectedIndex
         categoryButtons.forEach { $0.setNeedsUpdateConfiguration()}
     }
 
-//    // 갤러리모드 토글
-//    @objc private func toggleDisplayMode() {
-//        isGalleryMode.toggle()
-//        galleryButton.setImage(
-//            UIImage(systemName: isGalleryMode ? "list.bullet" : "photo.on.rectangle.angled"),
-//            for: .normal
-//        )
-//        // 갤러리 모드에서 테이블뷰 숨김. 갤러리 모드 생성 예정.
-//        tableView.isHidden = isGalleryMode
-//    }
+    // 갤러리모드 토글
+    @objc private func toggleDisplayMode() {
+        isGalleryMode.toggle()
+        galleryButton.setImage(
+            UIImage(systemName: isGalleryMode ? "list.bullet" : "photo.on.rectangle.angled"),
+            for: .normal
+        )
+        // 갤러리 모드에서 테이블뷰 숨김.
+        tableView.isHidden = isGalleryMode
+        collectionView.isHidden = !isGalleryMode
+        if isGalleryMode {
+            collectionView.reloadData()
+        }
+    }
     
     func scrollToTop() {
-        tableView.setContentOffset(.zero, animated: true)
+        if isGalleryMode {
+            collectionView.setContentOffset(CGPoint(x: 0, y: -collectionView.adjustedContentInset.top), animated: true)
+        } else {
+            tableView.setContentOffset(.zero, animated: true)
+        }
     }
 
 }
@@ -352,6 +381,54 @@ extension BookshelfViewController: UITableViewDelegate {
         let detailVC = BookDetailViewController(book: coreDataBook)
         detailVC.hidesBottomBarWhenPushed = true
 
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+}
+// MARK: 컬렉션뷰 관련 함수들
+extension BookshelfViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    private func makeLayout() -> UICollectionViewLayout {
+           let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/3.0), heightDimension: .fractionalHeight(1))
+           let item = NSCollectionLayoutItem(layoutSize: itemSize)
+           item.contentInsets = NSDirectionalEdgeInsets(
+               top: 2,
+               leading: 2,
+               bottom: 2,
+               trailing: 2
+           )
+           
+           let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(160))
+           let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+           
+           let section = NSCollectionLayoutSection(group: group)
+           section.contentInsets = NSDirectionalEdgeInsets(
+               top: 16,
+               leading: 20,
+               bottom: 16,
+               trailing: 20
+           )
+           return UICollectionViewCompositionalLayout(section: section)
+       }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return displayedBooks.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BookshelfCollectionVeiwCell.id, for: indexPath) as? BookshelfCollectionVeiwCell else {
+            return UICollectionViewCell()
+        }
+        let book = displayedBooks[indexPath.item]
+        cell.configure(with: book)
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let selectedBook = displayedBooks[indexPath.item]
+        guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: selectedBook.uuid) else {
+            return
+        }
+        let detailVC = BookDetailViewController(book: coreDataBook)
+        detailVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }
