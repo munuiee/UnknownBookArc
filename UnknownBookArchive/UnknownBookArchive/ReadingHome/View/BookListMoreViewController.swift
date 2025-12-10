@@ -32,6 +32,14 @@ final class BookListMoreViewController: UIViewController {
             name: .bookDeleted,
             object: nil
         )
+        
+        // 책 수정 알림
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadAfterDelete),
+            name: .bookUpdated,
+            object: nil
+        )
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,6 +54,7 @@ final class BookListMoreViewController: UIViewController {
     private func loadBooks() {
         let allBooks = CoreDataManager.shared.fetchAllBooks()
         
+        // 상태별 필터링
         books = allBooks.filter { book in
             switch listTitle {
             case "읽는 중인 책":
@@ -61,9 +70,15 @@ final class BookListMoreViewController: UIViewController {
             }
         }
         
+        // 최근 수정 순으로 정렬
+        books.sort { ($0.lastModifiedDate ?? .distantPast) >
+                     ($1.lastModifiedDate ?? .distantPast) }
+
         tableView.reloadData()
     }
+
     
+    // 삭제 후 다시 로드
     @objc private func reloadAfterDelete() {
         loadBooks()
     }

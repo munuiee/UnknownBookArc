@@ -2,10 +2,12 @@
 
 import UIKit
 import SnapKit
+import RxSwift
 
 final class ReadingHomeViewController: UIViewController {
     
     private let viewModel = ReadingHomeViewModel()
+    private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView()     // 전체 스크롤
     private let contentStackView = UIStackView()    // 콘텐츠 전체 스택
@@ -658,33 +660,35 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
             
             let book = currentReadingBooks[indexPath.item]
             
-            cell.titleLabel.text = book.title
-            cell.authorLabel.text = book.author
+            cell.configure(with: book)
             
-            if let imgData = book.coverImage,
-               let image = UIImage(data: imgData) {
-                cell.thumbnailImageView.image = image
-            }
-            
-            if let startDate = book.startDate {
-                let df = DateFormatter()
-                df.dateFormat = "yyyy.MM.dd"
-                cell.dateLabel.text = df.string(from: startDate)
-            }
-            
-            let currentPage = Int(book.currentPage)
-            let totalPage = Int(book.totalPage)
-            let percent = Int(book.percent)
-            
-            if totalPage > 0 {
-                cell.progressBar.progress = Float(currentPage) / Float(totalPage)
-                cell.percentLabel.text = "\(currentPage)/\(totalPage) P"
-                
-            } else {
-                let clamped = max(0, min(percent, 100))
-                cell.progressBar.progress = Float(clamped) / 100
-                cell.percentLabel.text = "\(clamped)%"
-            }
+//            cell.titleLabel.text = book.title
+//            cell.authorLabel.text = book.author
+//            
+//            if let imgData = book.coverImage,
+//               let image = UIImage(data: imgData) {
+//                cell.thumbnailImageView.image = image
+//            }
+//            
+//            if let startDate = book.startDate {
+//                let df = DateFormatter()
+//                df.dateFormat = "yyyy.MM.dd"
+//                cell.dateLabel.text = df.string(from: startDate)
+//            }
+//            
+//            let currentPage = Int(book.currentPage)
+//            let totalPage = Int(book.totalPage)
+//            let percent = Int(book.percent)
+//            
+//            if totalPage > 0 {
+//                cell.progressBar.progress = Float(currentPage) / Float(totalPage)
+//                cell.percentLabel.text = "\(currentPage)/\(totalPage) P"
+//                
+//            } else {
+//                let clamped = max(0, min(percent, 100))
+//                cell.progressBar.progress = Float(clamped) / 100
+//                cell.percentLabel.text = "\(clamped)%"
+//            }
             
             cell.onJournalButtonTapped = { [weak self] in
                 let vc = JournalViewController(book: book)
@@ -693,7 +697,21 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
 
                 self?.navigationController?.pushViewController(vc, animated: true)
             }
-            
+            cell.onProgressEditTapped = { [weak self, weak cell] bookToEdit in
+                let editVC = ProgressEditViewController(book: bookToEdit)
+                let navigationController = UINavigationController(rootViewController: editVC)
+                    navigationController.modalPresentationStyle = .pageSheet
+                    if let sheet = navigationController.sheetPresentationController {
+                        sheet.detents = [.medium(), .large()]
+                    }
+                editVC.completion = { [weak self, weak cell] updatedBook in
+                    cell?.configure(with: updatedBook)
+                    if let index = self?.currentReadingBooks.firstIndex(where: { $0.uuid == updatedBook.uuid }) {
+                                self?.currentReadingBooks[index] = updatedBook
+                            }
+                        }
+                self?.present(navigationController, animated: true)
+            }
             return cell
         }
         
@@ -720,7 +738,6 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
         
         return cell
     }
-    
     
     func collectionView(_ collectionView: UICollectionView,
                         didSelectItemAt indexPath: IndexPath) {

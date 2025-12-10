@@ -96,20 +96,21 @@ class BookSearchViewController: UIViewController {
  
         // 검색 시작 시
         searchBar.rx.searchButtonClicked
-                    .withLatestFrom(searchBar.rx.text.orEmpty)
-                    .bind(onNext: { [weak self] text in
-                        self?.currentQuery = text
-                        self?.viewModel.search(query: text)
-                        self?.searchBar.resignFirstResponder()
-                    })
-                    .disposed(by: disposeBag)
-
-            viewModel.bookList
-                .bind(to: tableView.rx.items(
-                    cellIdentifier: BookSearchCell.id, cellType: BookSearchCell.self)) { index, item, cell in
-                    cell.setData(item: item)
-                }
+                .withLatestFrom(searchBar.rx.text.orEmpty)
+                .bind(onNext: { [weak self] text in
+                    guard let self = self else { return }
+                    self.currentQuery = text
+                    self.viewModel.search(query: text, page: 1)
+                    self.searchBar.resignFirstResponder()
+                })
                 .disposed(by: disposeBag)
+
+        viewModel.bookList
+            .bind(to: tableView.rx.items(
+                cellIdentifier: BookSearchCell.id, cellType: BookSearchCell.self)) { index, item, cell in
+                cell.setData(item: item)
+            }
+            .disposed(by: disposeBag)
         // 검색 취소 시
         searchBar.rx.cancelButtonClicked
             .bind(onNext: { [weak self] in
@@ -255,7 +256,6 @@ class BookSearchViewController: UIViewController {
             .filter { $0 }
             .map { [weak self] _ -> (query: String, page: Int) in
                 let nextPageIndex = (self?.viewModel.currentPage.value ?? 0) + 1
-                self?.viewModel.currentPage.accept(nextPageIndex)
                 return (query: self?.currentQuery ?? "", page: nextPageIndex)
             }
             .subscribe(onNext: { [weak self] request in

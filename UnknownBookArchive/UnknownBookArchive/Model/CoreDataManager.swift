@@ -310,13 +310,13 @@ class CoreDataManager {
     
     func fetchAllBooks() -> [Book] {
         let request: NSFetchRequest<Book> = Book.fetchRequest()
-
         request.sortDescriptors = [
-            NSSortDescriptor(key: "startDate", ascending: true)
+            NSSortDescriptor(key: "lastModifiedDate", ascending: false)
         ]
         
         do {
             let result = try context.fetch(request)
+
             return result
         } catch {
             print("책 목록 불러오기 실패: \(error)")
@@ -422,6 +422,36 @@ class CoreDataManager {
         } catch {
             print("이번 년도 완독 책 개수 세기 실패: \(error)")
             return 0
+        }
+    }
+    // MARK: 진행도 수정
+    func updateProgress(uuid: String, isPageMode: Bool, currentPage: Int32, totalPage: Int32, percent: Int32, lastModifiedDate: Date) ->Bool {
+        let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+         
+        do {
+            let results = try context.fetch(fetchRequest)
+            guard let bookToUpdate = results.first else {
+                return false
+            }
+            bookToUpdate.isPageMode = isPageMode
+            bookToUpdate.lastModifiedDate = lastModifiedDate
+            
+            if isPageMode {
+                bookToUpdate.currentPage = currentPage
+                bookToUpdate.totalPage = totalPage
+                
+            } else {
+                bookToUpdate.percent = percent
+            }
+            if context.hasChanges {
+                try context.save()
+                return true
+            } else {
+                return true
+            }
+        } catch {
+            return false
         }
     }
 }

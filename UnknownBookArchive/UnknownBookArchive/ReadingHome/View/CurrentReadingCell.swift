@@ -2,10 +2,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
 
 final class CurrentReadingCell: UICollectionViewCell {
     
     static let identifier = "CurrentReadingCell"
+    let disposeBag = DisposeBag()
+    private var book: Book?
+    
     
     // MARK: - UI 요소
     let thumbnailImageView = UIImageView()
@@ -15,7 +19,8 @@ final class CurrentReadingCell: UICollectionViewCell {
     let percentLabel = UILabel()
     let progressBar = UIProgressView()
     let journalButton = UIButton(type: .system)
-
+    let progressEditView = UIView()
+    
     // 날짜 + 진행률 스택
     private let dateInfoStack: UIStackView = {
         let st = UIStackView()
@@ -27,6 +32,8 @@ final class CurrentReadingCell: UICollectionViewCell {
     
     // 저널 버튼 콜백
     var onJournalButtonTapped: (() -> Void)?
+    // 진행률 수정 콜백
+    var onProgressEditTapped: ((Book) -> Void)?
     
     
     // MARK: - Init
@@ -34,11 +41,11 @@ final class CurrentReadingCell: UICollectionViewCell {
         super.init(frame: frame)
         setupUI()
         setupLayout()
-
+        
         contentView.backgroundColor = .clear
         contentView.layer.cornerRadius = 0
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -82,6 +89,11 @@ final class CurrentReadingCell: UICollectionViewCell {
         journalButton.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         journalButton.layer.cornerRadius = 4
         journalButton.addTarget(self, action: #selector(didTapJournal), for: .touchUpInside)
+        
+        // 프로그레스바 탭 제스처
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapProgressBar))
+        progressEditView.addGestureRecognizer(tapGesture)
+        progressEditView.isUserInteractionEnabled = true
     }
     
     
@@ -92,13 +104,17 @@ final class CurrentReadingCell: UICollectionViewCell {
         contentView.addSubview(thumbnailImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(authorLabel)
-        contentView.addSubview(dateInfoStack)
-        contentView.addSubview(progressBar)
+        //        contentView.addSubview(dateInfoStack)
+        //        contentView.addSubview(progressBar)
+        contentView.addSubview(progressEditView)
         contentView.addSubview(journalButton)
         
         // 날짜 + 진행률 스택 내부에 라벨 넣기
         dateInfoStack.addArrangedSubview(dateLabel)
         dateInfoStack.addArrangedSubview(percentLabel)
+        
+        // 날짜 + 진행률 + 프로그레스바
+        [dateInfoStack, progressBar].forEach{ progressEditView.addSubview($0) }
         
         
         // 썸네일
@@ -111,35 +127,42 @@ final class CurrentReadingCell: UICollectionViewCell {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(23)
             $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(8)
         }
         
         // 작가
         authorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.trailing.equalToSuperview().inset(8)
+            
         }
+        progressEditView.snp.makeConstraints {
+            $0.top.equalTo(authorLabel.snp.bottom).offset(6)
+            $0.leading.equalTo(titleLabel)
+            $0.trailing.equalToSuperview().inset(8)
+            $0.height.equalTo(40)
+        }
+        
         
         // 날짜 + 진행률
         dateInfoStack.snp.makeConstraints {
-            $0.top.equalTo(authorLabel.snp.bottom).offset(16)
-            $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(progressEditView.snp.top).offset(10)
+            $0.leading.trailing.equalToSuperview()
+
         }
         
         // 진행률 바
         progressBar.snp.makeConstraints {
             $0.top.equalTo(dateInfoStack.snp.bottom).offset(4)
-            $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(6)
         }
         
         // 저널 버튼
         journalButton.snp.makeConstraints {
-            $0.top.equalTo(progressBar.snp.bottom).offset(16)
-            $0.trailing.equalToSuperview().inset(16)
+            $0.top.equalTo(progressEditView.snp.bottom).offset(6)
+            $0.trailing.equalToSuperview().inset(8)
             $0.leading.equalTo(titleLabel)
             $0.height.equalTo(32)
             $0.bottom.equalToSuperview().inset(16)
@@ -157,10 +180,11 @@ final class CurrentReadingCell: UICollectionViewCell {
         percentLabel.text = nil
         progressBar.progress = 0
     }
-
+    
     
     // MARK: - 데이터 구성
     func configure(with book: Book) {
+        self.book = book
         
         titleLabel.text = book.title
         authorLabel.text = book.author
@@ -184,10 +208,16 @@ final class CurrentReadingCell: UICollectionViewCell {
         let totalPage = Int(book.totalPage)
         let percent = Int(book.percent)
         
-        if totalPage > 0 {
-            let progress = Float(currentPage) / Float(totalPage)
-            progressBar.progress = progress
-            percentLabel.text = "\(currentPage)/\(totalPage) P"
+        if book.isPageMode {
+            if totalPage > 0 {
+                let progress = Float(currentPage) / Float(totalPage)
+                progressBar.progress = progress
+                percentLabel.text = "\(currentPage)/\(totalPage) P"
+            } else {
+                progressBar.progress = 0.0
+                percentLabel.text = "0/0 P"
+            }
+        
         } else {
             let clamped = max(0, min(percent, 100))
             progressBar.progress = Float(clamped) / 100.0
@@ -199,5 +229,11 @@ final class CurrentReadingCell: UICollectionViewCell {
     // MARK: - Action
     @objc private func didTapJournal() {
         onJournalButtonTapped?()
+    }
+    // 진행률 탭 액션
+    @objc private func didTapProgressBar() {
+        print("진행률 바 눌림")
+        guard let book = self.book else { return }
+        onProgressEditTapped?(book)
     }
 }

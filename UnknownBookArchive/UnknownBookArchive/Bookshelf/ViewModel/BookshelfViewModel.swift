@@ -35,7 +35,6 @@ final class BookshelfViewModel {
             )
         }
 
-
         self.filteredBooks = allBooks
         onUpdate?(filteredBooks)
     }
