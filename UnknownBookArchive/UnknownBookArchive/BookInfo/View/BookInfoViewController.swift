@@ -8,7 +8,7 @@ import RxKeyboard
 import CoreData
 import Photos
 
-class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     var viewModel = BookInfoViewModel()
     var book: Book?
@@ -487,7 +487,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate 
     
     // MARK: UI setup 함수들
     private func setupTopView() {
-        let saveConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        let saveConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
         let saveImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: saveConfig)
         topView.configure(title: "", rightButtonImage: saveImage)
     }

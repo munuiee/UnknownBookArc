@@ -424,4 +424,34 @@ class CoreDataManager {
             return 0
         }
     }
+    // MARK: 진행도 수정
+    func updateProgress(uuid: String, isPageMode: Bool, currentPage: Int32, totalPage: Int32, percent: Int32, lastModifiedDate: Date) ->Bool {
+        let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
+        fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+         
+        do {
+            let results = try context.fetch(fetchRequest)
+            guard let bookToUpdate = results.first else {
+                return false
+            }
+            bookToUpdate.isPageMode = isPageMode
+            bookToUpdate.lastModifiedDate = lastModifiedDate
+            
+            if isPageMode {
+                bookToUpdate.currentPage = currentPage
+                bookToUpdate.totalPage = totalPage
+                
+            } else {
+                bookToUpdate.percent = percent
+            }
+            if context.hasChanges {
+                try context.save()
+                return true
+            } else {
+                return true
+            }
+        } catch {
+            return false
+        }
+    }
 }
