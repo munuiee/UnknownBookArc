@@ -487,8 +487,6 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
     
     // MARK: UI setup 함수들
     private func setupTopView() {
-        let saveConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
-        let saveImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: saveConfig)
         topView.configure(title: "책장", rightButtonTitle: "저장")
     }
     
@@ -587,64 +585,49 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
     // 달력 팝업 띄우기
     private func openCalendar(sourceButton: UIButton, completion: @escaping (String) -> Void) {
         // 달력 보여줄 임시 뷰컨
-        let calenderVC = UIViewController()
-        calenderVC.view.backgroundColor = .backgroundModeColor
-        calenderVC.modalPresentationStyle = .popover
-        calenderVC.preferredContentSize = CGSize(width: 330, height: 350)
-        
-        if let popover = calenderVC.popoverPresentationController {
-            popover.sourceView = sourceButton
-            popover.sourceRect = sourceButton.bounds
-            popover.permittedArrowDirections = [.up, .down]
-        }
-        
-        // 달력 만들기
-        let datePicker = UIDatePicker()
-        datePicker.datePickerMode = .date
-        datePicker.preferredDatePickerStyle = .inline
-        datePicker.locale = Locale(identifier: "ko_KR")
-        datePicker.tintColor = .systemBlue
-//        datePicker.overrideUserInterfaceStyle = .light
-        
+        let calenderVC = CalendarViewController()
+
+        calenderVC.modalPresentationStyle = .overFullScreen
+        calenderVC.modalTransitionStyle = .crossDissolve
+
+
         // 종료일 버튼 클릭 시 최소 날짜 설정
-        if sourceButton == endDateButton {
+        if sourceButton == startDateButton {
+            calenderVC.shouldSetMinimumDate = false
+            let currentEndDateTitle = endDateButton.title(for: .normal) ?? ""
+            if currentEndDateTitle != "종료일",
+               let maxDate = dateFormatter.date(from: currentEndDateTitle) {
+                calenderVC.maximumDate = maxDate
+            }
+            
+        } else if sourceButton == endDateButton {
+            calenderVC.shouldSetMinimumDate = true
+            calenderVC.maximumDate = nil
             let currentStartDateTitle = startDateButton.title(for: .normal) ?? ""
             
             if currentStartDateTitle != "시작일",
                let minDate = dateFormatter.date(from: currentStartDateTitle) {
-                datePicker.minimumDate = minDate
+                calenderVC.minimumDate = minDate
             }
         }
-        
-        //완료 버튼
-        let doneButton = UIButton(type: .system)
-        doneButton.setTitle("완료", for: .normal)
-        doneButton.titleLabel?.font = UIFont.semiBoldFont(ofSize: 17)
-        doneButton.setTitleColor(.black, for: .normal)
-        
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        stackView.spacing = 10
-        stackView.distribution = .fill
-        
-        [stackView].forEach { calenderVC.view.addSubview($0) }
-        [datePicker, doneButton].forEach { stackView.addArrangedSubview($0) }
-        
-        stackView.snp.makeConstraints {
-            $0.leading.trailing.top.equalToSuperview().inset(30)
-            $0.bottom.equalToSuperview().inset(100)
-        }
-        doneButton.snp.makeConstraints {
-            $0.height.equalTo(50)
-        }
-        doneButton.rx.tap
-            .bind { [weak self, weak calenderVC] in
-                let dateString = self?.dateFormatter.string(from: datePicker.date) ?? "시작일"
-                completion(dateString)
-                calenderVC?.dismiss(animated: true)
+        calenderVC.onDateSelected = { [weak self] selectedDate in
+            guard let self = self else { return }
+            let dateString = self.dateFormatter.string(from: selectedDate)
+            completion(dateString)
+            sourceButton.setTitle(dateString, for: .normal)
+            
+            if sourceButton == self.startDateButton {
+                startDateButton.setTitleColor(.startDateUnselectedTextColor, for: .normal)
+                startDateButton.backgroundColor = .startDateUnselectedFillColor
+                startDateButton.dynamicBorder = UIColor.startDateUnselectedBorderColor
+            } else if sourceButton == self.endDateButton {
+                endDateButton.setTitleColor(.endDateUnselectedTextColor, for: .normal)
+                endDateButton.backgroundColor = .endDateUnselectedFillColor
+                endDateButton.dynamicBorder = UIColor.endDateUnselectedBorderColor
             }
-            .disposed(by: disposeBag)
-        self.present(calenderVC, animated: true)
+        }
+        present(calenderVC, animated: true, completion: nil)
+
     }
     
     private func setupTagButtons() {
@@ -760,6 +743,14 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
         
         let startDate = dateFormatter.date(from: startDateString ?? "")
         let endDate = dateFormatter.date(from: endDateString ?? "")
+        
+        if let start = startDate, let end = endDate {
+            
+            if end < start {
+                showAlert(title: "날짜 입력 오류", message: "종료일이 시작일보다 빠를 수 없습니다.")
+                return
+            }
+        }
         
         let allTagButtons: [TagButton] = [tagButton0, tagButton1, tagButton2, tagButton3, tagButton4, tagButton5, tagButton6, tagButton7, tagButton8, tagButton9, tagButton10]
         // 선택된 태그 타이틀 가져와서 콤마로 연결

@@ -329,7 +329,7 @@ class BookSearchViewController: UIViewController {
         topView.rightButton.setImage(saveImage, for: .normal)
         topView.rightButton.tintColor = .topColor
       }
-    
+
     // MARK: 상세화면으로 이동
     // 셀 클릭 후 이동
     private func moveToBookInfo(with bookItem: BookItem) {
