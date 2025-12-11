@@ -379,7 +379,7 @@ class BookDetailViewController: UIViewController {
         topView.rightButton.menu = UIMenu(children: [menuEdit, menuDelete])
         topView.rightButton.showsMenuAsPrimaryAction = true
         topView.rightButton.setImage(UIImage(systemName: "ellipsis"), for: .normal)
-        topView.rightButton.tintColor = .black
+        topView.rightButton.tintColor = .topColor
     }
     
     // MARK: 수정 및 삭제 기능 함수

@@ -187,6 +187,7 @@ final class BookshelfViewController: UIViewController {
 
         // 스크롤해서 키보드 내리기
         tableView.keyboardDismissMode = .onDrag
+        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
 
 
         
@@ -207,6 +208,7 @@ final class BookshelfViewController: UIViewController {
 
         @objc private func reloadBooks() {
             viewModel.loadInitialData()
+
     }
     
 
@@ -314,9 +316,6 @@ final class BookshelfViewController: UIViewController {
     @objc private func categoryTapped(_ sender: UIButton) {
         updateCategoryUI(selectedIndex: sender.tag)
         viewModel.updateCategory(index: sender.tag)
-        if !isGalleryMode {
-            toggleDisplayMode()
-        }
         scrollToTop()
     }
     
