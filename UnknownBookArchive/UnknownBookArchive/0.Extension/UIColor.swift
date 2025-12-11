@@ -893,8 +893,8 @@ extension UIColor {
     // 6. 좋아요 버튼 ------------------------------------------------------------
     
     static let paragraphLikeButtonIconColor: UIColor = .dynamic(
-        light: ColorHex.primaryBlue800,
-        dark:  ColorHex.primaryBlue100
+        light: ColorHex.primaryBlue300,
+        dark:  ColorHex.primaryBlue700
     )
     
     static let paragraphUnlikeButtonIconColor: UIColor = .dynamic(

@@ -324,7 +324,7 @@ class BookSearchViewController: UIViewController {
     
     private func setupTopView() {
         let saveConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
-        let saveImage = UIImage(systemName: "plus", withConfiguration: saveConfig)
+        let saveImage = UIImage(systemName: "document.badge.plus", withConfiguration: saveConfig)
         topView.configure(title: "책 추가하기", rightButtonTitle: "  ")
         topView.rightButton.setImage(saveImage, for: .normal)
         topView.rightButton.tintColor = .topColor
