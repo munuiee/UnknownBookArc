@@ -45,7 +45,7 @@ class ProgressEditViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         configureUI()
         setConstraints()
         setupTopView()
@@ -88,7 +88,7 @@ class ProgressEditViewController: UIViewController {
     private func setupTopView() {
         let saveConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
         let saveImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: saveConfig)
-        topView.configure(title: "진행률 수정", rightButtonImage: saveImage)
+        topView.configure(title: "진행률 수정", rightButtonTitle: "저장")
     }
     
     private func setupProgressUI() {

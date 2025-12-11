@@ -122,6 +122,13 @@ extension UIColor {
         dark:  ColorHex.primaryBlue100
     )
     
+    // 3. 저장 비활성화 버튼
+    static let unSaveColor: UIColor = .dynamic(
+        light: ColorHex.gray600,
+        dark:  "808080"
+    )
+    
+    
     // 4. 책 제목
     static let bookTitleColor: UIColor = .dynamic(
         light: ColorHex.primaryBlue900,
@@ -865,6 +872,7 @@ extension UIColor {
         dark:  ColorHex.gray500
     )
     
+
     
     // 4. 텍스트 -----------------------------------------------------------------
     
@@ -1125,8 +1133,10 @@ extension UIColor {
         light: ColorHex.primaryBlue50,
         dark:  ColorHex.gray900
     )
+
     
-    // 5. 외곽선 ---------------------------------------------------------------
+    
+    // 5. 배경 ---------------------------------------------------------------
     
     static let searchResultBGColor: UIColor = .dynamic(
         light: ColorHex.white,

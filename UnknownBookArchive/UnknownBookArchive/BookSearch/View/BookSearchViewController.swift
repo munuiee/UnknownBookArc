@@ -312,7 +312,7 @@ class BookSearchViewController: UIViewController {
     }
     
     private func setupTopView() {
-        topView.configure(title: "책 추가하기", rightButtonImage: nil)
+        topView.configure(title: "책 추가하기", rightButtonTitle: nil)
     }
     
     // MARK: 상세화면으로 이동
