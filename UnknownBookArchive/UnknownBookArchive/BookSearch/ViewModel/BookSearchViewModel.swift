@@ -34,7 +34,7 @@ class BookSearchViewModel {
             
         }
         if page == 1 {
-            self.currentPage.accept(1)
+            self.bookList.accept([])
             self.canLoadMore.accept(true)
         }
         guard !isLoading.value, canLoadMore.value else { return }
