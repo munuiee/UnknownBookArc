@@ -317,6 +317,7 @@ final class BookshelfViewController: UIViewController {
         updateCategoryUI(selectedIndex: sender.tag)
         viewModel.updateCategory(index: sender.tag)
         scrollToTop()
+
     }
     
     private func updateCategoryUI(selectedIndex: Int) {
@@ -352,12 +353,11 @@ final class BookshelfViewController: UIViewController {
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
 
-        let deleteAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
             guard let self = self else { return }
 
-            let info = self.displayedBooks[indexPath.row]  // BookshelfBook
+            let info = self.displayedBooks[indexPath.row]
 
-            // 1) uuid로 CoreData Book 가져오기
             guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: info.uuid) else {
                 print("삭제할 책을 찾지 못했습니다.")
                 completion(false)
@@ -365,18 +365,17 @@ final class BookshelfViewController: UIViewController {
             }
 
             CoreDataManager.shared.delete(details: coreDataBook)
-            self.displayedBooks.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .automatic)
-
+            NotificationCenter.default.post(name: .bookDeleted, object: nil)
             completion(true)
         }
 
         deleteAction.image = UIImage(systemName: "trash")
-        deleteAction.backgroundColor = .primaryBlue800
+
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
+
 
     // 갤러리형 삭제 알럿
     private func showDeleteAlertForGallery(book: BookshelfBook, indexPath: IndexPath) {
@@ -392,10 +391,11 @@ final class BookshelfViewController: UIViewController {
             // CoreData Book 찾아서 삭제
             guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: book.uuid) else { return }
             CoreDataManager.shared.delete(details: coreDataBook)
-            
+            NotificationCenter.default.post(name: .bookDeleted, object: nil)
+
             // UI 업데이트
-            self.displayedBooks.remove(at: indexPath.item)
-            self.collectionView.deleteItems(at: [indexPath])
+//            self.displayedBooks.remove(at: indexPath.item)
+//            self.collectionView.deleteItems(at: [indexPath])
         }
         
         let cancel = UIAlertAction(title: "취소", style: .cancel)
