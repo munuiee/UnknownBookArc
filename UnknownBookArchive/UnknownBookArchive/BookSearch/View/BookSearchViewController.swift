@@ -85,6 +85,13 @@ class BookSearchViewController: UIViewController {
     }
     
     private func bind() {
+        
+        topView.rightButtonTap
+            .bind { [ weak self] in
+                guard let self = self else { return }
+                moveToBookInfo()
+            }
+            .disposed(by: disposeBag)
 
         topView.backButtonTap
             .bind { [weak self] in
@@ -142,14 +149,16 @@ class BookSearchViewController: UIViewController {
                 var labelYOffset: CGFloat = -80
                 var buttonYOffset: CGFloat = -40
                 var isLeadingAlignment: Bool = false
+                var showButton: Bool = true
                 
                 switch state {
                 case .initial:
-                    message = "직접 책을 추가하고 싶으신가요?"
+                    message = "추가할 책을 검색해 보세요"
                     showEmptyView = true
-                    labelYOffset = -130
+                    labelYOffset = -110
                     buttonYOffset = -65
                     isLeadingAlignment = false
+                    showButton = false
                 case .loading:
                     showEmptyView = false
 
@@ -175,7 +184,11 @@ class BookSearchViewController: UIViewController {
                 
                 // UI 적용
                 if showEmptyView {
-                    let emptyView = self.createEmptyView(message: message, labelYOffset: labelYOffset, buttonYOffset: buttonYOffset, isLeadingAlignment: isLeadingAlignment)
+                    self.tableView.backgroundView?.removeFromSuperview()
+                    self.tableView.backgroundView = nil
+                    
+                    let emptyView = self.createEmptyView(message: message, showButton: showButton, labelYOffset: labelYOffset, buttonYOffset: buttonYOffset, isLeadingAlignment: isLeadingAlignment)
+                
                     self.tableView.backgroundView = emptyView
                     self.tableView.separatorStyle = .none
                     
@@ -260,7 +273,6 @@ class BookSearchViewController: UIViewController {
             }
             .subscribe(onNext: { [weak self] request in
                 guard let self = self else { return }
-                print("다음 페이지 로드 요청: \(request.page)페이지")
                 self.viewModel.search(query: request.query, page: request.page)
             })
             .disposed(by: disposeBag)
@@ -307,12 +319,15 @@ class BookSearchViewController: UIViewController {
                 $0.leading.trailing.equalToSuperview().inset(80)
             }
         }
-        
      return containerView
     }
     
     private func setupTopView() {
-        topView.configure(title: "책 추가하기", rightButtonImage: nil)
+        
+        let saveConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
+        let saveImage = UIImage(systemName: "plus", withConfiguration: saveConfig)
+        topView.configure(title: "책 추가하기", rightButtonImage: saveImage)
+        topView.rightButton.tintColor = .topColor
     }
     
     // MARK: 상세화면으로 이동
