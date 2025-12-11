@@ -35,8 +35,10 @@ class BookDetailViewController: UIViewController {
     
     private let coverImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = UIColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1)
+        imageView.backgroundColor = .thumbnailBackgroundColor
         imageView.contentMode = .scaleAspectFill
+        imageView.layer.borderWidth = 1
+        imageView.dynamicBorder = UIColor.thumbnailBorderColor
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 8
         imageView.isUserInteractionEnabled = true
@@ -132,6 +134,7 @@ class BookDetailViewController: UIViewController {
         label.dynamicBorder = UIColor.startDateSelectedBorderColor
         label.textAlignment = .center
         label.font = UIFont.mediumFont(ofSize: 12)
+        label.clipsToBounds = true
         return label
     }()
     
@@ -144,6 +147,7 @@ class BookDetailViewController: UIViewController {
         label.textColor = .endDateSelectedTextColor
         label.textAlignment = .center
         label.font = UIFont.mediumFont(ofSize: 12)
+        label.clipsToBounds = true
         return label
     }()
     
