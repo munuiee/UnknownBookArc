@@ -455,3 +455,18 @@ class CoreDataManager {
         }
     }
 }
+
+// 스와이프 삭제
+extension CoreDataManager {
+    func delete(details: Book) {
+        let ctx = persistentContainer.viewContext
+        ctx.delete(details)
+        do {
+            try ctx.save()
+            print("💫 스와이프 삭제 성공")
+        } catch {
+            print("☄️ 스와이프 삭제 실패: \(error)")
+        }
+    }
+    
+}
