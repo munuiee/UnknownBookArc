@@ -32,7 +32,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         
         momentView.collectionView.delegate = self
         momentView.collectionView.dataSource = self
@@ -179,12 +179,12 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
         
         if isEmpty {
             // 입력 없음
-            momentView.buttonView.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
-            momentView.sendButton.tintColor = UIColor(red: 0.10196, green: 0.09804, blue: 0.09804, alpha: 1.0)
+            momentView.buttonView.backgroundColor = .sendButtonDisabledBackgroundColor
+            momentView.sendButton.tintColor = .sendButtonDisabledIconColor
         } else {
             // 입력 있음
-            momentView.buttonView.backgroundColor = .primaryBlue800
-            momentView.sendButton.tintColor = .white
+            momentView.buttonView.backgroundColor = .sendButtonEnabledBackgroundColor
+            momentView.sendButton.tintColor = .sendButtonEnabledTextColor
         }
         
         let fittingWidth = textView.bounds.width > 0

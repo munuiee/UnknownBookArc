@@ -107,13 +107,13 @@ final class MyPageViewController: UIViewController {
     
     private func buttonTouchDown(_ button: UIButton) {
         UIView.animate(withDuration: 0.08) {
-            button.backgroundColor = .primaryBlue50
+            button.backgroundColor = .myPageButtonSelectedFillColor
             button.transform = CGAffineTransform(scaleX: 0.96, y: 0.96)
         }
     }
     private func buttonTouchUp(_ button: UIButton) {
         UIView.animate(withDuration: 0.08) {
-            button.backgroundColor = .white
+            button.backgroundColor = .myPageButtonSelectedAfterColor
             button.transform = .identity
         }
         

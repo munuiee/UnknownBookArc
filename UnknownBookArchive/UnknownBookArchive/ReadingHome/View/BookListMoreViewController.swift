@@ -105,13 +105,13 @@ final class BookListMoreViewController: UIViewController {
         
         // 뒤로가기 버튼
         backButton.setImage(UIImage(systemName: "chevron.left"), for: .normal)
-        backButton.tintColor = .black
+        backButton.tintColor = .topColor
         backButton.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
         
         // 타이틀
         titleLabel.text = listTitle
         titleLabel.font = UIFont.semiBoldFont(ofSize: 18)
-        titleLabel.textColor = .black
+        titleLabel.textColor = .topColor
         titleLabel.textAlignment = .center
         
         let rightSpacer = UIView()

@@ -10,10 +10,10 @@ final class MoreBookCell: UITableViewCell {
     // MARK: - UI 요소
     private let cardView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainTableBGColor
         view.layer.cornerRadius = 8
         view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.primaryBlue50.cgColor
+        view.dynamicBorder = UIColor .mainTableBordercolor
         return view
     }()
     
@@ -30,6 +30,7 @@ final class MoreBookCell: UITableViewCell {
         selectionStyle = .none
         backgroundColor = .clear
         contentView.backgroundColor = .clear
+        
     }
     
     required init?(coder: NSCoder) {
@@ -48,17 +49,17 @@ final class MoreBookCell: UITableViewCell {
         thumbnailImageView.clipsToBounds = true
         thumbnailImageView.layer.cornerRadius = 8
         thumbnailImageView.layer.borderWidth = 1
-        thumbnailImageView.layer.borderColor = UIColor.primaryBlue50.cgColor
-        thumbnailImageView.backgroundColor = UIColor(white: 0.9, alpha: 1)
+        thumbnailImageView.dynamicBorder = UIColor.mainThumbnailBorderColor
+        // thumbnailImageView.backgroundColor = UIColor(white: 0.9, alpha: 1)
         
         // 제목
         titleLabel.font = UIFont.semiBoldFont(ofSize: 18)
-        titleLabel.textColor = UIColor(red: 0.043, green: 0.078, blue: 0.176, alpha: 1.0)
+        titleLabel.textColor = .bookTitleColor
         titleLabel.numberOfLines = 1
         
         // 작가
         authorLabel.font = UIFont.mediumFont(ofSize: 14)
-        authorLabel.textColor = UIColor(red: 0.506, green: 0.494, blue: 0.494, alpha: 1.0)
+        authorLabel.textColor = .tableAuthorColor
         authorLabel.numberOfLines = 1
         
         [thumbnailImageView, titleLabel, authorLabel].forEach {

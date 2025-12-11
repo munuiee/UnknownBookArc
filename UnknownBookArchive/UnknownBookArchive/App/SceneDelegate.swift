@@ -32,7 +32,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let rootVC = TabBarController()
         
-        window.overrideUserInterfaceStyle = .light // 라이트모드 고정
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             let navigationController = UINavigationController(rootViewController: rootVC)

@@ -13,8 +13,8 @@ final class JournalTabCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             titleLabel.textColor = isSelected
-            ? UIColor.primaryBlue800
-            : UIColor.gray300
+            ? UIColor.recordTabSelectedTextColor
+            : UIColor.recordTabUnselectedTextColor
         }
     }
     
@@ -31,7 +31,7 @@ final class JournalTabCell: UICollectionViewCell {
         contentView.addSubview(titleLabel)
         titleLabel.textAlignment = .center
         titleLabel.font = UIFont.semiBoldFont(ofSize: 16)
-        titleLabel.textColor = .gray300
+        titleLabel.textColor = .recordTabUnselectedTextColor
         titleLabel.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }

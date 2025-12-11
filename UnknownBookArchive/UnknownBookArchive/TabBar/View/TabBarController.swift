@@ -16,23 +16,23 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
     private func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor.white
+        appearance.backgroundColor = UIColor.backgroundTab
         appearance.shadowColor = .clear
         tabBar.standardAppearance = appearance
         
         
         // 색상 설정
         let normal = appearance.stackedLayoutAppearance.normal
-        normal.titleTextAttributes = [.foregroundColor: UIColor.gray200]
+        normal.titleTextAttributes = [.foregroundColor: UIColor.unselectedTab]
         
         let selected = appearance.stackedLayoutAppearance.selected
-        selected.titleTextAttributes = [.foregroundColor: UIColor.primaryBlue800]
+        selected.titleTextAttributes = [.foregroundColor: UIColor.selectedTab]
         
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
         
-        tabBar.tintColor = .primaryBlue800
-        tabBar.unselectedItemTintColor = UIColor.gray200
+        tabBar.tintColor = .selectedTab
+        tabBar.unselectedItemTintColor = UIColor.unselectedTab
         
         if #available(iOS 15.0, *) {
             tabBar.scrollEdgeAppearance = appearance

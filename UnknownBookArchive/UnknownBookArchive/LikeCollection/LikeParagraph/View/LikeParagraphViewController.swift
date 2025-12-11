@@ -15,7 +15,7 @@ final class LikeParagraphViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         collectionSet()
         viewModel.onUpdate = { [weak self] in
             self?.collectionView.reloadData()
@@ -36,13 +36,13 @@ final class LikeParagraphViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(LikeParagraphCardCell.self, forCellWithReuseIdentifier: LikeParagraphCardCell.id)
-        collectionView.layer.borderColor = UIColor.gray100.cgColor
+        collectionView.dynamicBorder = UIColor.paragraphCellBorderColor
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints {
             $0.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
             $0.top.equalToSuperview().offset(36)
         }
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .backgroundModeColor
     }
     
     private func makeLayout() -> UICollectionViewLayout {

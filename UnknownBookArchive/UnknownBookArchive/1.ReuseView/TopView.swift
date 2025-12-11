@@ -17,13 +17,13 @@ class TopView: UIView {
     
     private let mainLabel: UILabel = {
         let label = UILabel()
-        label.textColor = UIColor.gray900
+        label.textColor = .topColor
         label.font = UIFont.semiBoldFont(ofSize: 18)
         return label
     }()
     lazy var rightButton: UIButton = {
         let button = UIButton(type: .system)
-        button.tintColor = .primaryBlue800
+        button.tintColor = .saveColor
         return button
     }()
     private lazy var backButton: UIButton = {
@@ -31,7 +31,7 @@ class TopView: UIView {
         let backConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let backImage = UIImage(systemName: "chevron.backward", withConfiguration: backConfig)
         button.setImage(backImage, for: .normal)
-        button.tintColor = .black
+        button.tintColor = .topColor
         button.sizeToFit()
         return button
     }()
@@ -43,7 +43,7 @@ class TopView: UIView {
     }
     
     private func configureUI() {
-        self.backgroundColor = .white
+        self.backgroundColor = .backgroundModeColor
         [backButton, mainLabel, rightButton].forEach { addSubview($0) }
     }
     private func setConstraints() {

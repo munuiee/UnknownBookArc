@@ -27,10 +27,10 @@ final class BookshelfTableViewCell: UITableViewCell {
     // 카드 뷰
     private let cardView: UIView = {
             let view = UIView()
-            view.backgroundColor = .white
+            view.backgroundColor = .searchResultBGColor
             view.layer.cornerRadius = 8
             view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.primaryBlue50.cgColor
+        view.dynamicBorder = UIColor.searchResultBorderColor
             return view
         }()
 
@@ -40,7 +40,7 @@ final class BookshelfTableViewCell: UITableViewCell {
         iv.backgroundColor = UIColor(white: 0.9, alpha: 1)
         iv.layer.cornerRadius = 8
         iv.layer.borderWidth = 1
-        iv.layer.borderColor = UIColor.primaryBlue50.cgColor
+        iv.dynamicBorder = UIColor.searchBarThumbnailColor
         iv.clipsToBounds = true
         iv.contentMode = .scaleAspectFill
         return iv
@@ -50,7 +50,7 @@ final class BookshelfTableViewCell: UITableViewCell {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .semiBoldFont(ofSize: 18)
-        label.textColor = .primaryBlue900
+        label.textColor = .searchBookTitleColor
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -60,7 +60,7 @@ final class BookshelfTableViewCell: UITableViewCell {
     private let authorLabel: UILabel = {
         let label = UILabel()
         label.font = .mediumFont(ofSize: 14)
-        label.textColor = .gray500
+        label.textColor = .searchBookAuthorColor
         label.numberOfLines = 1
         label.lineBreakMode = .byTruncatingTail
         return label
@@ -74,7 +74,7 @@ final class BookshelfTableViewCell: UITableViewCell {
         label.textAlignment = .center
         label.layer.cornerRadius = 8
         label.clipsToBounds = true
-        label.textColor = .gray500
+       // label.textColor = .gray500
         return label
     }()
 
@@ -150,19 +150,20 @@ final class BookshelfTableViewCell: UITableViewCell {
             
             switch state {
             case "읽는 중":
-                stateLabel.backgroundColor = .tertiaryGreen100
-                stateLabel.textColor = .tertialryGreen700
+                stateLabel.backgroundColor = .readingSelectedFillColor
+                stateLabel.textColor = .readingSelectedTextColor
             case "중단":
-                stateLabel.backgroundColor = .colorFEDCDD
-                stateLabel.textColor = .colorA40509
+                stateLabel.backgroundColor = .pausedSelectedFillColor
+                stateLabel.textColor = .pausedSelectedTextColor
             case "완독":
-                stateLabel.backgroundColor = .primaryBlue100
-                stateLabel.textColor = .primaryBlue700
+                stateLabel.backgroundColor = .finishedSelectedFillColor
+                stateLabel.textColor = .finishedSelectedTextColor
             case "읽을 예정":
-                stateLabel.backgroundColor = .colorFBF0CB
-                stateLabel.textColor = .colorB9920E
+                stateLabel.backgroundColor = .willReadSelectedFillColor
+                stateLabel.textColor = .willReadSelectedTextColor
             default:
-                stateLabel.backgroundColor = UIColor.systemGray4
+                stateLabel.backgroundColor = .unselectedFillColor
+                stateLabel.textColor = .unselectedTextColor
             }
 
         } else {

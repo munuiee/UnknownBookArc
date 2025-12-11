@@ -26,7 +26,7 @@ final class MomentCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.layer.cornerRadius = 8
         contentView.layer.borderWidth = 0
-        contentView.layer.borderColor = UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0).cgColor
+        contentView.dynamicBorder = UIColor.momentCellBorderColor
         contentView.clipsToBounds = true
         
         
@@ -41,7 +41,7 @@ final class MomentCell: UICollectionViewCell {
     
     private func separatorUI() {
         contentView.addSubview(separatorView)
-        separatorView.backgroundColor = .systemGray5
+        separatorView.backgroundColor = .likedCellBorderColor
         separatorView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(1)
@@ -82,12 +82,12 @@ final class MomentCell: UICollectionViewCell {
         mButton.setImage(UIImage(named: "journalMultiB"), for: .normal)
         mButton.imageView?.contentMode = .scaleAspectFit
         mButton.contentHorizontalAlignment = .right
-        mButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        mButton.tintColor = .momentMultiButtonTextColor
         mButton.snp.makeConstraints {
             $0.width.height.equalTo(24)
         }
 
-        mainText.textColor = UIColor(red: 0.101, green: 0.099, blue: 0.099, alpha: 1)
+        mainText.textColor = .momentTextColor
         mainText.numberOfLines = 0
         mainText.lineBreakMode = .byWordWrapping
         mainText.textColor = UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1.0)
@@ -103,9 +103,9 @@ final class MomentCell: UICollectionViewCell {
         bottomStack.distribution = .equalSpacing
         
         timeLabel.font = UIFont.regularFont(ofSize: 12)
-        timeLabel.textColor = UIColor(red: 0.705, green: 0.699, blue: 0.699, alpha: 1)
+        timeLabel.textColor = .momentTimeTextColor
         pageLabel.font = UIFont.regularFont(ofSize: 12)
-        pageLabel.textColor = UIColor(red: 0.404, green: 0.396, blue: 0.396, alpha: 1.0)
+        pageLabel.textColor = .momentPageTextColor
 
         bottomStack.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -133,7 +133,7 @@ final class MomentCell: UICollectionViewCell {
             .font: font,
             .kern: 0.20,
             .paragraphStyle: paragraphStyle,
-            .foregroundColor: UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1)
+            .foregroundColor: UIColor.momentTextColor
         ]
         
         mainText.attributedText = NSAttributedString(

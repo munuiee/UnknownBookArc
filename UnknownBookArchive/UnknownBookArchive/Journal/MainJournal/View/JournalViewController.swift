@@ -39,7 +39,7 @@ final class JournalViewController: UIViewController {
     private lazy var tabCollectionView: UICollectionView = {
         let layout = makeMenuLayout()
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .white
+        cv.backgroundColor = .backgroundModeColor
         cv.showsHorizontalScrollIndicator = false
         cv.isScrollEnabled = false
         cv.delegate = self
@@ -53,7 +53,7 @@ final class JournalViewController: UIViewController {
     private lazy var contentCollectionView: UICollectionView = {
         let layout = makeContentLayout()
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        cv.backgroundColor = .white
+        cv.backgroundColor = .backgroundModeColor
         cv.showsHorizontalScrollIndicator = false
         cv.alwaysBounceVertical = false
         cv.delegate = self
@@ -66,14 +66,14 @@ final class JournalViewController: UIViewController {
     // MARK: - 인디케이터
     private let indicatorView: UIView = {
         let indicate = UIView()
-        indicate.backgroundColor = UIColor.primaryBlue800
+        indicate.backgroundColor = UIColor.recordTabSelectedBarBackgroundColor
         return indicate
     }()
     
     // 배경 인디케이터
     private let bottomLineView: UIView = {
         let bottom = UIView()
-        bottom.backgroundColor = UIColor.lightGray.withAlphaComponent(0.4)
+        bottom.backgroundColor = UIColor.recordTabUnselectedFillColor.withAlphaComponent(0.4)
         return bottom
     }()
     
@@ -84,7 +84,7 @@ final class JournalViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         
         setupUI()
         bindViewModel()
@@ -124,18 +124,19 @@ final class JournalViewController: UIViewController {
         bookTitle.text = book.title ?? ""
         bookTitle.textAlignment = .center
         bookTitle.font = UIFont.semiBoldFont(ofSize: 18)
+        bookTitle.textColor = UIColor.topColor
         
         let addConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let addImage = UIImage(systemName: "plus", withConfiguration: addConfig)
         addButton.setImage(addImage, for: .normal)
-        addButton.tintColor = .black
+        addButton.tintColor = .topColor
         addButton.sizeToFit()
         addButton.addTarget(self, action: #selector(didTapEditButton), for: .touchUpInside)
         
         let backConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let backImage = UIImage(systemName: "chevron.backward", withConfiguration: backConfig)
         backButton.setImage(backImage, for: .normal)
-        backButton.tintColor = .black
+        backButton.tintColor = .topColor
         backButton.sizeToFit()
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
         

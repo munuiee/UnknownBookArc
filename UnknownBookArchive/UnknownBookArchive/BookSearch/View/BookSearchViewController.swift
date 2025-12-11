@@ -18,23 +18,23 @@ class BookSearchViewController: UIViewController {
         let sb = UISearchBar()
         sb.backgroundImage = UIImage()
         sb.barTintColor = .white
-        sb.backgroundColor = .white
-        sb.searchTextField.backgroundColor = UIColor(red: 0.903, green: 0.901, blue: 0.901, alpha: 1)
+        sb.backgroundColor = .backgroundModeColor
+        sb.searchTextField.backgroundColor = .searchBarBGColor
         sb.searchTextField.font = .systemFont(ofSize: 16, weight: .regular)
-        sb.searchTextField.tintColor = .black
-        sb.searchTextField.textColor = .black
-        sb.searchTextField.leftView?.tintColor = .gray
+        sb.searchTextField.tintColor = .searchInputLabelColor
+        sb.searchTextField.textColor = .searchInputLabelColor
+        sb.searchTextField.leftView?.tintColor = .searchBarIconColor
         sb.searchTextField.attributedPlaceholder = NSAttributedString(
             string: "책 제목, 저자를 검색하세요",
-            attributes: [NSAttributedString.Key.foregroundColor : UIColor(named: "gray300")!])
-        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(.gray300, renderingMode: .alwaysOriginal) {
+            attributes: [NSAttributedString.Key.foregroundColor : UIColor.searchPlaceholderColor])
+        if let clearImage = UIImage(systemName: "xmark.circle.fill")?.withTintColor(.searchXButtonColor, renderingMode: .alwaysOriginal) {
             sb.setImage(clearImage, for: .clear, state: .normal)
         }
             return sb
     }()
     private lazy var tableView: UITableView = {
         let tv = UITableView()
-        tv.backgroundColor = .white
+        tv.backgroundColor = .backgroundModeColor
         tv.register(BookSearchCell.self, forCellReuseIdentifier: BookSearchCell.id)
         tv.rowHeight = 124
         tv.separatorStyle = .none
@@ -58,7 +58,7 @@ class BookSearchViewController: UIViewController {
     
     private func configureUI() {
 
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         [
             topView, searchBar, tableView
         ].forEach { view.addSubview($0) }
@@ -274,7 +274,7 @@ class BookSearchViewController: UIViewController {
 
         let label = UILabel()
         label.text = message
-        label.textColor = UIColor(named: "gray600")
+        label.textColor = .searchEmptyResultLabelColor
         label.font = UIFont.mediumFont(ofSize: 16)
         label.textAlignment = .center
         label.textAlignment = isLeadingAlignment ? .left : .center
@@ -293,9 +293,9 @@ class BookSearchViewController: UIViewController {
         if showButton {
             let button = UIButton()
             button.tag = 999
-            button.backgroundColor = .primaryBlue800
+            button.backgroundColor = .searchEmptyAddButtonColor
             button.setTitle("직접 책 추가하기", for: .normal)
-            button.setTitleColor(.white, for: .normal)
+            button.setTitleColor(.searchEmptyAddButtonTextColor, for: .normal)
             button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
             button.layer.cornerRadius = 8
             

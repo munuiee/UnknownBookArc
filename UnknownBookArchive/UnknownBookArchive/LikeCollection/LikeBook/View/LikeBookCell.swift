@@ -24,7 +24,7 @@ final class LikeBookCell: UICollectionViewCell {
     private func configureUI() {
         contentView.layer.cornerRadius = 8
         contentView.layer.masksToBounds = true
-        contentView.layer.borderColor = UIColor(red: 0.90196, green: 0.90196, blue: 0.90196, alpha: 1.0).cgColor
+        contentView.dynamicBorder = UIColor.thumbnailBorderColor
         
         
         contentView.layer.borderWidth = 1
@@ -34,7 +34,7 @@ final class LikeBookCell: UICollectionViewCell {
         // imageView.image = UIImage(systemName: "book")
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
-        imageView.backgroundColor = .gray50
+        imageView.backgroundColor = .thumbnailBackgroundColor
         imageView.layer.cornerRadius = 8
         imageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
@@ -44,7 +44,7 @@ final class LikeBookCell: UICollectionViewCell {
     func configure(with book: Book) {
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
         imageView.preferredSymbolConfiguration = config
-        imageView.tintColor = .gray100
+        imageView.tintColor = .thumbnailBackgroundColor
         imageView.contentMode = .center    // 아이콘 중앙 배치
 
         imageView.image = UIImage(systemName: "book.closed.fill")

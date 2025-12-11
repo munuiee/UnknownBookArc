@@ -95,7 +95,8 @@ final class ReadingHomeViewController: UIViewController {
         applyInitialSpacing()
         
         addBookButton.addTarget(self, action: #selector(didTapAddBook), for: .touchUpInside)
-        
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
+
         viewModel.loadInitialData()
         
         // MARK: - Notification 기반
@@ -117,6 +118,7 @@ final class ReadingHomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         iCloudAlert()
+        
     }
     
     // MARK: 아이클라우드 알럿
@@ -283,35 +285,36 @@ final class ReadingHomeViewController: UIViewController {
             string: text,
             attributes: [
                 .font: UIFont.semiBoldFont(ofSize: 20),
-                .paragraphStyle: paragraph
+                .paragraphStyle: paragraph,
             ]
         )
         
         greetingMoreButton.setTitle("더보기", for: .normal)
-        greetingMoreButton.setTitleColor(UIColor(red: 0.161, green: 0.290, blue: 0.659, alpha: 1.0), for: .normal)
+        greetingMoreButton.setTitleColor(UIColor.mainMoreButtonColor, for: .normal)
         greetingMoreButton.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         greetingMoreButton.addTarget(self, action: #selector(didTapCurrentMore), for: .touchUpInside)
         
         
         greetingLabel.numberOfLines = 0
-        greetingLabel.textColor = .black
+        greetingLabel.textColor = .mainTextColor
         
-        greetingSectionView.backgroundColor = .primaryBlue100
+        greetingSectionView.backgroundColor = .mainCardSection
         greetingSectionView.layer.cornerRadius = 12
         greetingSectionView.clipsToBounds = true
         
         
-        currentReadingCardView.backgroundColor = .white
+        currentReadingCardView.backgroundColor = .mainEmptyStateBGColor
         currentReadingCardView.layer.cornerRadius = 8
         
         currentReadingCardTitleLabel.text = "읽고 있는 책을 추가해보세요"
         currentReadingCardTitleLabel.font = UIFont.semiBoldFont(ofSize: 16)
         currentReadingCardTitleLabel.textAlignment = .center
+        currentReadingCardTitleLabel.textColor = .mainEmptyTextColor
         
         currentReadingCardSubtitleLabel.text = "현재 읽고 있는 책이 여기에 표시돼요"
         currentReadingCardSubtitleLabel.font = UIFont.regularFont(ofSize: 14)
         currentReadingCardSubtitleLabel.textAlignment = .center
-        currentReadingCardSubtitleLabel.textColor = .lightGray
+        currentReadingCardSubtitleLabel.textColor = .mainEmptySubTextColor
         
         
         func styleTitle(_ label: UILabel, _ text: String) {
@@ -325,7 +328,7 @@ final class ReadingHomeViewController: UIViewController {
         
         func styleMore(_ button: UIButton) {
             button.setTitle("더보기", for: .normal)
-            button.setTitleColor(.lightGray, for: .normal)
+            button.setTitleColor(.mainUnderMoreButton, for: .normal)
             button.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         }
         styleMore(plannedMoreButton)
@@ -335,21 +338,22 @@ final class ReadingHomeViewController: UIViewController {
         
         addBookButton.setTitle("책 추가하기", for: .normal)
         addBookButton.layer.cornerRadius = 8
-        addBookButton.backgroundColor = .primaryBlue800
-        addBookButton.setTitleColor(.white, for: .normal)
+        addBookButton.backgroundColor = .mainAddButtonColor
+        addBookButton.setTitleColor(.mainAddButtonTextColor, for: .normal)
         addBookButton.titleLabel?.font = UIFont.semiBoldFont(ofSize: 18)
 
         
         func styleCard(_ card: UIView, _ label: UILabel, _ text: String) {
-            card.backgroundColor = UIColor(named: "gray50")
+            card.backgroundColor = .mainEmptySection
             card.layer.cornerRadius = 8
             card.layer.borderWidth = 1
-            card.layer.borderColor = UIColor(red: 0.902, green: 0.902, blue: 0.902, alpha: 1.0).cgColor
+            card.dynamicBorder = UIColor.mainESBorderColor
 
             label.text = text
             label.textAlignment = .center
-            label.textColor = .lightGray
+            label.textColor = .mainESTextColor
         }
+        
         styleCard(plannedEmptyCard, plannedEmptyLabel, "읽을 예정인 책이 없어요")
         styleCard(pausedEmptyCard, pausedEmptyLabel, "잠시 멈춘 책이 없어요")
         styleCard(finishedEmptyCard, finishedEmptyLabel, "완독한 책이 없어요")

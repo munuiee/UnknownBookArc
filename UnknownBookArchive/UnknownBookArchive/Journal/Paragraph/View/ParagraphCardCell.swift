@@ -109,24 +109,23 @@ final class ParagraphCardCell: UICollectionViewCell {
     
     private func configureUI() {
         [separatorView, sententceLabel].forEach { contentView.addSubview($0) }
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .backgroundModeColor
         contentView.layer.cornerRadius = 8
         contentView.layer.borderWidth = 0.5
-        contentView.layer.borderColor = UIColor.gray200.cgColor
+        contentView.dynamicBorder = UIColor.paragraphCellBorderColor
         contentView.clipsToBounds = true
         
         
-        separatorView.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.1)
+        separatorView.backgroundColor = .likedCellBorderColor
         separatorView.snp.makeConstraints {
             $0.top.equalTo(topStack.snp.bottom).offset(12)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(1)
         }
         
-        sententceLabel.textColor = UIColor(red: 0.101, green: 0.099, blue: 0.099, alpha: 1)
+        sententceLabel.textColor = .paragraphTextColor
         sententceLabel.numberOfLines = 0
         sententceLabel.lineBreakMode = .byWordWrapping
-        sententceLabel.textColor = UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1.0)
         sententceLabel.snp.makeConstraints {
             $0.top.equalTo(separatorView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(16)
@@ -144,8 +143,8 @@ final class ParagraphCardCell: UICollectionViewCell {
         let image = UIImage(systemName: imageName, withConfiguration: config)
         likeButton.setImage(image, for: .normal)
         likeButton.tintColor = liked
-            ? UIColor(red: 21/255, green: 37/255, blue: 85/255, alpha: 1.0)
-            : UIColor(red: 180/255, green: 178/255, blue: 178/255, alpha: 1.0)
+        ? .paragraphLikeButtonIconColor
+        : .paragraphUnlikeButtonIconColor
     }
     
     
@@ -164,7 +163,7 @@ final class ParagraphCardCell: UICollectionViewCell {
             .font: font,
             .kern: 0.20,
             .paragraphStyle: paragraphStyle,
-            .foregroundColor: UIColor(red: 26/255, green: 25/255, blue: 25/255, alpha: 1)
+            .foregroundColor: UIColor.paragraphTextColor
         ]
         
         sententceLabel.attributedText = NSAttributedString(

@@ -58,8 +58,6 @@ final class CurrentReadingCell: UICollectionViewCell {
         thumbnailImageView.contentMode = .scaleAspectFill
         thumbnailImageView.layer.cornerRadius = 8
         thumbnailImageView.clipsToBounds = true
-        thumbnailImageView.layer.borderWidth = 1
-        thumbnailImageView.layer.borderColor = UIColor.systemGray4.cgColor
         
         // 제목
         titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
@@ -76,18 +74,18 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         // 퍼센트
         percentLabel.font = UIFont.boldFont(ofSize: 12)
-        percentLabel.textColor = .primaryBlue700
+        percentLabel.textColor = .mainPercentTextColor
         
         // 진행률 바
-        progressBar.trackTintColor = .gray100
-        progressBar.progressTintColor = .primaryBlue800
+        progressBar.trackTintColor = .mainProgressBarBGColor
+        progressBar.progressTintColor = .mainProgressBarColor
         progressBar.layer.cornerRadius = 2
         progressBar.clipsToBounds = true
         
         // 저널 버튼
         journalButton.setTitle("저널 보기", for: .normal)
-        journalButton.backgroundColor = .primaryBlue100
-        journalButton.setTitleColor(.black, for: .normal)
+        journalButton.backgroundColor = .mainJournalButtonColor
+        journalButton.setTitleColor(.mainJournalTextColor, for: .normal)
         journalButton.titleLabel?.font = UIFont.mediumFont(ofSize: 12)
         journalButton.layer.cornerRadius = 4
         journalButton.addTarget(self, action: #selector(didTapJournal), for: .touchUpInside)

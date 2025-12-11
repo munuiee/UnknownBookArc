@@ -25,7 +25,7 @@ final class ParagraphViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .backgroundModeColor
         paragraphView.collectionView.delegate = self
         paragraphView.collectionView.dataSource = self
         viewModel.onUpdate = { [weak self] in
