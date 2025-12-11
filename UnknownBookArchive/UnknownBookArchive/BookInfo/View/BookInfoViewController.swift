@@ -588,7 +588,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
     private func openCalendar(sourceButton: UIButton, completion: @escaping (String) -> Void) {
         // 달력 보여줄 임시 뷰컨
         let calenderVC = UIViewController()
-        calenderVC.view.backgroundColor = .white
+        calenderVC.view.backgroundColor = .backgroundModeColor
         calenderVC.modalPresentationStyle = .popover
         calenderVC.preferredContentSize = CGSize(width: 330, height: 350)
         
@@ -604,7 +604,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
         datePicker.preferredDatePickerStyle = .inline
         datePicker.locale = Locale(identifier: "ko_KR")
         datePicker.tintColor = .systemBlue
-        datePicker.overrideUserInterfaceStyle = .light
+//        datePicker.overrideUserInterfaceStyle = .light
         
         // 종료일 버튼 클릭 시 최소 날짜 설정
         if sourceButton == endDateButton {
