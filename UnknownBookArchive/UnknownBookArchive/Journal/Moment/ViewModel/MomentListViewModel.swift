@@ -40,8 +40,6 @@ final class MomentListViewModel {
         
         do {
             let moments = try context.fetch(request)
-            print("📦 fetchMoments for book: \(book.title ?? "")")
-            print("가져온 Moment 개수: \(moments.count)")
             sections = makeSections(from: moments)
         } catch {
             print("찰나의 기록 불러오기 실패: \(error)")
@@ -62,10 +60,6 @@ final class MomentListViewModel {
         
         do {
             try context.save()
-            print("✅ Moment 저장 완료")
-            print("text: \(newMoment.momentText ?? "")")
-            print("page: \(newMoment.momentPage ?? "")")
-            print("parentBook title: \(newMoment.parentBook?.title ?? "nil")")
             fetchMoments()
         } catch {
             print("찰나의 기록 저장 실패: \(error)")

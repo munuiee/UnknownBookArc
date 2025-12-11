@@ -4,20 +4,20 @@ import UIKit
 import SnapKit
 
 final class BookshelfViewController: UIViewController {
-
+    
     private let viewModel = BookshelfViewModel()
     
     // 보여줄 책 목록
     private var displayedBooks: [BookshelfBook] = []
-
+    
     // 갤러리 모드 on/ off
     private var isGalleryMode: Bool = false
     
     private var selectedCategoryIndex: Int = 0
-
+    
     // 상단 바
     private let topBarView: UIView = UIView()
-
+    
     // 책장 타이틀
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -25,8 +25,10 @@ final class BookshelfViewController: UIViewController {
         label.font = .systemFont(ofSize: 18, weight: .semibold)
         return label
     }()
+    
 
-//    // 갤러리모드 전환 버튼
+
+    // 갤러리모드 전환 버튼
     private let galleryButton: UIButton = {
         let btn = UIButton(type: .system)
         btn.setImage(UIImage(systemName: "photo.on.rectangle.angled"), for: .normal)
@@ -344,6 +346,67 @@ final class BookshelfViewController: UIViewController {
             tableView.setContentOffset(.zero, animated: true)
         }
     }
+    
+    // 테이블뷰 스와이프 삭제
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        let deleteAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
+            guard let self = self else { return }
+
+            let info = self.displayedBooks[indexPath.row]  // BookshelfBook
+
+            // 1) uuid로 CoreData Book 가져오기
+            guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: info.uuid) else {
+                print("삭제할 책을 찾지 못했습니다.")
+                completion(false)
+                return
+            }
+
+            CoreDataManager.shared.delete(details: coreDataBook)
+            self.displayedBooks.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+
+            completion(true)
+        }
+
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.backgroundColor = .primaryBlue800
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = true
+        return configuration
+    }
+
+    // 갤러리형 삭제 알럿
+    private func showDeleteAlertForGallery(book: BookshelfBook, indexPath: IndexPath) {
+        let alert = UIAlertController(
+            title: "삭제하시겠어요?",
+            message: "모든 페이지에서 책이 삭제됩니다.",
+            preferredStyle: .alert
+        )
+        
+        let delete = UIAlertAction(title: "삭제", style: .destructive) { [weak self] _ in
+            guard let self = self else { return }
+            
+            // CoreData Book 찾아서 삭제
+            guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: book.uuid) else { return }
+            CoreDataManager.shared.delete(details: coreDataBook)
+            
+            // UI 업데이트
+            self.displayedBooks.remove(at: indexPath.item)
+            self.collectionView.deleteItems(at: [indexPath])
+        }
+        
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        
+        alert.addAction(delete)
+        alert.addAction(cancel)
+        
+        present(alert, animated: true)
+    }
+
+
 }
 
 // MARK: TableView DataSource
@@ -436,4 +499,42 @@ extension BookshelfViewController: UICollectionViewDelegate, UICollectionViewDat
         detailVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(detailVC, animated: true)
     }
+    
+    // MARK: - 갤러리형 삭제
+    func collectionView(_ collectionView: UICollectionView,
+                        contextMenuConfigurationForItemAt indexPath: IndexPath,
+                        point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        let book = displayedBooks[indexPath.item]
+        
+        return UIContextMenuConfiguration(
+            identifier: indexPath as NSCopying,
+            previewProvider: { [weak self] in
+                guard let self = self else { return nil }
+
+                guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: book.uuid) else {
+                    return nil
+                }
+
+                // 책 상세 화면 미리보기로 띄움
+                return BookDetailViewController(book: coreDataBook)
+            },
+            actionProvider: { [weak self] _ in
+                guard let self = self else { return nil }
+                
+                let deleteAction = UIAction(
+                    title: "삭제",
+                    image: UIImage(systemName: "trash"),
+                    attributes: .destructive
+                ) { _ in
+                    self.showDeleteAlertForGallery(book: book, indexPath: indexPath)
+
+
+                }
+                
+                return UIMenu(title: "", children: [deleteAction])
+            }
+        )
+    }
+
 }

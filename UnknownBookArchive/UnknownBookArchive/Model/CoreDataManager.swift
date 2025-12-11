@@ -455,3 +455,19 @@ class CoreDataManager {
         }
     }
 }
+
+// 스와이프 삭제
+extension CoreDataManager {
+    func delete(details: Book) {
+        let ctx = persistentContainer.viewContext
+        let journals = fetchJournals(for: details)
+        journals.forEach { ctx.delete($0) }
+        ctx.delete(details)
+        do {
+            try ctx.save()
+        } catch {
+            print("스와이프 삭제 실패: \(error)")
+        }
+    }
+    
+}

@@ -324,12 +324,12 @@ class BookSearchViewController: UIViewController {
     
     private func setupTopView() {
         let saveConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
-        let saveImage = UIImage(systemName: "plus", withConfiguration: saveConfig)
-        topView.configure(title: "책 추가하기", rightButtonTitle: "   ")
+        let saveImage = UIImage(systemName: "document.badge.plus", withConfiguration: saveConfig)
+        topView.configure(title: "책 추가하기", rightButtonTitle: "  ")
         topView.rightButton.setImage(saveImage, for: .normal)
         topView.rightButton.tintColor = .topColor
-    }
-    
+      }
+
     // MARK: 상세화면으로 이동
     // 셀 클릭 후 이동
     private func moveToBookInfo(with bookItem: BookItem) {
