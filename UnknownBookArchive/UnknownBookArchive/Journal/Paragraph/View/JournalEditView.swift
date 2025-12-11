@@ -34,25 +34,29 @@ final class JournalEditView: UIView {
         [topView, vStack].forEach { addSubview($0) }
         [backButton, mainLabel, saveButton].forEach { topView.addSubview($0) }
         
-        let backConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
+        let backConfig = UIImage.SymbolConfiguration(pointSize: 14, weight: .semibold)
         let backImage = UIImage(systemName: "chevron.backward", withConfiguration: backConfig)
         backButton.setImage(backImage, for: .normal)
         backButton.tintColor = .topColor
         backButton.sizeToFit()
         
         
-        let enabledImage = UIImage(named: "saveButton")?.withRenderingMode(.alwaysOriginal)
-        let disabledImage = UIImage(named: "unSaveButton")?
-            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
-        
-        // 상태별 이미지 설정
-        saveButton.setImage(enabledImage, for: .normal)
-        saveButton.setImage(disabledImage, for: .disabled)
-        saveButton.backgroundColor = .clear
-        
-        // 초기 상태 비활성화
+        // 초기 버튼 스타일
+        saveButton.setTitle("저장", for: .normal)
+        saveButton.titleLabel?.font = UIFont.semiBoldFont(ofSize: 14)
+
+        // 상태별 색상
+        let enabledColor = UIColor.saveColor
+        let disabledColor = UIColor.unSaveColor
+
+        saveButton.setTitleColor(enabledColor, for: .normal)
+        saveButton.setTitleColor(disabledColor, for: .disabled)
+
+        // 초기 상태는 비활성화
         saveButton.isEnabled = false
+
         
+
         mainLabel.text = "문단 수집"
         mainLabel.font = UIFont.semiBoldFont(ofSize: 18)
         

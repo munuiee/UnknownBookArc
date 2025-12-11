@@ -489,7 +489,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
     private func setupTopView() {
         let saveConfig = UIImage.SymbolConfiguration(pointSize: 20, weight: .semibold)
         let saveImage = UIImage(systemName: "checkmark.circle.fill", withConfiguration: saveConfig)
-        topView.configure(title: "", rightButtonImage: saveImage)
+        topView.configure(title: "책장", rightButtonTitle: "저장")
     }
     
     private func setupStateButtons() {

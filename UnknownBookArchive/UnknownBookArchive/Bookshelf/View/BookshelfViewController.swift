@@ -181,7 +181,8 @@ final class BookshelfViewController: UIViewController {
         updateCategoryUI(selectedIndex: 0)
         keyboardDismiss()
         
-        
+        galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
+
         // 스크롤해서 키보드 내리기
         tableView.keyboardDismissMode = .onDrag
         galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
@@ -284,7 +285,7 @@ final class BookshelfViewController: UIViewController {
         collectionView.register(BookshelfCollectionVeiwCell.self, forCellWithReuseIdentifier: BookshelfCollectionVeiwCell.id)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .backgroundModeColor
         collectionView.isHidden = true
     }
 

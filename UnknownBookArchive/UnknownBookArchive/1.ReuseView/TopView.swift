@@ -24,6 +24,8 @@ class TopView: UIView {
     lazy var rightButton: UIButton = {
         let button = UIButton(type: .system)
         button.tintColor = .saveColor
+        button.setTitleColor(.saveColor, for: .normal)
+        button.titleLabel?.font = UIFont.semiBoldFont(ofSize: 14)
         return button
     }()
     private lazy var backButton: UIButton = {
@@ -58,8 +60,9 @@ class TopView: UIView {
         }
 
         rightButton.snp.makeConstraints {
+            //$0.width.height.equalTo(24)
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(25)
+            $0.trailing.equalToSuperview().inset(18)
         }
     }
     
@@ -67,8 +70,20 @@ class TopView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(title: String, rightButtonImage: UIImage?) {
+    func configure(title: String, rightButtonTitle: String?, isRightButtonEnabled: Bool = true) {
         mainLabel.text = title
-        rightButton.setImage(rightButtonImage, for: .normal)
+        rightButton.setTitle(rightButtonTitle, for: .normal)
+
+        // 활성/비활성 상태에 따라 색상 변경
+        rightButton.isEnabled = isRightButtonEnabled
+        
+        if isRightButtonEnabled {
+            rightButton.setTitleColor(.saveColor, for: .normal)
+            rightButton.alpha = 1.0
+        } else {
+            rightButton.setTitleColor(.topColor.withAlphaComponent(0.4), for: .disabled)
+            rightButton.alpha = 0.5
+        }
     }
+
 }
