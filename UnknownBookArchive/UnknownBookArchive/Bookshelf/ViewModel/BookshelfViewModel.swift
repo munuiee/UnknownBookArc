@@ -35,8 +35,9 @@ final class BookshelfViewModel {
             )
         }
 
-        self.filteredBooks = allBooks
-        onUpdate?(filteredBooks)
+//        self.filteredBooks = allBooks
+//        onUpdate?(filteredBooks)
+        applyFilter()
     }
 
     // 검색 텍스트 변경
