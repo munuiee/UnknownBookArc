@@ -153,13 +153,54 @@ class BookDetailViewController: UIViewController {
     
     private let leadingDatePusher = UIView()
     
+    private let SPACING_TAG = 9999
+    
     private let tagsStackView: UIStackView = {
         let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 7.5
-        stackView.alignment = .leading
+        stackView.axis = .vertical
+        stackView.spacing = 4
+        stackView.alignment = .fill
+        stackView.distribution = .fill
         return stackView
     }()
+    private let tagLine1StackView: UIStackView = {
+        let stView = UIStackView()
+        stView.axis = .horizontal
+        stView.spacing = 8
+        stView.alignment = .fill
+        stView.distribution = .fill
+        return stView
+    }()
+
+    private let tagLine2StackView: UIStackView = {
+        let stView = UIStackView()
+        stView.axis = .horizontal
+        stView.spacing = 8
+        stView.alignment = .fill
+        stView.distribution = .fill
+
+        return stView
+    }()
+
+    private let tagLine3StackView: UIStackView = {
+        let stView = UIStackView()
+        stView.axis = .horizontal
+        stView.spacing = 8
+        stView.alignment = .fill
+        stView.distribution = .fill
+        return stView
+    }()
+    private let tagButton0 = TagButton()
+    private let tagButton1 = TagButton()
+    private let tagButton2 = TagButton()
+    private let tagButton3 = TagButton()
+    private let tagButton4 = TagButton()
+    private let tagButton5 = TagButton()
+    private let tagButton6 = TagButton()
+    private let tagButton7 = TagButton()
+    private let tagButton8 = TagButton()
+    private let tagButton9 = TagButton()
+    private let tagButton10 = TagButton()
     
     // 하단 좋아요, 저널 보기 버튼
     private let bottomButtonStackView: UIStackView = {
@@ -212,7 +253,6 @@ class BookDetailViewController: UIViewController {
         }
         
         displayBookInfo()
-        
     }
     
     
@@ -237,6 +277,12 @@ class BookDetailViewController: UIViewController {
         [progressLable, progressBar].forEach { progressStackView.addArrangedSubview($0) }
         [leadingDatePusher,startDateLabel, dateSpacer, endDateLabel].forEach { dateStackView.addArrangedSubview($0) }
         [likeButton, journalButton].forEach { bottomButtonStackView.addArrangedSubview($0) }
+        
+        [tagLine1StackView, tagLine2StackView, tagLine3StackView].forEach { tagsStackView.addArrangedSubview($0) }
+           
+        [tagButton0, tagButton1, tagButton2, tagButton3, tagButton4].forEach { tagLine1StackView.addArrangedSubview($0) }
+        [tagButton5, tagButton6, tagButton7, tagButton8, tagButton9].forEach { tagLine2StackView.addArrangedSubview($0) }
+        [tagButton10].forEach { tagLine3StackView.addArrangedSubview($0) }
         
         leadingDatePusher.setContentHuggingPriority(.defaultLow, for: .horizontal)
         leadingDatePusher.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
@@ -337,30 +383,57 @@ class BookDetailViewController: UIViewController {
     }
     // 장르 태그 추가
     private func setupDetailTags(tagsString: String?) {
-        guard let tagsString = tagsString, !tagsString.isEmpty else { return }
-        tagsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        let tagNames = tagsString?
+            .split(separator: ",")
+            .map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty } ?? []
         
-
-        let tagNames = tagsString.split(separator: ",").map { String($0).trimmingCharacters(in: .whitespacesAndNewlines) }
-        for tagName in tagNames {
-            let tagButton = TagButton(type: .custom)
-            
-            tagButton.configure(
-                title: tagName,
-                titleColor: .genreTagUnselectedTextColor,
-                backgroundColor: .genreTagUnselectedFillColor,
-                borderColor: .genreTagUnselectedBorderColor,
-                selectedBgColor: .genreTagSelectedFillColor,
-                selectedTitleColor: .genreTagSelectedTextColor,
-                selectedBorderColor: .genreTagSelectedBorderColor
-            )
-            tagButton.isSelected = true
-            
-            tagsStackView.addArrangedSubview(tagButton)
+        let allTagButtons: [TagButton] = [
+            tagButton0, tagButton1, tagButton2, tagButton3, tagButton4,
+            tagButton5, tagButton6, tagButton7, tagButton8, tagButton9,
+            tagButton10
+        ]
+        for (index, button) in allTagButtons.enumerated() {
+            if index < tagNames.count {
+                let tagName = tagNames[index]
+                
+                button.configure(
+                    title: tagName,
+                    titleColor: .genreTagUnselectedTextColor,
+                    backgroundColor: .genreTagUnselectedFillColor,
+                    borderColor: .genreTagUnselectedBorderColor,
+                    selectedBgColor: .genreTagSelectedFillColor,
+                    selectedTitleColor: .genreTagSelectedTextColor,
+                    selectedBorderColor: .genreTagSelectedBorderColor
+                )
+                                
+                button.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+                button.isSelected = true
+                button.isHidden = false
+            } else {
+                button.isHidden = true
+            }
         }
-        let spacer = UIView()
-        tagsStackView.addArrangedSubview(spacer)
+        
+        addSpacerToTagStackView(tagLineStackView: tagLine1StackView)
+        addSpacerToTagStackView(tagLineStackView: tagLine2StackView)
+        addSpacerToTagStackView(tagLineStackView: tagLine3StackView)
+        
+        tagsStackView.isHidden = tagNames.isEmpty
+        view.layoutIfNeeded()
     }
+
+    private func addSpacerToTagStackView(tagLineStackView: UIStackView) {
+        tagLineStackView.arrangedSubviews
+            .filter { $0.tag == SPACING_TAG }
+            .forEach { $0.removeFromSuperview() }
+        let spacer = UIView()
+        spacer.tag = SPACING_TAG
+        spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        tagLineStackView.addArrangedSubview(spacer)
+    }
+    
     
     // MARK: 데이터 새로고침 (외부 호출 용)
     func reloadBookDataAndDisplay() {

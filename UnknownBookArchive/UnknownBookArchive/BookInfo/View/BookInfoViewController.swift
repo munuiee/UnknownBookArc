@@ -699,14 +699,16 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
         
         let maxPageValue: Int32 = 9999
         
-        if totalPage > maxPageValue || currentPage > maxPageValue {
-            showAlert(title: "페이지 입력 오류", message: "페이지 수는 9,999페이지를 초과할 수 없습니다.")
-            return
-        }
-        
-        if totalPage > 0 && currentPage > totalPage {
-            showAlert(title: "페이지 입력 오류", message: "읽은 페이지가 전체 페이지보다 클 수 없습니다.")
-            return
+        if isPageMode {
+            if totalPage > maxPageValue || currentPage > maxPageValue {
+                showAlert(title: "페이지 입력 오류", message: "페이지 수는 9,999페이지를 초과할 수 없습니다.")
+                return
+            }
+            
+            if totalPage > 0 && currentPage > totalPage {
+                showAlert(title: "페이지 입력 오류", message: "읽은 페이지가 전체 페이지보다 클 수 없습니다.")
+                return
+            }
         }
         
         let percentText = percentTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
