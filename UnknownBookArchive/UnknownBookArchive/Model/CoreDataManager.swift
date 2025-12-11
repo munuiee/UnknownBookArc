@@ -460,12 +460,13 @@ class CoreDataManager {
 extension CoreDataManager {
     func delete(details: Book) {
         let ctx = persistentContainer.viewContext
+        let journals = fetchJournals(for: details)
+        journals.forEach { ctx.delete($0) }
         ctx.delete(details)
         do {
             try ctx.save()
-            print("💫 스와이프 삭제 성공")
         } catch {
-            print("☄️ 스와이프 삭제 실패: \(error)")
+            print("스와이프 삭제 실패: \(error)")
         }
     }
     
