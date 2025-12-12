@@ -11,16 +11,16 @@ final class CurrentReadingCell: UICollectionViewCell {
     private var book: Book?
     
     private let cardView: UIView = {
-            let v = UIView()
-            v.backgroundColor = .white
-            v.layer.cornerRadius = 12
-            v.layer.shadowColor = UIColor.black.cgColor
-            v.layer.shadowOpacity = 0.08
-            v.layer.shadowRadius = 6
-            v.layer.shadowOffset = CGSize(width: 0, height: 2)
-            return v
-        }()
-
+        let v = UIView()
+        v.backgroundColor = .mainCardCellColor
+        v.layer.cornerRadius = 12
+        v.layer.shadowColor = UIColor.black.cgColor
+        v.layer.shadowOpacity = 0.08
+        v.layer.shadowRadius = 6
+        v.layer.shadowOffset = CGSize(width: 0, height: 2)
+        return v
+    }()
+    
     
     // MARK: - UI 요소
     let thumbnailImageView = UIImageView()
@@ -52,9 +52,9 @@ final class CurrentReadingCell: UICollectionViewCell {
         super.init(frame: frame)
         
         contentView.addSubview(cardView)
-                cardView.snp.makeConstraints {
-                    $0.edges.equalToSuperview().inset(4)
-                }
+        cardView.snp.makeConstraints {
+            $0.edges.equalToSuperview().inset(4)
+        }
         
         setupUI()
         setupLayout()
@@ -79,15 +79,15 @@ final class CurrentReadingCell: UICollectionViewCell {
         // 제목
         titleLabel.font = UIFont.semiBoldFont(ofSize: 14)
         titleLabel.numberOfLines = 1
-        titleLabel.textColor = .primaryBlue900
+        titleLabel.textColor = .bookTitleColor
         
         // 지은이
         authorLabel.font = UIFont.mediumFont(ofSize: 12)
-        authorLabel.textColor = UIColor.gray200
+        authorLabel.textColor = UIColor.mainAuthorColor
         
         // 날짜
         dateLabel.font = UIFont.mediumFont(ofSize: 12)
-        dateLabel.textColor = .gray300
+        dateLabel.textColor = .mainDateColor
         
         // 퍼센트
         percentLabel.font = UIFont.boldFont(ofSize: 12)
@@ -118,10 +118,10 @@ final class CurrentReadingCell: UICollectionViewCell {
     private func setupLayout() {
         
         cardView.addSubview(thumbnailImageView)
-                cardView.addSubview(titleLabel)
-                cardView.addSubview(authorLabel)
-                cardView.addSubview(progressEditView)
-                cardView.addSubview(journalButton)
+        cardView.addSubview(titleLabel)
+        cardView.addSubview(authorLabel)
+        cardView.addSubview(progressEditView)
+        cardView.addSubview(journalButton)
         
         // MARK: 카드 내부 UI 추가
         contentView.addSubview(thumbnailImageView)
@@ -146,7 +146,7 @@ final class CurrentReadingCell: UICollectionViewCell {
             $0.leading.equalToSuperview().inset(16)
             $0.size.equalTo(CGSize(width: 97, height: 144))
         }
-
+        
         
         // 제목
         titleLabel.snp.makeConstraints {
@@ -176,7 +176,7 @@ final class CurrentReadingCell: UICollectionViewCell {
             $0.leading.equalTo(progressBar.snp.leading)
             $0.trailing.equalTo(progressBar.snp.trailing)
         }
-
+        
         // 진행률 바
         progressBar.snp.makeConstraints {
             $0.top.equalTo(dateInfoStack.snp.bottom).offset(4)
@@ -184,7 +184,7 @@ final class CurrentReadingCell: UICollectionViewCell {
             $0.trailing.equalToSuperview().inset(-13)
             $0.height.equalTo(4)
         }
-
+        
         // 저널 버튼
         journalButton.snp.makeConstraints {
             $0.top.equalTo(progressEditView.snp.bottom).offset(16)
@@ -244,7 +244,7 @@ final class CurrentReadingCell: UICollectionViewCell {
                 progressBar.progress = 0.0
                 percentLabel.text = "0/0 P"
             }
-        
+            
         } else {
             let clamped = max(0, min(percent, 100))
             progressBar.progress = Float(clamped) / 100.0

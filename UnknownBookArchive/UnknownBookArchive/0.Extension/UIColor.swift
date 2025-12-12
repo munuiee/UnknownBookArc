@@ -150,6 +150,12 @@ extension UIColor {
         dark:  ColorHex.primaryBlue800
     )
     
+    // 카드 안 셀 배경
+    static let mainCardCellColor: UIColor = .dynamic(
+        light: ColorHex.white,
+        dark:  ColorHex.primaryBlue900
+    )
+    
     // 1-1. 작가
     static let mainAuthorColor: UIColor = .dynamic(
         light: ColorHex.gray200,

@@ -48,7 +48,7 @@ class BookSearchCell: UITableViewCell {
     }
     
     private func configureUI() {
-        self.backgroundColor = .clear
+        self.backgroundColor = .backgroundModeColor
         [
             thumnailImage, titleLabel, authorLabel, publisherLabel
         ].forEach { contentView.addSubview($0) }
