@@ -141,20 +141,35 @@ final class MyPageViewController: UIViewController {
     }
     
     private func handleMailTap() {
-        guard MFMailComposeViewController.canSendMail() else {
-            if let url = URL(string: "jyeee0421@icloud.com") {
-                UIApplication.shared.open(url)
-            }
+        let email = "jyeee0421@icloud.com"
+        let subject = "[낯선책방] 문의 및 건의하기"
+        let body = ""
+
+        // 1) 애플 메일 계정 연결되어 있으면 → 모달로 띄우기 (그대로 유지)
+        if MFMailComposeViewController.canSendMail() {
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setToRecipients([email])
+            mail.setSubject(subject)
+            mail.setMessageBody(body, isHTML: false)
+
+            present(mail, animated: true)
             return
         }
-        
-        let mail = MFMailComposeViewController()
-        mail.mailComposeDelegate = self
-        mail.setToRecipients(["jyeee0421@icloud.com"])
-        mail.setSubject("[낯선책방] 문의 및 건의하기")
-        
-        present(mail, animated: true)
+        showNoMailAppAlert()
     }
+
+    private func showNoMailAppAlert() {
+        let alert = UIAlertController(
+            title: "메일 앱을 찾을 수 없어요",
+            message: "문의 메일을 보내시려면 Mail, Gmail 같은 메일 앱을 설치하거나 계정을 설정해 주세요.",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+        present(alert, animated: true)
+    }
+
+
     
 }
 

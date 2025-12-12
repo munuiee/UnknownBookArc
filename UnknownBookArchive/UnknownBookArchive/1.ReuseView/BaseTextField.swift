@@ -25,7 +25,7 @@ class BaseTextField: UITextField {
     private func setupTextField() {
         layer.cornerRadius = 8
         layer.borderWidth = 1
-        layer.borderColor = UIColor.textField2BorderColor.cgColor
+        self.dynamicBorder = .textField2BorderColor
         backgroundColor = .textField2Background
         font = UIFont.mediumFont(ofSize: 14)
         let defaultAttributes: [NSAttributedString.Key: Any] = [
