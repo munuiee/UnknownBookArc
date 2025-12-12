@@ -26,8 +26,8 @@ final class BookshelfViewController: UIViewController {
         return label
     }()
     
-
-
+    
+    
     // 갤러리모드 전환 버튼
     private let galleryButton: UIButton = {
         let btn = UIButton(type: .system)
@@ -35,7 +35,7 @@ final class BookshelfViewController: UIViewController {
         btn.tintColor = .label
         return btn
     }()
-
+    
     // 검색창
     private lazy var searchTextField: UITextField = {
         let tf = UITextField()
@@ -43,7 +43,7 @@ final class BookshelfViewController: UIViewController {
         tf.layer.cornerRadius = 12
         tf.font = .regularFont(ofSize: 16)
         tf.borderStyle = .none
-
+        
         tf.attributedPlaceholder = NSAttributedString(
             string: "책 제목 검색",
             attributes: [
@@ -51,7 +51,7 @@ final class BookshelfViewController: UIViewController {
                 .font: UIFont.regularFont(ofSize: 16)
             ]
         )
-
+        
         // 돋보기 아이콘
         let left = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 34))
         let icon = UIImageView(image: UIImage(systemName: "magnifyingglass"))
@@ -60,7 +60,7 @@ final class BookshelfViewController: UIViewController {
         left.addSubview(icon)
         tf.leftView = left
         tf.leftViewMode = .always
-
+        
         // X 버튼
         let right = UIView(frame: CGRect(x: 0, y: 0, width: 34, height: 34))
         let clearButton = UIButton(type: .system)
@@ -71,11 +71,11 @@ final class BookshelfViewController: UIViewController {
         right.addSubview(clearButton)
         tf.rightView = right
         tf.rightViewMode = .whileEditing
-
+        
         tf.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return tf
     }()
-
+    
     // 카테고리 스크롤
     private let categoryScrollView: UIScrollView = {
         let scroll = UIScrollView()
@@ -86,28 +86,28 @@ final class BookshelfViewController: UIViewController {
         scroll.isScrollEnabled = true               // 가로 스크롤만 허용
         return scroll
     }()
-
-
+    
+    
     private var categoryButtons: [UIButton] = []
-
+    
     // 카테고리 버튼 StackView
     private lazy var categoryStackView: UIStackView = {
         let categories = [
             "전체", "경제", "사회", "과학", "문학", "에세이",
             "역사", "예술", "인문학", "자기계발", "어린이", "해외도서"
         ]
-
+        
         let sv = UIStackView()
         sv.axis = .horizontal
         sv.spacing = 8
-
+        
         // 카테고리 버튼 디자인
         categories.enumerated().forEach { index, title in
             var config = UIButton.Configuration.bordered()
             config.title = title
             var attributed = AttributedString(title)
             attributed.font = UIFont.mediumFont(ofSize: 14)
-
+            
             config.attributedTitle = attributed
             
             config.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 8, bottom: 5, trailing: 8)
@@ -124,13 +124,13 @@ final class BookshelfViewController: UIViewController {
             btn.translatesAutoresizingMaskIntoConstraints = false
             btn.heightAnchor.constraint(equalToConstant: 32).isActive = true
             btn.widthAnchor.constraint(greaterThanOrEqualToConstant: 61).isActive = true
-
+            
             
             
             btn.configurationUpdateHandler = { [weak self] button in
                 guard let self = self else { return }
                 let isSelected = button.tag == self.selectedCategoryIndex
-
+                
                 if isSelected {
                     // 선택됨
                     button.configuration?.baseBackgroundColor = .genreTagSelectedFillColor
@@ -143,17 +143,17 @@ final class BookshelfViewController: UIViewController {
                     button.dynamicBorder = UIColor.genreTagUnselectedBorderColor
                 }
             }
-
+            
             
             btn.addTarget(self, action: #selector(categoryTapped(_:)), for: .touchUpInside)
             
             categoryButtons.append(btn)
             sv.addArrangedSubview(btn)
         }
-
+        
         return sv
     }()
-
+    
     // 책 목록 테이블
     private let tableView: UITableView = {
         let tv = UITableView()
@@ -165,16 +165,20 @@ final class BookshelfViewController: UIViewController {
         let cv = UICollectionView(frame: .zero, collectionViewLayout: makeLayout())
         return cv
     }()
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        selectedCategoryIndex = 0
+        updateCategoryUI(selectedIndex: 0)
+        viewModel.updateCategory(index: 0)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-
+        
         setupHierarchy()
         setupConstraints()
         setupTableView()
@@ -184,61 +188,66 @@ final class BookshelfViewController: UIViewController {
         keyboardDismiss()
         
         galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
-
+        
         // 스크롤해서 키보드 내리기
         tableView.keyboardDismissMode = .onDrag
         galleryButton.addTarget(self, action: #selector(toggleDisplayMode), for: .touchUpInside)
-
-
+        
+        
         
         NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(reloadBooks),
-                name: .bookUpdated,
-                object: nil
-            )
-
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(reloadBooks),
-                name: .bookDeleted,
-                object: nil
-            )
-        }
-
-        @objc private func reloadBooks() {
-            viewModel.loadInitialData()
-
+            self,
+            selector: #selector(reloadBooksAndScrollTop),
+            name: .bookUpdated,
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(reloadBooks),
+            name: .bookDeleted,
+            object: nil
+        )
+        
     }
     
-
+    @objc private func reloadBooks() {
+        viewModel.loadInitialData()
+        
+    }
+    @objc private func reloadBooksAndScrollTop() {
+        viewModel.loadInitialData()
+        scrollToTop()
+    }
+    
+    
     // 뷰 계층 구성
     private func setupHierarchy() {
         view.addSubview(topBarView)
         topBarView.addSubview(titleLabel)
         topBarView.addSubview(galleryButton)
-
+        
         view.addSubview(searchTextField)
         view.addSubview(categoryScrollView)
         categoryScrollView.addSubview(categoryStackView)
         [tableView, collectionView].forEach { view.addSubview($0) }
     }
-
+    
     // MARK: 레이아웃 설정
     private func setupConstraints() {
-
+        
         topBarView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.height.equalTo(60)
             $0.leading.trailing.equalToSuperview()
         }
-
+        
         
         titleLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.height.equalTo(32)
         }
-
+        
         galleryButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview().inset(20)
@@ -246,23 +255,23 @@ final class BookshelfViewController: UIViewController {
         }
         
         
-
+        
         searchTextField.snp.makeConstraints {
             $0.top.equalTo(topBarView.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(46)
         }
-
+        
         categoryScrollView.snp.makeConstraints {
             $0.top.equalTo(searchTextField.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(34)
         }
-
+        
         categoryStackView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-
+        
         tableView.snp.makeConstraints {
             $0.top.equalTo(categoryScrollView.snp.bottom).offset(16)
             $0.leading.trailing.bottom.equalToSuperview()
@@ -272,7 +281,7 @@ final class BookshelfViewController: UIViewController {
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }
-
+    
     // 테이블뷰 설정
     private func setupTableView() {
         tableView.dataSource = self
@@ -290,7 +299,7 @@ final class BookshelfViewController: UIViewController {
         collectionView.backgroundColor = .backgroundModeColor
         collectionView.isHidden = true
     }
-
+    
     private func bindViewModel() {
         viewModel.onUpdate = { [weak self] books in
             self?.displayedBooks = books
@@ -299,32 +308,32 @@ final class BookshelfViewController: UIViewController {
         }
         viewModel.loadInitialData()
     }
-
+    
     // 검색창 변경
     @objc private func textFieldDidChange() {
         viewModel.updateSearch(text: searchTextField.text ?? "")
     }
-
+    
     // X버튼 클릭 시 검색어 초기화
     @objc private func clearSearchText() {
         searchTextField.text = ""
         viewModel.updateSearch(text: "")
         searchTextField.resignFirstResponder()
     }
-
+    
     // 카테고리 버튼 클릭
     @objc private func categoryTapped(_ sender: UIButton) {
         updateCategoryUI(selectedIndex: sender.tag)
         viewModel.updateCategory(index: sender.tag)
         scrollToTop()
-
+        
     }
     
     private func updateCategoryUI(selectedIndex: Int) {
         selectedCategoryIndex = selectedIndex
         categoryButtons.forEach { $0.setNeedsUpdateConfiguration()}
     }
-
+    
     // 갤러리모드 토글
     @objc private func toggleDisplayMode() {
         isGalleryMode.toggle()
@@ -352,31 +361,31 @@ final class BookshelfViewController: UIViewController {
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-
+        
         let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
             guard let self = self else { return }
-
+            
             let info = self.displayedBooks[indexPath.row]
-
+            
             guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: info.uuid) else {
                 print("삭제할 책을 찾지 못했습니다.")
                 completion(false)
                 return
             }
-
+            
             CoreDataManager.shared.delete(details: coreDataBook)
             NotificationCenter.default.post(name: .bookDeleted, object: nil)
             completion(true)
         }
-
+        
         deleteAction.image = UIImage(systemName: "trash")
-
+        
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
-
-
+    
+    
     // 갤러리형 삭제 알럿
     private func showDeleteAlertForGallery(book: BookshelfBook, indexPath: IndexPath) {
         let alert = UIAlertController(
@@ -392,10 +401,10 @@ final class BookshelfViewController: UIViewController {
             guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: book.uuid) else { return }
             CoreDataManager.shared.delete(details: coreDataBook)
             NotificationCenter.default.post(name: .bookDeleted, object: nil)
-
+            
             // UI 업데이트
-//            self.displayedBooks.remove(at: indexPath.item)
-//            self.collectionView.deleteItems(at: [indexPath])
+            //            self.displayedBooks.remove(at: indexPath.item)
+            //            self.collectionView.deleteItems(at: [indexPath])
         }
         
         let cancel = UIAlertAction(title: "취소", style: .cancel)
@@ -405,29 +414,29 @@ final class BookshelfViewController: UIViewController {
         
         present(alert, animated: true)
     }
-
-
+    
+    
 }
 
 // MARK: TableView DataSource
 extension BookshelfViewController: UITableViewDataSource {
-
+    
     func tableView(_ tableView: UITableView,
                    numberOfRowsInSection section: Int) -> Int {
         return displayedBooks.count
     }
-
+    
     func tableView(_ tableView: UITableView,
                    cellForRowAt indexPath: IndexPath
     ) -> UITableViewCell {
-
+        
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: BookshelfTableViewCell.identifier,
             for: indexPath
         ) as? BookshelfTableViewCell else {
             return UITableViewCell()
         }
-
+        
         let book = displayedBooks[indexPath.row]
         cell.configure(model: book)
         return cell
@@ -437,45 +446,45 @@ extension BookshelfViewController: UITableViewDataSource {
 
 // MARK: TableView Delegate -> 상세 화면 이동
 extension BookshelfViewController: UITableViewDelegate {
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selected = displayedBooks[indexPath.row]
-
+        
         guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: selected.uuid) else {
             print("책 정보를 찾지 못했습니다.")
             return
         }
-
+        
         let detailVC = BookDetailViewController(book: coreDataBook)
         detailVC.hidesBottomBarWhenPushed = true
-
+        
         navigationController?.pushViewController(detailVC, animated: true)
     }
 }
 // MARK: 컬렉션뷰 관련 함수들
 extension BookshelfViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     private func makeLayout() -> UICollectionViewLayout {
-           let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/3.0), heightDimension: .fractionalHeight(1))
-           let item = NSCollectionLayoutItem(layoutSize: itemSize)
-           item.contentInsets = NSDirectionalEdgeInsets(
-               top: 2,
-               leading: 2,
-               bottom: 2,
-               trailing: 2
-           )
-           
-           let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(160))
-           let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-           
-           let section = NSCollectionLayoutSection(group: group)
-           section.contentInsets = NSDirectionalEdgeInsets(
-               top: 16,
-               leading: 20,
-               bottom: 16,
-               trailing: 20
-           )
-           return UICollectionViewCompositionalLayout(section: section)
-       }
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/3.0), heightDimension: .fractionalHeight(1))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(
+            top: 2,
+            leading: 2,
+            bottom: 2,
+            trailing: 2
+        )
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(160))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.contentInsets = NSDirectionalEdgeInsets(
+            top: 16,
+            leading: 20,
+            bottom: 16,
+            trailing: 20
+        )
+        return UICollectionViewCompositionalLayout(section: section)
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return displayedBooks.count
@@ -511,11 +520,11 @@ extension BookshelfViewController: UICollectionViewDelegate, UICollectionViewDat
             identifier: indexPath as NSCopying,
             previewProvider: { [weak self] in
                 guard let self = self else { return nil }
-
+                
                 guard let coreDataBook = CoreDataManager.shared.fetchBook(uuid: book.uuid) else {
                     return nil
                 }
-
+                
                 // 책 상세 화면 미리보기로 띄움
                 return BookDetailViewController(book: coreDataBook)
             },
@@ -528,13 +537,13 @@ extension BookshelfViewController: UICollectionViewDelegate, UICollectionViewDat
                     attributes: .destructive
                 ) { _ in
                     self.showDeleteAlertForGallery(book: book, indexPath: indexPath)
-
-
+                    
+                    
                 }
                 
                 return UIMenu(title: "", children: [deleteAction])
             }
         )
     }
-
+    
 }
