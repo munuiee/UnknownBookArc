@@ -32,6 +32,14 @@ final class LikeParagraphViewController: UIViewController {
         
     }
     
+    func scrollToTop() {
+        let topOffset = CGPoint(
+            x: 0,
+            y: -collectionView.adjustedContentInset.top
+        )
+        collectionView.setContentOffset(topOffset, animated: true)
+    }
+    
     private func collectionSet() {
         collectionView.delegate = self
         collectionView.dataSource = self
