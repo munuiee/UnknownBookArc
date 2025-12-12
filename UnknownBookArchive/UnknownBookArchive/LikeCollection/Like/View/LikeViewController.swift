@@ -81,7 +81,23 @@ final class LikeViewController: UIViewController {
         navigationController?.setNavigationBarHidden(true, animated: false)
     }
     
-    
+    func scrollToTop() {
+        switch currentPageIndex {
+        case 0:
+            // 문단 수집 페이지
+            LikeParagraphVC.view.layoutIfNeeded()
+            LikeParagraphVC.scrollToTop()
+            
+        case 1:
+            // 책 모음 페이지
+            LikeBookVC.view.layoutIfNeeded()
+            LikeBookVC.scrollToTop()
+            
+        default:
+            break
+        }
+    }
+
     
     // MARK: - UI 세팅
     

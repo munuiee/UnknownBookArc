@@ -25,13 +25,15 @@ final class LikeBookViewController: UIViewController {
         viewModel.fetchLikeBooks()
         collectionView.reloadData()
     }
-    func scrollToTop() {
-        collectionView.setContentOffset(
-            CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
-            animated: true
-        )
-    }
 
+    
+    func scrollToTop() {
+        let topOffset = CGPoint(
+            x: 0,
+            y: -collectionView.adjustedContentInset.top
+        )
+        collectionView.setContentOffset(topOffset, animated: true)
+    }
     
     private func makeLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0/3.0), heightDimension: .fractionalHeight(1))

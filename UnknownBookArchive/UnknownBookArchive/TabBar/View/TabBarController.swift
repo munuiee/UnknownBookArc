@@ -81,6 +81,11 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
                 vc.scrollToTop()
             }
             
+            if let nav = viewController as? UINavigationController,
+               let vc = nav.viewControllers.first as? LikeViewController {
+                vc.scrollToTop()
+            }
+            
         }
         
         lastSelectedIndex = selectedIndex
