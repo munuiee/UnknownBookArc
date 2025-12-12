@@ -205,17 +205,10 @@ class BookSearchViewController: UIViewController {
                 }
             })
                 .disposed(by: disposeBag)
-        // 테이블 뷰 선택 애니메이션
-        tableView.rx.itemSelected
-            .subscribe(onNext: { [weak self] indexPath in
-                self?.tableView.deselectRow(at: indexPath, animated: true)
-            })
-            .disposed(by: disposeBag)
-        
+
         // 테이블 뷰 셀 선택
         tableView.rx.modelSelected(BookItem.self)
             .subscribe(onNext: { [weak self] bookItem in
-                self?.tableView.deselectRow(at: self?.tableView.indexPathForSelectedRow ?? IndexPath(), animated: true)
                 self?.viewModel.selectBook(item: bookItem)
             })
             .disposed(by: disposeBag)
