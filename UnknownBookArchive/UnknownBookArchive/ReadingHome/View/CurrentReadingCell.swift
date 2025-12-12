@@ -53,7 +53,7 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         contentView.addSubview(cardView)
         cardView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(4)
+            $0.edges.equalToSuperview()
         }
         
         setupUI()

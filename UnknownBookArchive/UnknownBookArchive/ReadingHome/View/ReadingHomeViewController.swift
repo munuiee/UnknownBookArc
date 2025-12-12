@@ -541,7 +541,7 @@ final class ReadingHomeViewController: UIViewController {
     
     // MARK: - 초기 간격 설정
     private func applyInitialSpacing() {
-        contentStackView.setCustomSpacing(32, after: greetingSectionView)
+        contentStackView.setCustomSpacing(16, after: greetingSectionView)
         contentStackView.setCustomSpacing(40, after: addBookButton)
     }
     
@@ -561,14 +561,14 @@ final class ReadingHomeViewController: UIViewController {
         // 하늘색 카드
         greetingSectionView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(274)
+           // $0.height.equalTo(274)
         }
         
         // 책방지기님~
         greetingLabel.snp.makeConstraints {
             $0.top.equalTo(greetingSectionView).offset(16)
             $0.leading.trailing.equalTo(greetingSectionView).inset(16)
-            $0.height.equalTo(56)
+           // $0.height.equalTo(56)
         }
         
         // 하얀 카드
@@ -580,12 +580,17 @@ final class ReadingHomeViewController: UIViewController {
         }
 
         currentReadingCollectionView.snp.remakeConstraints {
-            $0.edges.equalTo(currentReadingCardView)
+            $0.top.equalTo(greetingLabel.snp.bottom).offset(10)
+            $0.leading.equalTo(greetingSectionView)
+            $0.trailing.equalTo(greetingSectionView)
+            $0.height.equalTo(176)
+            $0.bottom.equalTo(greetingSectionView.snp.bottom).offset(-16)
         }
+
+
 
         // 책추가하기 버튼
         addBookButton.snp.makeConstraints {
-            $0.top.equalTo(greetingSectionView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(52)
         }
@@ -620,34 +625,29 @@ final class ReadingHomeViewController: UIViewController {
     
     // MARK: - 현재 읽는 중 컬렉션 레이아웃
     private func makeCurrentReadingLayout() -> UICollectionViewLayout {
-
         let cardHeight: CGFloat = 176
 
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.97),
+            widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(cardHeight)
         )
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
+            widthDimension: .fractionalWidth(0.90),  
             heightDimension: .absolute(cardHeight)
         )
-
-        let group = NSCollectionLayoutGroup.horizontal(
-            layoutSize: groupSize,
-            subitems: [item]
-        )
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
+        section.interGroupSpacing = 6
 
-        section.interGroupSpacing = -10
-
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)
+        item.contentInsets = .zero
         return UICollectionViewCompositionalLayout(section: section)
     }
+
 
 
 }
@@ -686,26 +686,26 @@ extension ReadingHomeViewController: UICollectionViewDataSource, UICollectionVie
             
 //            cell.titleLabel.text = book.title
 //            cell.authorLabel.text = book.author
-//            
+//
 //            if let imgData = book.coverImage,
 //               let image = UIImage(data: imgData) {
 //                cell.thumbnailImageView.image = image
 //            }
-//            
+//
 //            if let startDate = book.startDate {
 //                let df = DateFormatter()
 //                df.dateFormat = "yyyy.MM.dd"
 //                cell.dateLabel.text = df.string(from: startDate)
 //            }
-//            
+//
 //            let currentPage = Int(book.currentPage)
 //            let totalPage = Int(book.totalPage)
 //            let percent = Int(book.percent)
-//            
+//
 //            if totalPage > 0 {
 //                cell.progressBar.progress = Float(currentPage) / Float(totalPage)
 //                cell.percentLabel.text = "\(currentPage)/\(totalPage) P"
-//                
+//
 //            } else {
 //                let clamped = max(0, min(percent, 100))
 //                cell.progressBar.progress = Float(clamped) / 100
