@@ -4,7 +4,8 @@ import UIKit
 import SnapKit
 
 final class BookshelfViewController: UIViewController {
-    
+    private var needsReset = false
+
     private let viewModel = BookshelfViewModel()
     
     // 보여줄 책 목록
@@ -170,6 +171,7 @@ final class BookshelfViewController: UIViewController {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: false)
         
+    
         selectedCategoryIndex = 0
         updateCategoryUI(selectedIndex: 0)
         viewModel.updateCategory(index: 0)
@@ -211,6 +213,42 @@ final class BookshelfViewController: UIViewController {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        guard needsReset else { return }
+        needsReset = false
+
+        updateCategoryUI(selectedIndex: 0)
+        tableView.reloadData()
+        collectionView.reloadData()
+    }
+
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        scrollToTop(animated: false)
+
+        selectedCategoryIndex = 0
+        viewModel.updateCategory(index: 0)
+
+        needsReset = true
+    }
+
+    
+    func scrollToTop(animated: Bool = true) {
+        if isGalleryMode {
+            collectionView.setContentOffset(
+                CGPoint(x: 0, y: -collectionView.adjustedContentInset.top),
+                animated: animated
+            )
+        } else {
+            tableView.setContentOffset(.zero, animated: animated)
+        }
+    }
+    
+
     @objc private func reloadBooks() {
         viewModel.loadInitialData()
         
@@ -221,6 +259,7 @@ final class BookshelfViewController: UIViewController {
     }
     
     
+ 
     // 뷰 계층 구성
     private func setupHierarchy() {
         view.addSubview(topBarView)
