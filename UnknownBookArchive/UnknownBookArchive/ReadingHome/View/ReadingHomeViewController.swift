@@ -554,32 +554,34 @@ final class ReadingHomeViewController: UIViewController {
             $0.width.equalTo(scrollView.frameLayoutGuide)
         }
         
+        // 하늘색 카드
         greetingSectionView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.height.equalTo(290)
+            $0.height.equalTo(274)
         }
         
+        // 책방지기님~
         greetingLabel.snp.makeConstraints {
             $0.top.equalTo(greetingSectionView).offset(16)
             $0.leading.trailing.equalTo(greetingSectionView).inset(16)
-            $0.height.equalTo(70)
+            $0.height.equalTo(56)
         }
         
+        // 하얀 카드
         currentReadingCardView.snp.makeConstraints {
             $0.top.equalTo(greetingLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalTo(greetingSectionView).inset(16)
-            $0.height.equalTo(180)
+            $0.height.equalTo(176)
             $0.bottom.equalTo(greetingSectionView.snp.bottom).offset(-16)
         }
 
-        
         currentReadingCollectionView.snp.remakeConstraints {
             $0.edges.equalTo(currentReadingCardView)
         }
 
-        
+        // 책추가하기 버튼
         addBookButton.snp.makeConstraints {
-            $0.top.equalTo(greetingSectionView.snp.bottom).offset(24)
+            $0.top.equalTo(greetingSectionView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(52)
         }
@@ -615,7 +617,7 @@ final class ReadingHomeViewController: UIViewController {
     // MARK: - 현재 읽는 중 컬렉션 레이아웃
     private func makeCurrentReadingLayout() -> UICollectionViewLayout {
 
-        let cardHeight: CGFloat = 180
+        let cardHeight: CGFloat = 176
 
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(0.97),

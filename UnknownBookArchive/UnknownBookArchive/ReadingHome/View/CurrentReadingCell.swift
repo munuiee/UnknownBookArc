@@ -144,24 +144,24 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         // 썸네일
         thumbnailImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(18)
-            $0.leading.equalToSuperview().inset(20)
+            $0.top.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().inset(16)
             $0.size.equalTo(CGSize(width: 97, height: 144))
         }
 
         
         // 제목
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(35)
+            $0.top.equalToSuperview().offset(23)
             $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
-            $0.trailing.equalToSuperview().inset(8)
+            $0.trailing.equalToSuperview().inset(16)
         }
         
         // 작가
         authorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(30) 
+            $0.trailing.equalToSuperview().inset(16)
             
         }
         progressEditView.snp.makeConstraints {
@@ -173,25 +173,27 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         
         // 날짜 + 진행률
-        dateInfoStack.snp.makeConstraints {
-            $0.top.equalTo(progressEditView.snp.top).offset(10)
-            $0.leading.trailing.equalToSuperview()
-
+        dateInfoStack.snp.remakeConstraints {
+            $0.top.equalTo(progressEditView.snp.top).offset(16)
+            $0.leading.equalTo(progressBar.snp.leading)
+            $0.trailing.equalTo(progressBar.snp.trailing)
         }
-        
+
         // 진행률 바
         progressBar.snp.makeConstraints {
             $0.top.equalTo(dateInfoStack.snp.bottom).offset(4)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(6)
+            $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
+            $0.trailing.equalToSuperview().inset(-13)
+            $0.height.equalTo(4)
         }
-        
+
         // 저널 버튼
         journalButton.snp.makeConstraints {
-            $0.top.equalTo(progressEditView.snp.bottom).offset(6)
-            $0.trailing.equalToSuperview().inset(30)
+            $0.top.equalTo(progressEditView.snp.bottom).offset(16)
+            $0.trailing.equalToSuperview().inset(16)
             $0.leading.equalTo(titleLabel)
             $0.height.equalTo(32)
+            $0.bottom.equalToSuperview().inset(23)
             
         }
     }
