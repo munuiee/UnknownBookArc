@@ -277,16 +277,11 @@ class CoreDataManager {
     }
     
     // 책 정보 삭제
+    // 책 정보 삭제
     func deleteBook(uuid: String, completion: @escaping (Bool) -> Void) {
-        DispatchQueue.global().async { [weak self] in
-            guard self != nil else {
-                completion(false)
-                return
-            }
-        }
-        
         let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
+
         do {
             let fetchedBooks = try context.fetch(fetchRequest)
             guard let bookToDelete = fetchedBooks.first else {
@@ -294,19 +289,24 @@ class CoreDataManager {
                 completion(false)
                 return
             }
+
+            // ✅ 이 책에 연결된 문단 수집(Journal) 먼저 모두 삭제
+            let journals = fetchJournals(for: bookToDelete)
+            journals.forEach { context.delete($0) }
+
+            // ✅ 책 삭제
             context.delete(bookToDelete)
-            
+
             try context.save()
-            print("책 삭제 성공")
+            print("책 + 연결된 문단 수집 삭제 성공")
             completion(true)
-            return
         } catch {
             let nsError = error as NSError
             print("책 삭제 실패(에러: \(nsError))")
             completion(false)
-            return
         }
     }
+
     
     func fetchAllBooks() -> [Book] {
         let request: NSFetchRequest<Book> = Book.fetchRequest()

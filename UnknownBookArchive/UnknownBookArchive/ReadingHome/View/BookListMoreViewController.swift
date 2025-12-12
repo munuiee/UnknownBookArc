@@ -152,6 +152,29 @@ final class BookListMoreViewController: UIViewController {
             $0.leading.trailing.bottom.equalToSuperview()
         }
     }
+    // 테이블뷰 스와이프 삭제
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
+            guard let self = self else { return }
+
+            let bookToDelete = self.books[indexPath.row]
+
+            CoreDataManager.shared.delete(details: bookToDelete)
+            NotificationCenter.default.post(name: .bookDeleted, object: nil)
+
+            completion(true)
+        }
+
+
+        deleteAction.image = UIImage(systemName: "trash")
+
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = true
+        return configuration
+    }
 }
 
 
