@@ -184,7 +184,7 @@ final class ReadingHomeViewController: UIViewController {
         finishedBooks = Array(model.finishedBooks.prefix(10))
         
         // 책 개수가 10권을 초과할 때만 더보기 버튼 보이기
-        greetingMoreButton.isHidden = model.currentReadingBooks.count <= 10
+        greetingMoreButton.isHidden = model.currentReadingBooks.count <= 5 // 5권으로 낮춤
         plannedMoreButton.isHidden = model.plannedBooks.count <= 10
         pausedMoreButton.isHidden = model.pausedBooks.count <= 10
         finishedMoreButton.isHidden = model.finishedBooks.count <= 10
@@ -214,13 +214,18 @@ final class ReadingHomeViewController: UIViewController {
     // MARK: - 현재 읽는 중 카드 UI
     private func updateCurrentReadingCardUI() {
         if currentReadingBooks.isEmpty {
+    
+            currentReadingCardView.isHidden = false
             currentReadingEmptyStack.isHidden = false
             currentReadingCollectionView.isHidden = true
         } else {
+            
+            currentReadingCardView.isHidden = true
             currentReadingEmptyStack.isHidden = true
             currentReadingCollectionView.isHidden = false
         }
     }
+
     
     
     // MARK: - show/hide emptyCard or collectionView
@@ -439,6 +444,9 @@ final class ReadingHomeViewController: UIViewController {
         greetingSectionView.addSubview(currentReadingCardView)
         greetingSectionView.addSubview(greetingMoreButton)
         
+        greetingSectionView.addSubview(currentReadingCollectionView)
+
+        
         greetingMoreButton.snp.makeConstraints {
             $0.top.equalTo(greetingSectionView).offset(12)
             $0.trailing.equalTo(greetingSectionView).inset(12)
@@ -453,16 +461,16 @@ final class ReadingHomeViewController: UIViewController {
         currentReadingEmptyStack.addArrangedSubview(currentReadingCardSubtitleLabel)
         
         currentReadingCardView.addSubview(currentReadingEmptyStack)
-        currentReadingCardView.addSubview(currentReadingCollectionView)
+//        currentReadingCardView.addSubview(currentReadingCollectionView)
         
         currentReadingEmptyStack.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
         
-        currentReadingCollectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview().inset(12)
-            $0.height.equalTo(180)
-        }
+//        currentReadingCollectionView.snp.makeConstraints {
+//            $0.edges.equalToSuperview().inset(12)
+//            $0.height.equalTo(180)
+//        }
         
         contentStackView.addArrangedSubview(addBookButton)
         
@@ -550,25 +558,34 @@ final class ReadingHomeViewController: UIViewController {
             $0.width.equalTo(scrollView.frameLayoutGuide)
         }
         
+        // 하늘색 카드
         greetingSectionView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(20)
+            $0.height.equalTo(274)
         }
         
+        // 책방지기님~
         greetingLabel.snp.makeConstraints {
             $0.top.equalTo(greetingSectionView).offset(16)
             $0.leading.trailing.equalTo(greetingSectionView).inset(16)
-            $0.height.equalTo(70)
+            $0.height.equalTo(56)
         }
         
+        // 하얀 카드
         currentReadingCardView.snp.makeConstraints {
             $0.top.equalTo(greetingLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalTo(greetingSectionView).inset(16)
-            $0.height.equalTo(180)
+            $0.height.equalTo(176)
             $0.bottom.equalTo(greetingSectionView.snp.bottom).offset(-16)
         }
-        
+
+        currentReadingCollectionView.snp.remakeConstraints {
+            $0.edges.equalTo(currentReadingCardView)
+        }
+
+        // 책추가하기 버튼
         addBookButton.snp.makeConstraints {
-            $0.top.equalTo(greetingSectionView.snp.bottom).offset(24)
+            $0.top.equalTo(greetingSectionView.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.height.equalTo(52)
         }
@@ -603,30 +620,35 @@ final class ReadingHomeViewController: UIViewController {
     
     // MARK: - 현재 읽는 중 컬렉션 레이아웃
     private func makeCurrentReadingLayout() -> UICollectionViewLayout {
+
+        let cardHeight: CGFloat = 176
+
         let itemSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1.0)
+            widthDimension: .fractionalWidth(0.97),
+            heightDimension: .absolute(cardHeight)
         )
-        
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-        
+
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(160)
+            heightDimension: .absolute(cardHeight)
         )
-        
+
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
             subitems: [item]
         )
-        
+
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .groupPagingCentered
-        section.interGroupSpacing = 16
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
-        
+
+        section.interGroupSpacing = -10
+
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+
         return UICollectionViewCompositionalLayout(section: section)
     }
+
 
 }
 

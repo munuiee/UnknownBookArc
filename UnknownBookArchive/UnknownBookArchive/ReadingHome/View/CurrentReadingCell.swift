@@ -10,6 +10,17 @@ final class CurrentReadingCell: UICollectionViewCell {
     let disposeBag = DisposeBag()
     private var book: Book?
     
+    private let cardView: UIView = {
+            let v = UIView()
+            v.backgroundColor = .white
+            v.layer.cornerRadius = 12
+            v.layer.shadowColor = UIColor.black.cgColor
+            v.layer.shadowOpacity = 0.08
+            v.layer.shadowRadius = 6
+            v.layer.shadowOffset = CGSize(width: 0, height: 2)
+            return v
+        }()
+
     
     // MARK: - UI 요소
     let thumbnailImageView = UIImageView()
@@ -39,6 +50,12 @@ final class CurrentReadingCell: UICollectionViewCell {
     // MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        contentView.addSubview(cardView)
+                cardView.snp.makeConstraints {
+                    $0.edges.equalToSuperview().inset(4)
+                }
+        
         setupUI()
         setupLayout()
         
@@ -100,6 +117,12 @@ final class CurrentReadingCell: UICollectionViewCell {
     // MARK: - Layout
     private func setupLayout() {
         
+        cardView.addSubview(thumbnailImageView)
+                cardView.addSubview(titleLabel)
+                cardView.addSubview(authorLabel)
+                cardView.addSubview(progressEditView)
+                cardView.addSubview(journalButton)
+        
         // MARK: 카드 내부 UI 추가
         contentView.addSubview(thumbnailImageView)
         contentView.addSubview(titleLabel)
@@ -119,53 +142,57 @@ final class CurrentReadingCell: UICollectionViewCell {
         
         // 썸네일
         thumbnailImageView.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(8)
+            $0.top.equalToSuperview().inset(16)
+            $0.leading.equalToSuperview().inset(16)
             $0.size.equalTo(CGSize(width: 97, height: 144))
         }
+
         
         // 제목
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(23)
             $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
-            $0.trailing.equalToSuperview().inset(8)
+            $0.trailing.equalToSuperview().inset(16)
         }
         
         // 작가
         authorLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(4)
             $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(8)
+            $0.trailing.equalToSuperview().inset(16)
             
         }
         progressEditView.snp.makeConstraints {
             $0.top.equalTo(authorLabel.snp.bottom).offset(6)
             $0.leading.equalTo(titleLabel)
-            $0.trailing.equalToSuperview().inset(8)
+            $0.trailing.equalToSuperview().inset(30)
             $0.height.equalTo(40)
         }
         
         
         // 날짜 + 진행률
-        dateInfoStack.snp.makeConstraints {
-            $0.top.equalTo(progressEditView.snp.top).offset(10)
-            $0.leading.trailing.equalToSuperview()
-
+        dateInfoStack.snp.remakeConstraints {
+            $0.top.equalTo(progressEditView.snp.top).offset(16)
+            $0.leading.equalTo(progressBar.snp.leading)
+            $0.trailing.equalTo(progressBar.snp.trailing)
         }
-        
+
         // 진행률 바
         progressBar.snp.makeConstraints {
             $0.top.equalTo(dateInfoStack.snp.bottom).offset(4)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(6)
+            $0.leading.equalTo(thumbnailImageView.snp.trailing).offset(16)
+            $0.trailing.equalToSuperview().inset(-13)
+            $0.height.equalTo(4)
         }
-        
+
         // 저널 버튼
         journalButton.snp.makeConstraints {
-            $0.top.equalTo(progressEditView.snp.bottom).offset(6)
-            $0.trailing.equalToSuperview().inset(8)
+            $0.top.equalTo(progressEditView.snp.bottom).offset(16)
+            $0.trailing.equalToSuperview().inset(16)
             $0.leading.equalTo(titleLabel)
             $0.height.equalTo(32)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(23)
+            
         }
     }
     
