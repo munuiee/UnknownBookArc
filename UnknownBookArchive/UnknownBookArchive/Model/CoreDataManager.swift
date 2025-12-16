@@ -425,35 +425,54 @@ class CoreDataManager {
         }
     }
     // MARK: 진행도 수정
-    func updateProgress(uuid: String, isPageMode: Bool, currentPage: Int32, totalPage: Int32, percent: Int32, lastModifiedDate: Date) ->Bool {
+    func updateProgress(
+        uuid: String,
+        isPageMode: Bool,
+        currentPage: Int32,
+        totalPage: Int32,
+        percent: Int32,
+        lastModifiedDate: Date
+    ) -> Bool {
+
         let fetchRequest: NSFetchRequest<Book> = Book.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "uuid == %@", uuid)
-         
+
         do {
             let results = try context.fetch(fetchRequest)
             guard let bookToUpdate = results.first else {
                 return false
             }
+
             bookToUpdate.isPageMode = isPageMode
             bookToUpdate.lastModifiedDate = lastModifiedDate
-            
+
             if isPageMode {
                 bookToUpdate.currentPage = currentPage
                 bookToUpdate.totalPage = totalPage
-                
+                bookToUpdate.percent = 0
             } else {
                 bookToUpdate.percent = percent
+                bookToUpdate.currentPage = 0
+                bookToUpdate.totalPage = 0
             }
+
             if context.hasChanges {
                 try context.save()
-                return true
-            } else {
-                return true
             }
+
+            NotificationCenter.default.post(
+                name: .bookUpdated,
+                object: nil
+            )
+
+            return true
+
         } catch {
+            print("Progress 업데이트 실패:", error)
             return false
         }
     }
+
 }
 
 // 스와이프 삭제
