@@ -250,10 +250,10 @@ final class ReadingHomeViewController: UIViewController {
         
         contentStackView.setCustomSpacing(pausedBooks.isEmpty ? 20 : 0, after: pausedHeader)
         contentStackView.setCustomSpacing(40, after: pausedEmptyCard)
-        contentStackView.setCustomSpacing(40, after: pausedCollectionView)
+        contentStackView.setCustomSpacing(16, after: pausedCollectionView)
         
         contentStackView.setCustomSpacing(finishedBooks.isEmpty ? 20 : 0, after: finishedHeader)
-        contentStackView.setCustomSpacing(60, after: finishedEmptyCard)
+        contentStackView.setCustomSpacing(40, after: finishedEmptyCard)
         contentStackView.setCustomSpacing(60, after: finishedCollectionView)
     }
     
