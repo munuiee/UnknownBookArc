@@ -112,8 +112,8 @@ Core Data와 연동하여 관리 부담을 줄이면서도, Apple이 제공하�
 <br>
 
 ## 디자인 시스템
-<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/0a6182f1-b4b7-4c9a-9aec-33b485549f35" />
-네이비와 화이트의 강한 대비를 활용해 브랜드의 핵심 감정인 **낯섦**을 직관적으로 표현했습니다. <br>
+<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/d5a4e098-bd37-4d7a-b304-a5876822b00e" />
+네이비와 화이트의 강한 대비를 활용해 브랜드의 핵심 감정인 낯섦을 직관적으로 표현했습니다. <br>
 메인 컬러로 네이비를 선택한 이유는, 시간이 지나 새롭게 느껴지는 문장처럼 깊고 차분한 분위기를 표현하기 위해서 입니다. <br>
 로고는 책에서 만나는 새로운 공간을 표현했고, 아이콘은 24px 기준으로 만들었습니다. 마진값은 20px, 버튼 사이즈는 ios 터치 아리아 권장 사이즈 44포인트이상인 52px로, 컴포넌트는 4배수 기준으로 제작했습니다.
 
