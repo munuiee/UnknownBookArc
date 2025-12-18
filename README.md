@@ -1,4 +1,5 @@
-<img width="1920" height="1080" alt="Image" src="https://github.com/user-attachments/assets/8cd5c4b1-7724-4a90-a9a4-019484c7ccb4" />
+
+<img width="1920" height="1080" alt="1_표지" src="https://github.com/user-attachments/assets/962b2bc2-38a5-48ad-b342-f97f26d4a3d3" />
 <br>
 
 <img width="7611" height="2234" alt="앱스크린_마이페이지 추가" src="https://github.com/user-attachments/assets/9735d86b-6d15-4122-92fd-cdf802714fc3" />
@@ -53,7 +54,7 @@
 
 
 ## 주요 기능
-📎 [낯선책방 주요 기능 소개](https://tulip-bronze-600.notion.site/2c8badea375980bf8573df7d65de842f?source=copy_link)
+📎 [낯선책방 주요 기능 소개](https://power-ketch-e9a.notion.site/2cd7e11137998011a467f54fef1003c1?source=copy_link)
 
 <br>
 
