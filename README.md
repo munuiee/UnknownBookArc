@@ -52,6 +52,11 @@
 
 <br>
 
+## 개인별 개발로그
+👉 [Development Log](https://shining-polo-563.notion.site/2aa470d98ef5809980bad250f0566740?v=2aa470d98ef5807ca3f6000c10848b2e&source=copy_link)
+
+<br>
+
 
 ## 주요 기능
 📎 [낯선책방 주요 기능 소개](https://power-ketch-e9a.notion.site/2cd7e11137998011a467f54fef1003c1?source=copy_link)
