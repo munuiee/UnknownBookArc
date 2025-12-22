@@ -53,7 +53,7 @@
 <br>
 
 ## 개인별 개발로그
-👉 [Development Log](https://shining-polo-563.notion.site/2aa470d98ef5809980bad250f0566740?v=2aa470d98ef5807ca3f6000c10848b2e&source=copy_link)
+👉 [Development Log](https://shining-polo-563.notion.site/2aa470d98ef58031838ff1c630859c6d?source=copy_link)
 
 <br>
 
