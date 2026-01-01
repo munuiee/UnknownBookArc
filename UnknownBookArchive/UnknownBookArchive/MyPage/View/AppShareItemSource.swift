@@ -1,10 +1,3 @@
-//
-//  AppShareItemSource.swift
-//  UnknownBookArchive
-//
-//  Created by jyeee on 12/9/25.
-//
-
 import Foundation
 import UIKit
 

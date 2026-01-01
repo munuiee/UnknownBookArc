@@ -1,4 +1,4 @@
-// MARK: 마이페이지
+// MARK: 마이페이지 뷰컨트롤러
 
 import UIKit
 import SnapKit
@@ -7,51 +7,101 @@ import RxCocoa
 import MessageUI
 
 final class MyPageViewController: UIViewController {
+
     private let myPageView = MyPageView()
     private let viewModel: MyPageViewModel
     private let disposeBag = DisposeBag()
-    
-    
+
+    private let hiddenYearField = UITextField(frame: .zero)
+    private let yearPicker = UIPickerView()
+    private var years: [Int] = []
+
     init(viewModel: MyPageViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func loadView() {
         self.view = myPageView
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupYearPicker()
         bind()
         setupActions()
         bindTouchEvents()
+        viewModel.viewDidLoad()
     }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        viewModel.fetchMonthCompletedCount()
-        viewModel.fetchYearCompletedCount()
+
+        // 화면 재진입 시 선택 연도 기준으로 UI/통계 갱신
+        myPageView.setSelectedYear(viewModel.selectedYear.value)
+        viewModel.refresh()
     }
-    
-    
-    
-    // MARK: bind함수
+
+    // MARK: - bind
     private func bind() {
         viewModel.monthCompletedCount
             .map { String($0) }
             .bind(to: myPageView.monthCountLabel.rx.text)
             .disposed(by: disposeBag)
+
         viewModel.yearCompletedCount
             .map { String($0) }
             .bind(to: myPageView.yearCountLabel.rx.text)
             .disposed(by: disposeBag)
     }
-    
+
+    // MARK: - Year Picker Setup
+    private func setupYearPicker() {
+        view.addSubview(hiddenYearField)
+        hiddenYearField.isHidden = true
+
+        let currentYear = Calendar.current.component(.year, from: Date())
+        let startYear = 2025
+        years = Array(startYear...currentYear).reversed()
+
+        yearPicker.dataSource = self
+        yearPicker.delegate = self
+        hiddenYearField.inputView = yearPicker
+
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let done = UIBarButtonItem(title: "완료", style: .done, target: self, action: #selector(donePickingYear))
+        let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        toolbar.items = [flex, done]
+        hiddenYearField.inputAccessoryView = toolbar
+
+        // 기본 선택: 현재 연도
+        viewModel.setSelectedYear(currentYear)
+        myPageView.setSelectedYear(currentYear)
+
+        if let idx = years.firstIndex(of: currentYear) {
+            yearPicker.selectRow(idx, inComponent: 0, animated: false)
+        }
+
+
+        myPageView.activeTapButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.hiddenYearField.becomeFirstResponder()
+            })
+            .disposed(by: disposeBag)
+
+
+    }
+
+    @objc private func donePickingYear() {
+        hiddenYearField.resignFirstResponder()
+    }
+
     // ---------------------------------------
     // MARK: 버튼 클릭 시 배경색 변경되는 효과
     private func bindTouchEvents() {
@@ -59,100 +109,88 @@ final class MyPageViewController: UIViewController {
             myPageView.shareButton,
             myPageView.reviewButton,
             myPageView.communicationButton
-        ].forEach {
-            bindTouchEvents(for: $0)
-        }
+        ].forEach { bindTouchEvents(for: $0) }
     }
-    
+
     private func bindTouchEvents(for button: UIButton) {
-        
-        // 터치 다운 (손가락 닿은 순간)
         button.rx.controlEvent(.touchDown)
             .subscribe(onNext: { [weak self] in
                 self?.buttonTouchDown(button)
             })
             .disposed(by: disposeBag)
-        
-        // 터치 업 (눌렀다가 뗀 순간 — 탭 완료되었을 때)
+
         button.rx.controlEvent([.touchUpInside, .touchUpOutside, .touchCancel])
             .subscribe(onNext: { [weak self] in
                 self?.buttonTouchUp(button)
             })
             .disposed(by: disposeBag)
     }
-    
+
     private func setupActions() {
-        // 추천버튼 클릭
         myPageView.shareButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.handleShareTap()
             })
             .disposed(by: disposeBag)
-        
-        // 리뷰버튼 클릭
+
         myPageView.reviewButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.handleReviewTap()
             })
             .disposed(by: disposeBag)
-        
-        // 메일버튼 클릭
+
         myPageView.communicationButton.rx.tap
             .subscribe(onNext: { [weak self] in
                 self?.handleMailTap()
             })
             .disposed(by: disposeBag)
     }
-    
-    
+
     private func buttonTouchDown(_ button: UIButton) {
         UIView.animate(withDuration: 0.08) {
             button.backgroundColor = .myPageButtonSelectedFillColor
             button.transform = CGAffineTransform(scaleX: 0.96, y: 0.96)
         }
     }
+
     private func buttonTouchUp(_ button: UIButton) {
         UIView.animate(withDuration: 0.08) {
             button.backgroundColor = .myPageButtonSelectedAfterColor
             button.transform = .identity
         }
-        
     }
     // ---------------------------------------
 
-    // 추천 버튼 클릭시 모달 뷰
+    // MARK: Share / Review / Mail
+
     private func handleShareTap() {
         let shareText = "가볍게 독서 기록을 남길 수 있는 '낯선책방'을 소개합니다 📚"
         let appURL = URL(string: "https://apps.apple.com/kr/app/%EB%82%AF%EC%84%A0%EC%B1%85%EB%B0%A9/id6756062952")!
         let itemSource = AppShareItemSource(appURL: appURL, messageText: shareText)
         let activityVC = UIActivityViewController(activityItems: [itemSource], applicationActivities: nil)
         activityVC.modalPresentationStyle = .pageSheet
-        
         present(activityVC, animated: true)
     }
-    
+
     private func handleReviewTap() {
         let appID = "6756062952"
         let urlString = "https://apps.apple.com/app/id\(appID)?action=write-review"
-        
         if let url = URL(string: urlString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
-    
+
     private func handleMailTap() {
         let email = "jyeee0421@icloud.com"
         let subject = "[낯선책방] 문의 및 건의하기"
         let body = ""
 
-        // 1) 애플 메일 계정 연결되어 있으면 → 모달로 띄우기 (그대로 유지)
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
             mail.setToRecipients([email])
             mail.setSubject(subject)
             mail.setMessageBody(body, isHTML: false)
-
             present(mail, animated: true)
             return
         }
@@ -168,9 +206,24 @@ final class MyPageViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
         present(alert, animated: true)
     }
+}
 
+extension MyPageViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int { 1 }
 
-    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        years.count
+    }
+
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        "\(years[row])년"
+    }
+
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let year = years[row]
+        myPageView.setSelectedYear(year)
+        viewModel.setSelectedYear(year)   
+    }
 }
 
 extension MyPageViewController: MFMailComposeViewControllerDelegate {
