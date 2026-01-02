@@ -32,13 +32,12 @@ final class MyPageView: UIView {
         communicationButton.applyBorder(.primaryBlue50)
     }
 
-
     func setSelectedYear(_ year: Int) {
-        statsSubLabel.text = "\(year)년 활동 내역이에요"
         yearDropdownLabel.text = "\(year)년 ▾"
         yearLabel.text = "\(year)년 완독한 책"
     }
 
+    // MARK: - Top
 
     private let myPageTitle: UILabel = {
         let label = UILabel()
@@ -49,6 +48,7 @@ final class MyPageView: UIView {
 
     private let topView = UIView()
 
+    // MARK: - Stats
 
     private let statsLabel: UILabel = {
         let label = UILabel()
@@ -59,29 +59,39 @@ final class MyPageView: UIView {
         return label
     }()
 
-
     private let activeView: UIStackView = {
         let stView = UIStackView()
         stView.axis = .horizontal
-        stView.spacing = 8
-        stView.distribution = .fill
+        stView.spacing = 4
         stView.alignment = .center
-
         stView.backgroundColor = .activityLabelBackgroundColor
         stView.layer.cornerRadius = 8
         stView.clipsToBounds = true
-
         stView.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
         stView.isLayoutMarginsRelativeArrangement = true
         return stView
     }()
 
-    private let statsSubLabel: UILabel = {
+    // 연도 드롭다운
+    private let yearDropdownLabel: UILabel = {
         let label = UILabel()
-        label.text = "----년 활동 내역이에요"
+        label.text = "----년 ▾"
+        label.textColor = .activityLabelTextColor
+        label.font = .semiBoldFont(ofSize: 12)
+        label.textAlignment = .left
+        label.setContentHuggingPriority(.required, for: .horizontal)
+        label.setContentCompressionResistancePriority(.required, for: .horizontal)
+        return label
+    }()
+
+    private let statsTextLabel: UILabel = {
+        let label = UILabel()
+        label.text = "활동 내역이에요"
         label.textColor = .activityLabelTextColor
         label.font = .mediumFont(ofSize: 12)
         label.textAlignment = .left
+        label.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }()
 
@@ -90,17 +100,6 @@ final class MyPageView: UIView {
         v.setContentHuggingPriority(.defaultLow, for: .horizontal)
         v.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return v
-    }()
-
-    private let yearDropdownLabel: UILabel = {
-        let label = UILabel()
-        label.text = "----년 ▾"
-        label.textColor = .activityLabelTextColor
-        label.font = .semiBoldFont(ofSize: 12)
-        label.textAlignment = .right
-        label.setContentHuggingPriority(.required, for: .horizontal)
-        label.setContentCompressionResistancePriority(.required, for: .horizontal)
-        return label
     }()
 
     let activeTapButton: UIButton = {
@@ -189,7 +188,6 @@ final class MyPageView: UIView {
         return stackView
     }()
 
-    // 추천 버튼
     let shareButton: UIButton = {
         let button = UIButton()
         button.layer.borderWidth = 1
@@ -213,7 +211,6 @@ final class MyPageView: UIView {
         return imageView
     }()
 
-    // 리뷰 버튼
     let reviewButton: UIButton = {
         let button = UIButton()
         button.layer.borderWidth = 1
@@ -289,17 +286,14 @@ final class MyPageView: UIView {
 
         topView.addSubview(myPageTitle)
 
-        // activeView 구성
-        activeView.addArrangedSubview(statsSubLabel)
-        activeView.addArrangedSubview(spacerView)
         activeView.addArrangedSubview(yearDropdownLabel)
+        activeView.addArrangedSubview(statsTextLabel)
+        activeView.addArrangedSubview(spacerView)
 
-        // month/year cards
         [monthLabel, monthCountLabel].forEach { monthView.addSubview($0) }
         [yearLabel, yearCountLabel].forEach { yearView.addSubview($0) }
         [monthView, yearView].forEach { monthYearSV.addArrangedSubview($0) }
 
-        // compliment buttons
         [shareButton, reviewButton].forEach { stackView.addArrangedSubview($0) }
 
         shareButton.addSubview(shareTitle)
@@ -308,13 +302,8 @@ final class MyPageView: UIView {
         reviewButton.addSubview(reviewTitleLabel)
         reviewButton.addSubview(reviewIconView)
 
-        // communication
         communicationButton.addSubview(communicationTitle)
         communicationButton.addSubview(communicationIconView)
-
-        // 왼쪽 라벨은 늘어나고 오른쪽은 고정
-        statsSubLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        statsSubLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
 
     // MARK: - Layout
@@ -436,6 +425,7 @@ final class MyPageView: UIView {
             $0.width.height.equalTo(24)
         }
     }
+
 }
 
 extension UIView {
