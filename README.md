@@ -7,6 +7,22 @@
 <img width="2155" height="759" alt="장표에 사용한 다크모드 화면" src="https://github.com/user-attachments/assets/d2b6f93e-e48d-441e-9a23-98886e0d3514" />
 
 
+## Project Summary
+```md
+## Project Summary (PM Perspective)
+
+- Problem: 독서 기록 앱들이 기능 과다 및 UI/UX 불일치로 인해 기록 흐름에 집중하기 어렵다는 문제 인식
+- Solution: 기록 행동에 집중할 수 있도록 기능을 최소화하고 UI 흐름을 단순화한 독서 기록 앱 설계
+- Result: 마케팅 없이 앱스토어 도서 카테고리 54위 달성, UT 기반 UX 및 안정성 업데이트 완료
+
+## Role & Contribution
+
+- Team Lead (PM / iOS Developer)
+  - 서비스 기획 및 문제 정의
+  - MVP 범위 정의 및 우선순위 설정
+  - 일정 관리 및 팀 커뮤니케이션
+  - 저널 페이지 핵심 기능 개발
+```
 
 ## 팀
 
@@ -15,7 +31,7 @@
 | 🧑🏻‍🎨 강솔이 | 👩‍💻 김리하   | 👩‍💻 변지혜     | 👩‍💻 박혜연      |
 |-------------|-------------|--------------|-------------|
 | <div align="center">[@strongtoothbrush](https://github.com/strongtoothbrush)</div> | <div align="center">[@meowbyterh](https://github.com/meowbyterh)</div>  | <div align="center">[@munuiee](https://github.com/munuiee)</div> | <div align="center">[@104hyeon](https://github.com/104hyeon)</div> |
-| 전체 UI/UX 디자인 | 메인 화면 및 책장 구현 | 저널 및 좋아요 구현 | 추가화면 및 편집화면 구현 |
+| ▫️ UI/UX <br> ▫️ Design System | ▫️ Home <br> ▫️ Library <br> ▫️ Navigation Bar <br> ▫️ Asset Setting | ▫️ Journal <br> ▫️ Liked <br> ▫️ My Page <br> ▫️ DarkMode <br> ▫️ CloudKit | ▫️ API <br> ▫️ Search <br> ▫️ Book Registration <br> ▫️ My Page |
 
 <br>
 </div>
