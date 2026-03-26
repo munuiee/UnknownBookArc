@@ -14,6 +14,7 @@ final class ParagraphCardCell: UICollectionViewCell {
     private let topStack = UIStackView()
     private let pageLabel = UILabel()
     private let multiButton = UIButton(type: .system)
+    private let copyButton = UIButton(type: .system)
     
     private let separatorView = UIView()
     private let sententceLabel = UILabel()
@@ -21,6 +22,9 @@ final class ParagraphCardCell: UICollectionViewCell {
     private let bottomStack = UIStackView()
     private let dateLabel = UILabel()
     private let likeButton = UIButton(type: .system)
+    
+    private var currentText: String = ""
+
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -36,12 +40,19 @@ final class ParagraphCardCell: UICollectionViewCell {
     
     private func topStackUI() {
         contentView.addSubview(topStack)
-        [pageLabel, multiButton].forEach { topStack.addArrangedSubview($0) }
+        [pageLabel, copyButton, multiButton].forEach { topStack.addArrangedSubview($0) }
         
         topStack.axis = .horizontal
         topStack.distribution = .equalSpacing
         pageLabel.font = UIFont.mediumFont(ofSize: 14)
         pageLabel.textColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        
+        copyButton.setImage(UIImage(systemName: "document.on.document"), for: .normal)
+        copyButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        copyButton.addTarget(self, action: #selector(journalCopyTapped), for: .touchUpInside)
+        copyButton.snp.makeConstraints {
+            $0.width.height.equalTo(18)
+        }
         
         let menuEdit = UIAction(
             title: "문단 수정",
@@ -65,7 +76,9 @@ final class ParagraphCardCell: UICollectionViewCell {
         multiButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
         multiButton.snp.makeConstraints {
             $0.width.height.equalTo(24)
+            $0.left.equalTo(copyButton.snp.right).offset(4)
         }
+       
         
         topStack.snp.makeConstraints {
             $0.centerX.equalToSuperview()
@@ -132,6 +145,8 @@ final class ParagraphCardCell: UICollectionViewCell {
             $0.bottom.lessThanOrEqualTo(bottomStack.snp.top).offset(-12)
         }
     }
+        
+  
     
     @objc private func likeButtonTapped() {
         onLikeTapped?()
@@ -149,7 +164,23 @@ final class ParagraphCardCell: UICollectionViewCell {
     
     
     
+    @objc private func journalCopyTapped() {
+            UIPasteboard.general.string = currentText
+
+            UIView.transition(with: copyButton, duration: 0.08, options: .transitionCrossDissolve) {
+                self.copyButton.setImage(UIImage(systemName: "doc.on.doc.fill"), for: .normal)
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
+                guard let self else { return }
+
+                UIView.transition(with: self.copyButton, duration: 0.08, options: .transitionCrossDissolve) {
+                    self.copyButton.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
+                }
+            }
+        }
     func configure(page: String, text: String, dateText: String, liked: Bool) {
+        currentText = text
         pageLabel.text = "\(page)p"
         dateLabel.text = dateText
         
