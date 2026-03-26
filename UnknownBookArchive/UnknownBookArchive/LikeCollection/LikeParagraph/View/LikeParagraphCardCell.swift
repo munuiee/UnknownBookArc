@@ -18,6 +18,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
     private let titleLabel = UILabel()
     private let authorLabel = UILabel()
     private let multiButton = UIButton(type: .system)
+    private let copyButton = UIButton(type: .system)
     
     private let separatorView = UIView()
     private let pageLabel = UILabel()
@@ -26,6 +27,8 @@ final class LikeParagraphCardCell: UICollectionViewCell {
     private let bottomStack = UIStackView()
     private let dateLabel = UILabel()
     private let likeButton = UIButton(type: .system)
+    
+    private var currentText: String = ""
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -46,7 +49,7 @@ final class LikeParagraphCardCell: UICollectionViewCell {
     
     
     private func topStackUI() {
-        [titleLabel, multiButton].forEach { infoStack.addArrangedSubview($0) }
+        [titleLabel, copyButton, multiButton].forEach { infoStack.addArrangedSubview($0) }
         contentView.addSubview(topStack)
         
         [infoStack, authorLabel].forEach { topStack.addArrangedSubview($0)}
@@ -62,6 +65,13 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         authorLabel.textColor = .likedAuthorColor
         authorLabel.snp.makeConstraints {
             $0.height.equalTo(24)
+        }
+        
+        copyButton.setImage(UIImage(systemName: "document.on.document"), for: .normal)
+        copyButton.tintColor = UIColor(red: 103/255, green: 101/255, blue: 101/255, alpha: 1.0)
+        copyButton.addTarget(self, action: #selector(journalCopyTapped), for: .touchUpInside)
+        copyButton.snp.makeConstraints {
+            $0.width.height.equalTo(18)
         }
         
         let menuEdit = UIAction(
@@ -185,13 +195,29 @@ final class LikeParagraphCardCell: UICollectionViewCell {
         : UIColor.paragraphUnlikeButtonIconColor
     }
     
-    
+    @objc private func journalCopyTapped() {
+            UIPasteboard.general.string = currentText
+
+            UIView.transition(with: copyButton, duration: 0.08, options: .transitionCrossDissolve) {
+                self.copyButton.setImage(UIImage(systemName: "doc.on.doc.fill"), for: .normal)
+            }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
+                guard let self else { return }
+
+                UIView.transition(with: self.copyButton, duration: 0.08, options: .transitionCrossDissolve) {
+                    self.copyButton.setImage(UIImage(systemName: "doc.on.doc"), for: .normal)
+                }
+            }
+        }
     func configure(page: String, text: String, dateText: String, liked: Bool, bookTitle: String? = nil, bookAuthor: String? = nil) {
         
         titleLabel.isHidden = false
            authorLabel.isHidden = false
         pageLabel.text = "\(page)p"
         dateLabel.text = dateText
+        currentText = text
+
         
         if let t = bookTitle, !t.isEmpty {
             titleLabel.isHidden = false
