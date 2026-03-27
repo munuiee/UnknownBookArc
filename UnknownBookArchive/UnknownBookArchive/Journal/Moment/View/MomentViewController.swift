@@ -11,6 +11,7 @@ final class MomentViewController: UIViewController, UIGestureRecognizerDelegate 
     private let viewModel: MomentListViewModel
     private let book: Book
     private let disposeBag = DisposeBag()
+    private var hasLoggedMomentStarted = false
     
     init(book: Book) {
         self.book = book
@@ -282,6 +283,13 @@ extension MomentViewController: UICollectionViewDelegate, UICollectionViewDataSo
 
 extension MomentViewController: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
+        let trimmedText = textView.text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        if !trimmedText.isEmpty, !hasLoggedMomentStarted {
+            AnalyticsManager.shared.logJournalStarted(type: "moment")
+            hasLoggedMomentStarted = true
+        }
+
         updateInputUI(for: textView)
     }
 }
