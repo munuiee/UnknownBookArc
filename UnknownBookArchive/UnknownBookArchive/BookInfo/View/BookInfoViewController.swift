@@ -768,6 +768,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
         let duplicateBook = CoreDataManager.shared.fetchBookByIsbn(isbn: isbn, isbn13: isbn13, excludeUUID: self.bookUUID)
         if duplicateBook != nil {
             showAlert(title: "중복된 책", message: "이미 서재에 저장된 책입니다.")
+            return
         }
         let saveDate = Date()
         
@@ -803,6 +804,7 @@ class BookInfoViewController: UIViewController, UIImagePickerControllerDelegate,
                     navigateToNewDetailVC(with: saveBook, progressValue: progressValue, progressText: progressText)
                 }
             } else {
+                AnalyticsManager.shared.logBookRegistered()
                 navigateToNewDetailVC(with: saveBook, progressValue: progressValue, progressText: progressText)
             }
             

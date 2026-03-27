@@ -36,6 +36,10 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         view.backgroundColor = .backgroundModeColor
         hidesBottomBarWhenPushed = true
         
+        if journal == nil {
+            AnalyticsManager.shared.logJournalStarted(type: "paragraph")
+        }
+        
         bindActions()
         bindEdit()
         bindMainFieldFocus()
@@ -51,7 +55,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         let swipe = UISwipeGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         swipe.direction = [.down]
         view.addGestureRecognizer(swipe)
-
+        
         
         if let journal = journal {
             journalEditView.pageField.text = journal.savedPage
@@ -76,7 +80,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         let expandedHeight = min(512, safeHeight - 40)
         journalEditView.mainFieldHeightConstraint?.update(offset: expandedHeight)
     }
-
+    
     
     
     // MARK: bind - 버튼 터치 이벤트 액션
@@ -188,7 +192,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         let heightWhenKeyboard = safeHeight - overlap
         let collapsedHeight = max(heightWhenKeyboard * 0.65, 200)
         let options = UIView.AnimationOptions(rawValue: curveValue << 16)
-
+        
         journalEditView.mainFieldHeightConstraint?.update(offset: isKeyboardVisible ? collapsedHeight : expandedHeight)
         UIView.animate(withDuration: duration, delay: 0, options: options) {
             self.view.layoutIfNeeded()
@@ -211,7 +215,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         let textChanged = (newPage != editPage) || (newText != editText)
         return textChanged
     }
-
+    
     
     // MARK: 텍스트필드/텍스트뷰 클릭 시 border 적용
     private func bindPageFieldFocus() {

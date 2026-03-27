@@ -52,27 +52,27 @@ class BookSearchViewModel {
                 let isLastPage = newBookList.isEmpty
                 
                 self.currentPage.accept(page)
-            
+                
                 var currentList = self.bookList.value
                 currentList.append(contentsOf: newBookList)
                 self.bookList.accept(currentList)
                 
                 self.canLoadMore.accept(!isLastPage)
                 
-                if self.bookList.value.isEmpty {
-                    self.viewState.accept(.success)
-                } else {
-                    self.viewState.accept(.success)
+                if page == 1 {
+                    AnalyticsManager.shared.logSearchCompleted()
                 }
+                
+                self.viewState.accept(.success)
             }, onFailure: { [weak self] error in
                 guard let self = self else { return }
                 self.isLoading.accept(false)
                 self.viewState.accept(.error(error))
-  
+                
             })
             .disposed(by: disposeBag)
     }
-
+    
     // 초기 상태로 돌리기 (검색 취소시 사용)
     func resetSearchState() {
         self.viewState.accept(.initial)

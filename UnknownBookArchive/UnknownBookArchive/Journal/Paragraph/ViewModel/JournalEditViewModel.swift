@@ -23,6 +23,8 @@ final class JournalEditViewModel {
     }
     
     func saveButtonTapped(journal: Journal?, savedPage: String, journalText: String, liked: Bool) {
+        let isNew = (journal == nil)
+        
         if let journal = journal {
             // 수정
             journal.savedPage = savedPage
@@ -47,6 +49,9 @@ final class JournalEditViewModel {
         }
         do {
             try context.save()
+            if isNew {
+                AnalyticsManager.shared.logJournalCompleted(type: "paragraph")
+            }
             onSaved?()
         } catch {
             print("[JournalEditVC] 문단 수집 저장 실패")

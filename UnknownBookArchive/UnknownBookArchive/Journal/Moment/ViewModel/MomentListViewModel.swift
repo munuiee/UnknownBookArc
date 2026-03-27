@@ -60,6 +60,7 @@ final class MomentListViewModel {
         
         do {
             try context.save()
+            AnalyticsManager.shared.logJournalCompleted(type: "moment")
             fetchMoments()
         } catch {
             print("찰나의 기록 저장 실패: \(error)")
