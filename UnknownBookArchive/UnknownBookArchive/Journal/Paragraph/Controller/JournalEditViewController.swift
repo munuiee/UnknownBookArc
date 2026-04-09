@@ -5,6 +5,11 @@ import SnapKit
 import UIKit
 import RxSwift
 import RxCocoa
+import AVFoundation
+import Vision
+import VisionKit
+
+
 
 final class JournalEditViewController: UIViewController, UIGestureRecognizerDelegate {
     private let journalEditView = JournalEditView()
@@ -96,6 +101,12 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
                 self?.saveButtonTapped()
             })
             .disposed(by: disposeBag)
+        
+        journalEditView.scanButton.rx.tap
+            .subscribe(onNext: { [weak self] in
+                self?.didTapScanButton()
+            })
+            .disposed(by: disposeBag)
     }
     
     private func bindEdit() {
@@ -130,6 +141,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             .disposed(by: disposeBag)
     }
     
+
     
     // MARK: 뒤로가기 버튼
     private func didTapBackButton() {
@@ -249,7 +261,82 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             })
             .disposed(by: disposeBag)
     }
+    
+    // MARK: - 스캔 버튼 액션
+    @objc func didTapScanButton() {
+        checkCameraPermission {
+            self.openCamera()
+        }
+    }
+
+    // MARK: - 카메라 권한 체크
+    func checkCameraPermission(granted: @escaping () -> Void) {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            granted()
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { ok in
+                if ok { DispatchQueue.main.async { granted() } }
+            }
+        case .denied, .restricted:
+            let alert = UIAlertController(
+                title: "카메라 권한 필요",
+                message: "책 페이지 스캔을 위해 카메라 권한이 필요합니다.",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "설정으로 이동", style: .default) { _ in
+                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+            })
+            alert.addAction(UIAlertAction(title: "취소", style: .cancel))
+            present(alert, animated: true)
+        @unknown default:
+            break
+        }
+    }
+
+    // MARK: - 카메라 열기
+    func openCamera() {
+        guard VNDocumentCameraViewController.isSupported else { return }
+        let scanner = VNDocumentCameraViewController()
+        scanner.delegate = self
+        present(scanner, animated: true)
+    }
+    
+    // MARK: - OCR
+    func recognizeText(from image: UIImage) {
+        guard let cgImage = image.cgImage else { return }
+        
+        let request = VNRecognizeTextRequest { [weak self] request, error in
+            guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
+            let text = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
+            DispatchQueue.main.async {
+                self?.journalEditView.mainField.text = text
+                self?.journalEditView.mainPlaceholderLabel.isHidden = !text.isEmpty
+                self?.updateSaveButtonState()
+            }
+        }
+        request.recognitionLevel = .accurate
+        request.recognitionLanguages = ["ko", "en"]
+        
+        DispatchQueue.global().async {
+            try? VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
+        }
+    }
+
 }
 
 
-
+// MARK: - 촬영 완료
+extension JournalEditViewController: VNDocumentCameraViewControllerDelegate {
+    func documentCameraViewController(_ controller: VNDocumentCameraViewController,
+                                      didFinishWith scan: VNDocumentCameraScan) {
+        controller.dismiss(animated: true)
+        guard scan.pageCount > 0 else { return }
+        let image = scan.imageOfPage(at: 0)
+        recognizeText(from: image)
+    }
+    
+    func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
+        controller.dismiss(animated: true)
+    }
+}
