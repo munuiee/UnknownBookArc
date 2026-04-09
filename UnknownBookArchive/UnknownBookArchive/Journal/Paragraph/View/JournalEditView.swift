@@ -14,6 +14,8 @@ final class JournalEditView: UIView {
     let mainField = UITextView()
     let mainPlaceholderLabel = UILabel()
     
+    let scanButton = UIButton(type: .system)
+    
     private let buttonView = UIView()
     let saveButton = UIButton(type: .system)
     
@@ -85,7 +87,7 @@ final class JournalEditView: UIView {
     
     // 스택뷰 설정
     private func configureStack() {
-        [pageField, mainField].forEach { vStack.addArrangedSubview($0) }
+        [pageField, mainField, scanButton].forEach { vStack.addArrangedSubview($0) }
         
         vStack.axis = .vertical
         vStack.distribution = .equalSpacing
@@ -113,6 +115,11 @@ final class JournalEditView: UIView {
         mainPlaceholderLabel.font = UIFont.regularFont(ofSize: 15)
         mainField.addSubview(mainPlaceholderLabel)
         
+        scanButton.setImage(UIImage(systemName: "camera.viewfinder"), for: .normal)
+        scanButton.setTitle(" 카메라로 스캔하기", for: .normal)
+        scanButton.titleLabel?.font = UIFont.regularFont(ofSize: 13)
+        scanButton.tintColor = .gray300
+       // scanButton.addTarget(self, action: #selector(didTapScanButton), for: .touchUpInside)
         
         mainPlaceholderLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(12)
@@ -136,7 +143,15 @@ final class JournalEditView: UIView {
             $0.top.equalTo(pageField.snp.bottom).offset(24)
             mainFieldHeightConstraint = $0.height.equalTo(0).constraint
         }
+        
+        scanButton.snp.makeConstraints {
+            $0.top.equalTo(mainField.snp.bottom).offset(10)
+
+        }
+        
+      
     }
+    
 }
 
 
