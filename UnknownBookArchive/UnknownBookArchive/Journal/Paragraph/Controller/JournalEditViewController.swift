@@ -310,7 +310,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
             let text = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
             DispatchQueue.main.async {
-                self?.journalEditView.mainField.text = text
+                self?.correctWithLLM(text)
                 self?.journalEditView.mainPlaceholderLabel.isHidden = !text.isEmpty
                 self?.updateSaveButtonState()
             }
@@ -322,6 +322,72 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             try? VNImageRequestHandler(cgImage: cgImage, options: [:]).perform([request])
         }
     }
+    
+    // MARK: - LLM 교정
+    func correctWithLLM(_ text: String) {
+        // 로딩 시작
+            let indicator = UIActivityIndicatorView(style: .medium)
+            indicator.center = journalEditView.mainField.center
+            indicator.tag = 999
+            journalEditView.mainField.addSubview(indicator)
+            indicator.startAnimating()
+            journalEditView.mainField.text = ""
+            journalEditView.mainPlaceholderLabel.isHidden = true
+        let url = URL(string: "https://api.anthropic.com/v1/messages")!
+        let apiKey = Bundle.main.infoDictionary?["ANTHROPIC_API_KEY"] as? String ?? ""
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "content-type")
+        request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
+        
+        let body: [String: Any] = [
+            "model": "claude-haiku-4-5-20251001",
+            "max_tokens": 4096,
+            "messages": [
+                ["role": "user", "content": """
+                  다음은 책 페이지를 OCR로 스캔한 텍스트입니다.
+                  오탈자, 깨진 글자, 줄바꿈 오류를 교정해주세요.
+                  불필요한 줄바꿈을 제거하고 문단 단위로만 줄바꿈하세요.
+                  원문의 의미는 절대 변경하지 마세요.
+                  교정된 텍스트만 출력하세요. 설명이나 부가 텍스트 없이.
+                ---
+                \(text)
+                ---
+                """]
+            ]
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+                DispatchQueue.main.async {
+                    self?.journalEditView.mainField.viewWithTag(999)?.removeFromSuperview()
+                }
+                
+                if let error = error {
+                    print("❌ API Error: \(error)")
+                    return
+                }
+                if let data = data, let raw = String(data: data, encoding: .utf8) {
+                    print("📦 API Response: \(raw)")
+                }
+                guard let data = data,
+                      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                      let content = json["content"] as? [[String: Any]],
+                      let corrected = content.first?["text"] as? String
+                else {
+                    print("❌ 파싱 실패")
+                    return
+                }
+                DispatchQueue.main.async {
+                    self?.journalEditView.mainField.text = corrected
+                    self?.journalEditView.mainPlaceholderLabel.isHidden = true
+                    self?.updateSaveButtonState()
+                }
+            }.resume()
+        }
 
 }
 
