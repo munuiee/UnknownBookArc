@@ -310,7 +310,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
             guard let observations = request.results as? [VNRecognizedTextObservation] else { return }
             let text = observations.compactMap { $0.topCandidates(1).first?.string }.joined(separator: "\n")
             DispatchQueue.main.async {
-                self?.correctWithLLM(text)
+                self?.correctWithLLM(text, fallback: text)
                 self?.journalEditView.mainPlaceholderLabel.isHidden = !text.isEmpty
                 self?.updateSaveButtonState()
             }
@@ -324,7 +324,7 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
     }
     
     // MARK: - LLM 교정
-    func correctWithLLM(_ text: String) {
+    func correctWithLLM(_ text: String, fallback: String) {
         // 로딩 시작
             let indicator = UIActivityIndicatorView(style: .medium)
             indicator.center = journalEditView.mainField.center
@@ -362,32 +362,39 @@ final class JournalEditViewController: UIViewController, UIGestureRecognizerDele
         request.httpBody = try? JSONSerialization.data(withJSONObject: body)
         
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-                DispatchQueue.main.async {
-                    self?.journalEditView.mainField.viewWithTag(999)?.removeFromSuperview()
-                }
-                
-                if let error = error {
-                    print("❌ API Error: \(error)")
-                    return
-                }
-                if let data = data, let raw = String(data: data, encoding: .utf8) {
-                    print("📦 API Response: \(raw)")
-                }
-                guard let data = data,
-                      let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                      let content = json["content"] as? [[String: Any]],
-                      let corrected = content.first?["text"] as? String
-                else {
-                    print("❌ 파싱 실패")
-                    return
-                }
-                DispatchQueue.main.async {
-                    self?.journalEditView.mainField.text = corrected
-                    self?.journalEditView.mainPlaceholderLabel.isHidden = true
-                    self?.updateSaveButtonState()
-                }
-            }.resume()
-        }
+               DispatchQueue.main.async {
+                   self?.journalEditView.mainField.viewWithTag(999)?.removeFromSuperview()
+               }
+               
+               if let error = error {
+                   print("❌ API Error: \(error)")
+                   DispatchQueue.main.async {
+                       self?.journalEditView.mainField.text = fallback
+                       self?.updateSaveButtonState()
+                   }
+                   return
+               }
+               
+               guard let data = data,
+                     let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                     let content = json["content"] as? [[String: Any]],
+                     let corrected = content.first?["text"] as? String
+               else {
+                   print("❌ 파싱 실패")
+                   DispatchQueue.main.async {
+                       self?.journalEditView.mainField.text = fallback
+                       self?.updateSaveButtonState()
+                   }
+                   return
+               }
+               
+               DispatchQueue.main.async {
+                   self?.journalEditView.mainField.text = corrected
+                   self?.journalEditView.mainPlaceholderLabel.isHidden = true
+                   self?.updateSaveButtonState()
+               }
+           }.resume()
+       }
 
 }
 
